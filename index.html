@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScoreMyFitness — How do you actually measure up?</title>
+<meta name="description" content="Interactive fitness scoring tools for every test in the REALFIT Absolute Score battery. Pick a test. Enter your result. See exactly where you stand.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --surface:#1a1c22;--surface2:#22242c;--surface3:#2a2d36;
+  --text:#f0ede8;--muted:#8a8880;--faint:#5a5856;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --accent:#e8f02a;--accent2:#3A7BFF;--teal:#5DCAA5;
+}
+[data-theme="light"] {
+  --surface:#f4f2ee;--surface2:#eeebe5;--surface3:#e5e2dc;
+  --text:#0f0e0c;--muted:#6b6860;--faint:#9a9890;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);
+  --accent:#c0392b;--accent2:#1a56db;--teal:#0a6e56;
+}
+[data-theme="light"] header{background:rgba(244,242,238,0.94);border-bottom-color:rgba(0,0,0,0.1)}
+[data-theme="light"] .realfit-badge{border-color:rgba(0,0,0,0.14)}
+[data-theme="light"] .realfit-badge:hover{border-color:var(--accent);color:var(--accent)}
+[data-theme="light"] .realfit-badge::before{background:var(--accent)}
+[data-theme="light"] .hero-score{color:var(--accent)}
+[data-theme="light"] .test-card:hover{border-color:var(--accent2)}
+[data-theme="light"] .test-card.live:hover{border-color:var(--accent)}
+[data-theme="light"] .test-card.live .tc-badge{background:rgba(192,57,43,0.1);color:var(--accent)}
+[data-theme="light"] .test-card .tc-arrow{color:var(--accent2)}
+[data-theme="light"] .test-card.live .tc-arrow{color:var(--accent)}
+[data-theme="light"] .section-label{color:var(--accent2)}
+[data-theme="light"] .theme-toggle{color:var(--muted);border-color:rgba(0,0,0,0.16)}
+
+.theme-toggle{
+  border:1px solid var(--border2);background:transparent;
+  color:var(--muted);cursor:pointer;padding:6px 10px;
+  border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;
+  transition:all .15s;
+}
+.theme-toggle:hover{border-color:var(--text);color:var(--text);background:var(--surface)}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'Barlow',sans-serif;font-size:16px;line-height:1.6;
+  color:var(--text);background:var(--surface);
+  transition:background .2s,color .2s;
+}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(26,28,34,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo-group{display:flex;align-items:center;gap:12px}
+.site-logo{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:20px;font-weight:700;letter-spacing:.04em;
+  color:var(--text);text-decoration:none;
+}
+.site-logo span{color:var(--accent)}
+.realfit-badge{
+  padding:4px 10px;border-radius:5px;
+  border:1px solid var(--border2);
+  font-size:11px;font-weight:500;color:var(--muted);
+  text-decoration:none;letter-spacing:.04em;
+  display:flex;align-items:center;gap:6px;
+  transition:all .15s;
+}
+.realfit-badge::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--teal);flex-shrink:0;
+}
+.realfit-badge:hover{border-color:var(--teal);color:var(--teal)}
+.header-right{display:flex;align-items:center;gap:10px}
+.nav-cta{
+  padding:7px 16px;border-radius:6px;
+  background:var(--accent);color:#0f0e0c;
+  font-size:13px;font-weight:600;letter-spacing:.02em;
+  text-decoration:none;font-family:'Barlow Condensed',sans-serif;
+  transition:opacity .15s;
+}
+.nav-cta:hover{opacity:.88}
+
+/* ── HERO ── */
+.hero{
+  padding:72px 24px 56px;
+  text-align:center;
+  border-bottom:1px solid var(--border);
+}
+.hero-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:16px;
+}
+.hero h1{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(52px,8vw,88px);
+  font-weight:900;line-height:.95;
+  letter-spacing:-.01em;color:var(--text);
+  margin-bottom:12px;
+}
+.hero h1 span{color:var(--accent)}
+.hero-sub{
+  font-size:17px;color:var(--muted);
+  max-width:520px;margin:0 auto 32px;
+  line-height:1.65;
+}
+.hero-stats{
+  display:flex;align-items:center;justify-content:center;
+  gap:32px;flex-wrap:wrap;margin-bottom:0;
+}
+.hero-stat{text-align:center}
+.hero-stat-num{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:32px;font-weight:700;color:var(--text);
+  line-height:1;
+}
+.hero-stat-num span{color:var(--accent)}
+.hero-stat-label{font-size:12px;color:var(--muted);margin-top:3px;letter-spacing:.04em}
+.hero-divider{width:1px;height:32px;background:var(--border2)}
+
+/* ── TEST GRID ── */
+.tests-section{padding:56px 24px;max-width:1120px;margin:0 auto}
+.section-header{margin-bottom:28px}
+.section-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:12px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:6px;
+}
+.section-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:28px;font-weight:700;color:var(--text);
+  letter-spacing:.01em;
+}
+.section-sub{font-size:14px;color:var(--muted);margin-top:4px}
+
+.test-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+}
+
+.test-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;padding:20px;
+  text-decoration:none;color:var(--text);
+  display:flex;flex-direction:column;gap:12px;
+  transition:border-color .15s,background .15s,transform .1s;
+  cursor:pointer;position:relative;
+}
+.test-card:hover{
+  border-color:var(--border2);
+  background:var(--surface3);
+  transform:translateY(-2px);
+}
+.test-card.live{border-color:rgba(232,240,42,0.2)}
+.test-card.live:hover{border-color:var(--accent);background:var(--surface3)}
+.test-card.coming{opacity:.55;cursor:default}
+.test-card.coming:hover{transform:none;border-color:var(--border)}
+
+.tc-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;padding:3px 8px;
+  border-radius:4px;align-self:flex-start;
+}
+.tc-badge.live-badge{background:rgba(232,240,42,0.12);color:var(--accent)}
+.tc-badge.coming-badge{background:rgba(255,255,255,0.06);color:var(--faint)}
+.tc-badge.live-badge::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--accent);animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.tc-icon{
+  font-size:28px;line-height:1;
+  /* Using text chars not emoji for consistency */
+}
+.tc-anim-preview{
+  height:48px;display:flex;align-items:center;justify-content:center;
+  border-radius:8px;background:var(--surface3);
+  border:1px solid var(--border);
+  overflow:hidden;position:relative;
+}
+
+.tc-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:700;letter-spacing:.02em;
+  color:var(--text);line-height:1.2;
+}
+.tc-component{font-size:12px;color:var(--muted);margin-top:2px}
+.tc-arrow{
+  font-size:13px;color:var(--accent2);
+  margin-top:auto;padding-top:4px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:600;letter-spacing:.04em;
+  transition:gap .15s;display:flex;align-items:center;gap:4px;
+}
+.test-card:hover .tc-arrow{gap:8px}
+
+/* Animation previews */
+.preview-track{
+  width:100%;height:100%;position:relative;
+  display:flex;align-items:center;padding:0 12px;
+}
+.preview-runner{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);position:absolute;
+  animation:runpreview 1.8s ease-in-out infinite;
+}
+.preview-runner2{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--muted);position:absolute;
+  animation:runpreview 2.4s ease-in-out infinite .3s;
+}
+@keyframes runpreview{
+  0%{left:8px;opacity:.6}
+  50%{left:calc(100% - 20px);opacity:1}
+  100%{left:8px;opacity:.6}
+}
+.preview-bar{
+  display:flex;align-items:flex-end;justify-content:center;
+  gap:2px;height:100%;padding:6px 8px;
+}
+.preview-plate{
+  width:14px;border-radius:2px 2px 0 0;
+  background:var(--border2);
+  animation:platerise 2s ease-in-out infinite;
+}
+.preview-plate:nth-child(1){height:40%;animation-delay:0s}
+.preview-plate:nth-child(2){height:60%;animation-delay:.15s}
+.preview-plate:nth-child(3){height:80%;animation-delay:.3s}
+.preview-plate:nth-child(4){height:95%;animation-delay:.45s;background:var(--accent);opacity:.7}
+@keyframes platerise{
+  0%,100%{opacity:.4;transform:scaleY(.85)}
+  50%{opacity:1;transform:scaleY(1)}
+}
+.preview-arc{
+  width:100%;height:100%;position:relative;overflow:hidden;
+}
+.preview-ball{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);position:absolute;bottom:8px;left:10px;
+  animation:throwpreview 2s ease-in-out infinite;
+}
+@keyframes throwpreview{
+  0%{left:10px;bottom:8px;opacity:.5}
+  25%{bottom:32px}
+  50%{left:calc(100% - 18px);bottom:8px;opacity:1}
+  75%{bottom:32px;left:60%}
+  100%{left:10px;bottom:8px;opacity:.5}
+}
+.preview-pullup{
+  display:flex;align-items:center;justify-content:center;
+  height:100%;gap:4px;
+}
+.preview-bar-hang{
+  width:32px;height:3px;background:var(--border2);border-radius:2px;
+  position:absolute;top:8px;
+}
+.preview-figure{
+  width:6px;height:16px;border-radius:3px;
+  background:var(--muted);position:absolute;top:11px;
+  animation:pulluppreview 1.6s ease-in-out infinite;
+}
+@keyframes pulluppreview{
+  0%,100%{top:24px;opacity:.5}
+  50%{top:11px;opacity:1;background:var(--accent)}
+}
+.preview-clock{
+  display:flex;align-items:center;justify-content:center;
+  height:100%;
+}
+.preview-clock-ring{
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--border2);position:relative;
+}
+.preview-clock-hand{
+  width:1px;height:10px;background:var(--accent);
+  position:absolute;bottom:50%;left:50%;transform-origin:bottom center;
+  animation:clockspin 2s linear infinite;
+}
+@keyframes clockspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.preview-run{
+  display:flex;align-items:center;justify-content:center;
+  height:100%;position:relative;overflow:hidden;
+}
+.preview-road{
+  position:absolute;bottom:10px;left:0;right:0;
+  height:1px;background:var(--border2);
+}
+.preview-runner-sm{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--teal);position:absolute;bottom:11px;
+  animation:roadrunner 2.2s ease-in-out infinite;
+}
+@keyframes roadrunner{
+  0%{left:10%;opacity:.5}40%{opacity:1}
+  70%{left:80%;opacity:.8}100%{left:10%;opacity:.5}
+}
+.preview-squat{
+  display:flex;align-items:flex-end;justify-content:center;
+  height:100%;padding-bottom:6px;
+}
+.preview-squat-bar{
+  width:36px;height:3px;background:var(--border2);
+  border-radius:2px;position:relative;
+  animation:squatmove 1.8s ease-in-out infinite;
+}
+@keyframes squatmove{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-24px)}
+}
+
+/* ── REALFIT SECTION ── */
+.realfit-section{
+  border-top:1px solid var(--border);
+  padding:48px 24px;background:var(--surface2);
+}
+.realfit-inner{
+  max-width:1120px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+}
+.realfit-text h2{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:32px;font-weight:800;color:var(--text);
+  letter-spacing:.01em;margin-bottom:10px;
+}
+.realfit-text p{font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:16px}
+.realfit-links{display:flex;gap:10px;flex-wrap:wrap}
+.rl-primary{
+  padding:10px 20px;border-radius:7px;
+  background:var(--accent);color:#0f0e0c;
+  font-size:13px;font-weight:600;letter-spacing:.02em;
+  text-decoration:none;font-family:'Barlow Condensed',sans-serif;
+  transition:opacity .15s;
+}
+.rl-primary:hover{opacity:.88}
+.rl-secondary{
+  padding:10px 20px;border-radius:7px;
+  border:1px solid var(--border2);color:var(--muted);
+  font-size:13px;font-weight:500;text-decoration:none;
+  transition:all .15s;
+}
+.rl-secondary:hover{border-color:var(--text);color:var(--text)}
+.score-card-preview{
+  background:var(--surface3);border:1px solid var(--border);
+  border-radius:12px;padding:24px;
+}
+.scp-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:12px;
+}
+.scp-score{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:64px;font-weight:900;color:var(--text);
+  line-height:1;letter-spacing:-.02em;margin-bottom:4px;
+}
+.scp-score span{color:var(--accent)}
+.scp-band{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:16px;font-weight:600;color:var(--teal);
+  margin-bottom:16px;
+}
+.scp-bars{display:flex;flex-direction:column;gap:7px}
+.scp-bar-row{display:flex;align-items:center;gap:10px;font-size:12px}
+.scp-bar-label{color:var(--muted);width:100px;flex-shrink:0;font-size:11px}
+.scp-bar-track{flex:1;height:5px;background:var(--border2);border-radius:3px}
+.scp-bar-fill{height:5px;border-radius:3px;background:var(--accent);transition:width .5s}
+.scp-bar-val{color:var(--muted);width:28px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:12px}
+
+/* ── FOOTER ── */
+footer{
+  padding:24px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+}
+.footer-left{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.footer-left a{color:var(--muted);text-decoration:none;transition:color .15s}
+.footer-left a:hover{color:var(--text)}
+.divider{opacity:.3}
+.footer-right{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--faint);letter-spacing:.06em}
+
+@media(max-width:768px){
+  .hero h1{font-size:52px}
+  .hero-divider{display:none}
+  .realfit-inner{grid-template-columns:1fr}
+  .score-card-preview{display:none}
+  .test-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <a href="/" class="site-logo">ScoreMy<span>Fitness</span></a>
+    <a href="https://realfit.com" target="_blank" rel="noopener" class="realfit-badge">A REALFIT app</a>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀ / ☾</button>
+    <a href="https://realfitscore.com" class="nav-cta">Full battery →</a>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow">REALFIT Absolute Score · Interactive scoring tools</div>
+  <h1>How do you<br><span>actually</span> measure up?</h1>
+  <p class="hero-sub">Pick a test. Enter your result. See exactly where you stand — with the visuals to make it real.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span>13</span></div>
+      <div class="hero-stat-label">Tests in the battery</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span>0</span>–<span>1000</span></div>
+      <div class="hero-stat-label">Absolute Score scale</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span>3</span></div>
+      <div class="hero-stat-label">Live scoring tools</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEST GRID ── -->
+<div class="tests-section">
+  <div class="section-header">
+    <div class="section-label">The battery</div>
+    <div class="section-title">Choose your test</div>
+    <div class="section-sub">3 tests live now — more coming as we build them out.</div>
+  </div>
+
+  <div class="test-grid">
+
+    <!-- LIVE: 40 Yard Dash -->
+    <a href="https://scoremy40.com" class="test-card live">
+      <div class="tc-badge live-badge">Live now</div>
+      <div class="tc-anim-preview">
+        <div class="preview-track">
+          <div class="preview-runner"></div>
+          <div class="preview-runner2" style="animation-delay:.6s"></div>
+          <div style="position:absolute;right:10px;width:2px;height:32px;background:var(--border2);border-radius:1px"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">40 Yard Dash</div>
+        <div class="tc-component">Speed · Power · Agility</div>
+      </div>
+      <div class="tc-arrow">scoremy40.com <span>→</span></div>
+    </a>
+
+    <!-- COMING: Bench Press -->
+    <a href="/bench" class="test-card live">
+      <div class="tc-badge live-badge">Live now</div>
+      <div class="tc-anim-preview">
+        <div class="preview-bar">
+          <div class="preview-plate"></div>
+          <div class="preview-plate"></div>
+          <div class="preview-plate"></div>
+          <div class="preview-plate"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Bench Press — 1RM</div>
+        <div class="tc-component">Muscular Strength · Power</div>
+      </div>
+      <div class="tc-arrow">Watch the plates load <span>→</span></div>
+    </a>
+
+    <!-- COMING: Medicine Ball Throw -->
+    <a href="/throw" class="test-card live">
+      <div class="tc-badge live-badge">Live now</div>
+      <div class="tc-anim-preview">
+        <div class="preview-arc">
+          <div class="preview-ball"></div>
+          <div style="position:absolute;bottom:6px;left:0;right:0;height:1px;background:var(--border2)"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Medicine Ball Throw</div>
+        <div class="tc-component">Power · Muscular Strength</div>
+      </div>
+      <div class="tc-arrow">Compare throw arcs <span>→</span></div>
+    </a>
+
+    <!-- COMING: Pull-Ups -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview" style="position:relative">
+        <div class="preview-bar-hang"></div>
+        <div class="preview-figure"></div>
+      </div>
+      <div>
+        <div class="tc-name">Pull-Ups — Max Reps</div>
+        <div class="tc-component">Muscular Endurance · Strength</div>
+      </div>
+      <div class="tc-arrow">See the rep count <span>→</span></div>
+    </div>
+
+    <!-- COMING: Back Squat -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview">
+        <div class="preview-squat">
+          <div class="preview-squat-bar"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Back Squat — 1RM</div>
+        <div class="tc-component">Muscular Strength · Power</div>
+      </div>
+      <div class="tc-arrow">Load the bar <span>→</span></div>
+    </div>
+
+    <!-- COMING: Shuttle Run -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview">
+        <div class="preview-track">
+          <div class="preview-runner" style="animation:runpreview 1.4s ease-in-out infinite alternate"></div>
+          <div style="position:absolute;left:8px;width:2px;height:24px;background:var(--border2);border-radius:1px"></div>
+          <div style="position:absolute;right:8px;width:2px;height:24px;background:var(--border2);border-radius:1px"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Shuttle Run — 60 Yds</div>
+        <div class="tc-component">Agility · Speed</div>
+      </div>
+      <div class="tc-arrow">Cut and go <span>→</span></div>
+    </div>
+
+    <!-- COMING: 5K Run -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview">
+        <div class="preview-run">
+          <div class="preview-road"></div>
+          <div class="preview-runner-sm"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">5K Run</div>
+        <div class="tc-component">Cardiovascular · Endurance</div>
+      </div>
+      <div class="tc-arrow">Pace yourself <span>→</span></div>
+    </div>
+
+    <!-- COMING: Wall Sit -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview">
+        <div class="preview-clock">
+          <div class="preview-clock-ring">
+            <div class="preview-clock-hand"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Wall Sit</div>
+        <div class="tc-component">Muscular Endurance · Strength</div>
+      </div>
+      <div class="tc-arrow">Hold the clock <span>→</span></div>
+    </div>
+
+    <!-- COMING: Plank Hold -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview">
+        <div class="preview-clock">
+          <div class="preview-clock-ring" style="border-color:var(--teal);opacity:.5">
+            <div class="preview-clock-hand" style="background:var(--teal);animation-duration:3s"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Plank Hold</div>
+        <div class="tc-component">Muscular Endurance · Strength</div>
+      </div>
+      <div class="tc-arrow">Don't break <span>→</span></div>
+    </div>
+
+    <!-- COMING: Push-Ups -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview">
+        <div class="preview-bar">
+          <div class="preview-plate" style="width:10px;animation-delay:0s"></div>
+          <div class="preview-plate" style="width:10px;animation-delay:.1s"></div>
+          <div class="preview-plate" style="width:10px;animation-delay:.2s"></div>
+          <div class="preview-plate" style="width:10px;animation-delay:.3s;background:var(--teal)"></div>
+          <div class="preview-plate" style="width:10px;animation-delay:.4s;background:var(--teal)"></div>
+          <div class="preview-plate" style="width:10px;animation-delay:.5s;background:var(--accent)"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Push-Ups — Max Reps</div>
+        <div class="tc-component">Muscular Endurance · Strength</div>
+      </div>
+      <div class="tc-arrow">Count every rep <span>→</span></div>
+    </div>
+
+    <!-- COMING: 400m Sprint -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview">
+        <div class="preview-run">
+          <div class="preview-road"></div>
+          <div class="preview-runner-sm" style="background:var(--accent);animation-duration:1.6s"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Sprint — 400m</div>
+        <div class="tc-component">Endurance · Speed</div>
+      </div>
+      <div class="tc-arrow">Around the track <span>→</span></div>
+    </div>
+
+    <!-- COMING: Squat Thrust Jumps -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview">
+        <div class="preview-bar">
+          <div class="preview-plate" style="width:10px;animation-delay:0s"></div>
+          <div class="preview-plate" style="width:10px;animation-delay:.08s"></div>
+          <div class="preview-plate" style="width:10px;animation-delay:.16s"></div>
+          <div class="preview-plate" style="width:10px;animation-delay:.24s;background:var(--accent);opacity:.8"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Squat Thrust Jumps</div>
+        <div class="tc-component">Endurance · Cardio · Strength</div>
+      </div>
+      <div class="tc-arrow">2 minutes of work <span>→</span></div>
+    </div>
+
+    <!-- COMING: Concept2 / 5K choice -->
+    <div class="test-card coming">
+      <div class="tc-badge coming-badge">Coming soon</div>
+      <div class="tc-anim-preview">
+        <div class="preview-run">
+          <div class="preview-road"></div>
+          <div class="preview-runner-sm" style="background:var(--teal);animation-duration:2.8s"></div>
+        </div>
+      </div>
+      <div>
+        <div class="tc-name">Concept2 Row — 2K</div>
+        <div class="tc-component">Cardiovascular · Endurance</div>
+      </div>
+      <div class="tc-arrow">Pull every meter <span>→</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── REALFIT SECTION ── -->
+<section class="realfit-section">
+  <div class="realfit-inner">
+    <div class="realfit-text">
+      <h2>Want the full picture?</h2>
+      <p>Each test here scores one dimension of your fitness. The REALFIT Absolute Score combines all 13 tests into a single 0–1,000 number — the only score that tells you whether you are genuinely fitter than you were last year, regardless of your age or who you're comparing yourself to.</p>
+      <p>A 700 at 25 and a 700 at 45 mean exactly the same thing. The standard doesn't move. Only your fitness does.</p>
+      <div class="realfit-links">
+        <a href="https://realfitscore.com" class="rl-primary">Score all 13 tests →</a>
+        <a href="https://fitdat.com/scoring-spec.html" class="rl-secondary">How the score works</a>
+      </div>
+    </div>
+    <div class="score-card-preview">
+      <div class="scp-label">REALFIT Absolute Score™</div>
+      <div class="scp-score">7<span>35</span></div>
+      <div class="scp-band">Exceptionally Fit</div>
+      <div class="scp-bars">
+        <div class="scp-bar-row">
+          <div class="scp-bar-label">Cardiovascular</div>
+          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:72%;background:#5DCAA5"></div></div>
+          <div class="scp-bar-val">720</div>
+        </div>
+        <div class="scp-bar-row">
+          <div class="scp-bar-label">Muscular strength</div>
+          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:76%"></div></div>
+          <div class="scp-bar-val">760</div>
+        </div>
+        <div class="scp-bar-row">
+          <div class="scp-bar-label">Muscular endurance</div>
+          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:66%;background:#3A7BFF"></div></div>
+          <div class="scp-bar-val">659</div>
+        </div>
+        <div class="scp-bar-row">
+          <div class="scp-bar-label">Power</div>
+          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:68%;background:#EF9F27"></div></div>
+          <div class="scp-bar-val">680</div>
+        </div>
+        <div class="scp-bar-row">
+          <div class="scp-bar-label">Speed</div>
+          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:89%;background:#D85A30"></div></div>
+          <div class="scp-bar-val">890</div>
+        </div>
+        <div class="scp-bar-row">
+          <div class="scp-bar-label">Agility</div>
+          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:71%;background:#D4537E"></div></div>
+          <div class="scp-bar-val">710</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">
+    <strong style="color:var(--text);font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">ScoreMyFitness</strong>
+    <span class="divider">·</span>
+    A <a href="https://realfit.com">REALFIT</a> app
+    <span class="divider">·</span>
+    <a href="https://scoremy40.com">ScoreMy40</a>
+    <span class="divider">·</span>
+    <a href="https://realfitscore.com">REALFITSCORE</a>
+    <span class="divider">·</span>
+    <a href="https://fitdat.com">FITDAT</a>
+  </div>
+  <div class="footer-right">© 2026 REALFIT® · All rights reserved</div>
+</footer>
+
+<script>
+function toggleTheme(){
+  const t = document.documentElement.getAttribute('data-theme');
+  document.documentElement.setAttribute('data-theme', t==='dark'?'light':'dark');
+  localStorage.setItem('smf-theme', t==='dark'?'light':'dark');
+}
+const saved = localStorage.getItem('smf-theme');
+if(saved) document.documentElement.setAttribute('data-theme', saved);
+</script>
+</body>
+</html>

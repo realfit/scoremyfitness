@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScoreMyBench — How does your bench press stack up?</title>
+<meta name="description" content="Enter your bench press 1RM and see exactly where you stand with a live plate-loading animation. Powered by the REALFIT Absolute Score.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --surface:#1a1c22;--surface2:#22242c;--surface3:#2a2d36;
+  --text:#f0ede8;--muted:#8a8880;--faint:#5a5856;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --accent:#e8f02a;--accent2:#3A7BFF;--teal:#5DCAA5;
+  --plate-45:#e8f02a;--plate-25:#5DCAA5;--plate-10:#3A7BFF;
+  --plate-5:#D85A30;--plate-2:#888780;
+  --bar:#b8b4ae;
+}
+[data-theme="light"]{
+  --surface:#f4f2ee;--surface2:#eeebe5;--surface3:#e5e2dc;
+  --text:#0f0e0c;--muted:#6b6860;--faint:#9a9890;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);
+  --accent:#c0392b;--accent2:#1a56db;--teal:#0a6e56;
+  --bar:#888480;
+}
+[data-theme="light"] header{background:rgba(244,242,238,0.94);border-bottom-color:rgba(0,0,0,0.1)}
+[data-theme="light"] .realfit-badge{border-color:rgba(0,0,0,0.14)}
+[data-theme="light"] .theme-toggle{color:var(--muted);border-color:rgba(0,0,0,0.16)}
+[data-theme="light"] .std-tab.active{background:var(--text);color:#f4f2ee;border-color:var(--text)}
+[data-theme="light"] .score-band{color:var(--surface)}
+[data-theme="light"] .comparison-row.you .cr-bar-fill{background:var(--accent)}
+
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.6;color:var(--text);background:var(--surface);transition:background .2s,color .2s}
+
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:100;background:rgba(26,28,34,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.logo-group{display:flex;align-items:center;gap:12px}
+.site-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--text);text-decoration:none}
+.site-logo span{color:var(--accent)}
+.realfit-badge{padding:4px 10px;border-radius:5px;border:1px solid var(--border2);font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:.04em;display:flex;align-items:center;gap:6px;transition:all .15s}
+.realfit-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0}
+.realfit-badge:hover{border-color:var(--teal);color:var(--teal)}
+.header-right{display:flex;align-items:center;gap:10px}
+.nav-link{padding:6px 12px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none;transition:all .15s}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.theme-toggle{border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;transition:all .15s}
+.theme-toggle:hover{border-color:var(--text);color:var(--text)}
+
+/* ── HERO ── */
+.hero{padding:48px 24px 32px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(44px,7vw,72px);font-weight:900;line-height:.95;letter-spacing:-.01em;color:var(--text);margin-bottom:10px}
+.hero h1 span{color:var(--accent)}
+.hero-sub{font-size:16px;color:var(--muted);max-width:480px;margin:0 auto}
+
+/* ── MAIN LAYOUT ── */
+.main{max-width:1100px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+
+/* ── INPUT PANEL ── */
+.input-panel{}
+.panel-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+
+/* Unit toggle */
+.unit-toggle{display:flex;gap:6px;margin-bottom:24px}
+.unit-btn{padding:7px 18px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:13px;font-weight:500;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s}
+.unit-btn.active{background:var(--text);color:var(--surface);border-color:var(--text)}
+.unit-btn:hover:not(.active){border-color:var(--border2);color:var(--text)}
+
+/* Weight input */
+.weight-input-wrap{margin-bottom:28px}
+.weight-input-label{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.weight-input-label span{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
+.weight-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--surface3);outline:none;cursor:pointer;margin-bottom:8px}
+.weight-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--surface);box-shadow:0 0 0 1px var(--accent)}
+.weight-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--surface)}
+.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);font-family:'Barlow Condensed',sans-serif}
+
+/* Direct input */
+.direct-input-row{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.direct-input-row input[type=number]{
+  width:100px;padding:10px 14px;border-radius:8px;
+  border:1px solid var(--border2);background:var(--surface2);
+  color:var(--text);font-size:20px;font-weight:600;
+  font-family:'Barlow Condensed',sans-serif;text-align:center;
+  outline:none;transition:border-color .15s;
+}
+.direct-input-row input[type=number]:focus{border-color:var(--accent)}
+.direct-input-row input[type=number]::-webkit-outer-spin-button,
+.direct-input-row input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.direct-input-label{font-size:14px;color:var(--muted)}
+
+/* 1RM estimator */
+.orm-section{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:28px}
+.orm-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--muted);margin-bottom:0;user-select:none}
+.orm-toggle-arrow{transition:transform .2s;font-size:10px}
+.orm-toggle.open .orm-toggle-arrow{transform:rotate(90deg)}
+.orm-body{display:none;margin-top:14px;border-top:1px solid var(--border);padding-top:14px}
+.orm-body.open{display:block}
+.orm-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:13px;color:var(--muted)}
+.orm-row label{width:80px;flex-shrink:0}
+.orm-row input[type=number]{width:80px;padding:7px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--surface3);color:var(--text);font-size:14px;font-family:'Barlow',sans-serif;text-align:center;outline:none}
+.orm-row input:focus{border-color:var(--accent)}
+.orm-row input::-webkit-outer-spin-button,.orm-row input::-webkit-inner-spin-button{-webkit-appearance:none}
+.orm-result{font-size:13px;color:var(--teal);font-weight:500;padding-top:4px}
+
+/* Std tabs */
+.std-tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap}
+.std-tab{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:12px;font-weight:500;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s;letter-spacing:.02em}
+.std-tab.active{background:var(--accent);color:#0f0e0c;border-color:var(--accent)}
+.std-tab:hover:not(.active){color:var(--text);border-color:var(--border2)}
+
+/* ── RESULT PANEL ── */
+.result-panel{}
+.score-display{text-align:center;margin-bottom:24px;padding:24px;background:var(--surface2);border:1px solid var(--border);border-radius:14px}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:80px;font-weight:900;line-height:1;letter-spacing:-.02em;color:var(--text);transition:all .3s}
+.score-band{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;padding:5px 16px;border-radius:6px;display:inline-block;margin-top:6px;letter-spacing:.04em;transition:all .3s}
+.score-kg{font-size:13px;color:var(--muted);margin-top:8px}
+
+/* ── BAR ANIMATION ── */
+.bar-stage{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:14px;padding:28px 20px 20px;
+  margin-bottom:24px;position:relative;overflow:hidden;
+}
+.bar-stage-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:20px;text-align:center}
+
+/* The barbell */
+.barbell-wrap{
+  display:flex;align-items:center;justify-content:center;
+  height:100px;position:relative;margin-bottom:16px;
+}
+.bar-sleeve-l,.bar-sleeve-r{
+  height:14px;border-radius:3px;
+  background:var(--bar);
+  flex-shrink:0;
+  transition:width .4s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+}
+.bar-sleeve-l{width:60px;border-radius:3px 0 0 3px}
+.bar-sleeve-r{width:60px;border-radius:0 3px 3px 0}
+
+.bar-collar-l,.bar-collar-r{
+  width:6px;height:22px;border-radius:2px;
+  background:var(--muted);flex-shrink:0;
+}
+
+.bar-center{
+  width:160px;height:8px;border-radius:2px;
+  background:var(--bar);flex-shrink:0;
+  position:relative;
+}
+.bar-center::after{
+  content:'45 lb bar';
+  position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  font-size:10px;color:var(--faint);font-family:'Barlow Condensed',sans-serif;
+  white-space:nowrap;letter-spacing:.04em;
+}
+
+/* Plates stack on sleeves */
+.plates-l,.plates-r{
+  display:flex;align-items:center;
+  gap:2px;position:absolute;
+}
+.plates-l{right:0;flex-direction:row-reverse}
+.plates-r{left:0}
+
+.plate{
+  display:flex;align-items:center;justify-content:center;
+  border-radius:4px;cursor:default;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:9px;font-weight:700;
+  letter-spacing:.02em;
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);
+  transform-origin:center;
+  flex-shrink:0;
+  border:1px solid rgba(0,0,0,0.2);
+}
+.plate.p45{width:16px;height:72px;background:var(--plate-45);color:#0f0e0c}
+.plate.p25{width:14px;height:58px;background:var(--plate-25);color:#04342C}
+.plate.p10{width:11px;height:40px;background:var(--plate-10);color:#E6F1FB}
+.plate.p5{width:9px;height:30px;background:var(--plate-5);color:#FAECE7}
+.plate.p2{width:7px;height:22px;background:var(--plate-2);color:#F1EFE8}
+
+/* Floor shadow */
+.bar-floor{
+  height:3px;background:linear-gradient(to right,transparent,var(--border2),transparent);
+  border-radius:2px;margin-top:4px;
+}
+
+/* Plate legend */
+.plate-legend{
+  display:flex;flex-wrap:wrap;gap:8px 14px;
+  justify-content:center;margin-top:12px;
+}
+.pl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.pl-swatch{width:10px;height:16px;border-radius:2px;flex-shrink:0}
+
+/* Weight breakdown */
+.weight-breakdown{
+  background:var(--surface3);border-radius:8px;
+  padding:12px 14px;font-size:12px;color:var(--muted);
+  font-family:'Barlow Condensed',sans-serif;
+  line-height:1.8;text-align:center;
+  margin-bottom:24px;
+}
+.weight-breakdown strong{color:var(--text);font-size:14px}
+
+/* Comparison table */
+.comparison-section{margin-bottom:24px}
+.comp-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.comparison-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px}
+.comparison-row.you .cr-name{color:var(--accent);font-weight:600}
+.cr-name{color:var(--muted);width:140px;flex-shrink:0;font-size:12px}
+.cr-bar-track{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
+.cr-bar-fill{height:6px;border-radius:3px;background:var(--border2);transition:width .6s cubic-bezier(.25,.46,.45,.94)}
+.comparison-row.you .cr-bar-fill{background:var(--accent)}
+.cr-val{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);width:50px;text-align:right;flex-shrink:0}
+
+/* Ecosystem */
+.eco-strip{border-top:1px solid var(--border);padding-top:24px;display:flex;gap:12px;flex-wrap:wrap}
+.eco-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-decoration:none;color:var(--text);flex:1;min-width:180px;transition:border-color .15s}
+.eco-card:hover{border-color:var(--border2)}
+.eco-card.featured{border-color:rgba(58,123,255,0.3)}
+.eco-card.featured:hover{border-color:var(--accent2)}
+.eco-badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);margin-bottom:6px}
+.eco-card.featured .eco-badge{color:var(--accent2)}
+.eco-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:3px}
+.eco-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.eco-arrow{font-size:12px;color:var(--muted);margin-top:8px}
+
+footer{padding:24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-left{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.footer-left a{color:var(--muted);text-decoration:none}.footer-left a:hover{color:var(--text)}
+.divider{opacity:.3}
+.footer-right{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--faint);letter-spacing:.06em}
+
+@media(max-width:768px){
+  .main{grid-template-columns:1fr;gap:28px}
+  .hero h1{font-size:44px}
+}
+
+  .std-disclaimer{display:none;font-size:12px;color:var(--muted);line-height:1.6;padding:10px 12px;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;margin-bottom:16px}
+  .std-disclaimer.visible{display:block}
+  .std-disclaimer strong{color:var(--text);font-weight:500}
+
+  /* ── PROTOCOL SECTION ── */
+  .protocol-section{border-top:1px solid var(--border);padding:40px 24px;background:var(--surface2)}
+  .protocol-inner{max-width:1100px;margin:0 auto}
+  .protocol-header{margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .protocol-title-block{}
+  .protocol-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .protocol-eyebrow a{color:var(--accent2);text-decoration:none;transition:color .15s}
+  .protocol-eyebrow a:hover{color:var(--text)}
+  .protocol-id{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--faint);background:var(--surface3);border:1px solid var(--border2);padding:2px 8px;border-radius:4px;letter-spacing:.06em}
+  .protocol-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:.01em}
+  .protocol-desc{font-size:14px;color:var(--muted);line-height:1.6}
+  .protocol-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .protocol-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+  .pc-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:12px}
+  .pc-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .pc-list li{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+  .pc-list li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:6px}
+  .pc-list li.equip-item::before{background:var(--accent2)}
+  .pc-list li.proto-item::before{background:var(--accent)}
+  .pc-note{margin-top:14px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--muted);line-height:1.6}
+  .pc-note strong{color:var(--text);font-weight:500}
+  @media(max-width:768px){.protocol-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <a href="https://scoremyfitness.com" class="site-logo">ScoreMy<span>Bench</span></a>
+    <a href="https://realfit.com" target="_blank" rel="noopener" class="realfit-badge">A REALFIT app</a>
+  </div>
+  <div class="header-right">
+    <a href="https://scoremy40.com" class="nav-link">ScoreMy40</a>
+    <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Bench Press · 1 Rep Max · REALFIT Absolute Score</div>
+  <h1>How much do you<br><span>really</span> bench?</h1>
+  <p class="hero-sub">Enter your 1RM and watch the plates load — see exactly where you stand on the universal standard.</p>
+</section>
+
+<div class="main">
+
+  <!-- LEFT: INPUT -->
+  <div class="input-panel">
+    <div class="panel-label">Your result</div>
+
+    <div class="unit-toggle">
+      <button class="unit-btn active" onclick="setUnit('lbs',this)">lbs</button>
+      <button class="unit-btn" onclick="setUnit('kg',this)">kg</button>
+    </div>
+
+    <div class="weight-input-wrap">
+      <div class="weight-input-label">
+        Weight <span id="sliderDisplay">185 lbs</span>
+      </div>
+      <input type="range" class="weight-slider" id="weightSlider" min="45" max="500" value="185" step="5" oninput="onSlider(this.value)">
+      <div class="slider-labels">
+        <span id="sliderMin">45 lbs</span>
+        <span id="sliderMax">500 lbs</span>
+      </div>
+    </div>
+
+    <div class="direct-input-row">
+      <input type="number" id="weightInput" value="185" min="1" max="9999" oninput="onDirectInput(this.value)">
+      <span class="direct-input-label" id="unitLabel">lbs</span>
+    </div>
+
+    <!-- 1RM Estimator -->
+    <div class="orm-section">
+      <div class="orm-toggle" id="ormToggle" onclick="toggleOrm()">
+        <span class="orm-toggle-arrow">▶</span>
+        Don't have your 1RM? Estimate from reps
+      </div>
+      <div class="orm-body" id="ormBody">
+        <div class="orm-row">
+          <label>Weight lifted</label>
+          <input type="number" id="ormWeight" placeholder="135" oninput="calcOrm()">
+          <span id="ormUnitLabel" style="font-size:12px;color:var(--muted)">lbs</span>
+        </div>
+        <div class="orm-row">
+          <label>Reps completed</label>
+          <input type="number" id="ormReps" placeholder="8" min="1" max="20" oninput="calcOrm()">
+          <span style="font-size:12px;color:var(--muted)">reps</span>
+        </div>
+        <div class="orm-result" id="ormResult">Enter weight and reps above</div>
+        <button onclick="useOrmResult()" id="ormUseBtn" style="display:none;margin-top:10px;padding:7px 14px;border-radius:6px;background:var(--teal);color:#04342C;border:none;font-size:12px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;letter-spacing:.04em">Use this estimate →</button>
+      </div>
+    </div>
+
+    <!-- Standard tabs -->
+    <div class="panel-label">Standard</div>
+    <div class="std-tabs">
+      <button class="std-tab active" onclick="setStd('general',this)">REALFIT Absolute</button>
+      <button class="std-tab" onclick="setStd('powerlifting',this)">Powerlifting</button>
+      <button class="std-tab" onclick="setStd('football',this)">Football</button>
+      <button class="std-tab" onclick="setStd('military',this)">Military</button>
+    </div>
+
+    <!-- Comparison benchmarks -->
+
+    <div class="std-disclaimer" id="stdDisclaimer">
+      <strong>Estimated benchmarks.</strong> These figures are based on publicly available information and REALFIT research. They are provided for context only and are not official standards. Only the REALFIT Absolute tab reflects scores derived directly from the published scoring specification.
+    </div>
+    <div class="comparison-section">
+      <div class="comp-label" id="compLabel">General population benchmarks</div>
+      <div id="compRows"></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: RESULT -->
+  <div class="result-panel">
+
+    <!-- Score -->
+    <div class="score-display">
+      <div class="score-num" id="scoreNum">—</div>
+      <div><span class="score-band" id="scoreBand" style="background:var(--surface3);color:var(--muted)">Enter your weight</span></div>
+      <div class="score-kg" id="scoreKg"></div>
+    </div>
+
+    <!-- Bar animation -->
+    <div class="bar-stage">
+      <div class="bar-stage-label">Your bar</div>
+      <div class="barbell-wrap" id="barbellWrap">
+        <div class="plates-l" id="platesL"></div>
+        <div class="bar-sleeve-l" id="sleeveL"></div>
+        <div class="bar-collar-l"></div>
+        <div class="bar-center"></div>
+        <div class="bar-collar-r"></div>
+        <div class="bar-sleeve-r" id="sleeveR"></div>
+        <div class="plates-r" id="platesR"></div>
+      </div>
+      <div class="bar-floor"></div>
+      <div class="weight-breakdown" id="weightBreakdown">Load a weight to see the breakdown</div>
+      <div class="plate-legend">
+        <div class="pl-item"><div class="pl-swatch" style="background:var(--plate-45)"></div>45 lbs</div>
+        <div class="pl-item"><div class="pl-swatch" style="background:var(--plate-25)"></div>25 lbs</div>
+        <div class="pl-item"><div class="pl-swatch" style="background:var(--plate-10)"></div>10 lbs</div>
+        <div class="pl-item"><div class="pl-swatch" style="background:var(--plate-5)"></div>5 lbs</div>
+        <div class="pl-item"><div class="pl-swatch" style="background:var(--plate-2)"></div>2.5 lbs</div>
+      </div>
+    </div>
+
+    <!-- Ecosystem links -->
+    <div class="eco-strip">
+      <a href="https://scoremy40.com" class="eco-card">
+        <div class="eco-badge">Speed test</div>
+        <div class="eco-title">ScoreMy40</div>
+        <div class="eco-desc">How fast are you over 40 yards? Race 8 athletes.</div>
+        <div class="eco-arrow">Try it →</div>
+      </a>
+      <a href="https://realfitscore.com" class="eco-card featured">
+        <div class="eco-badge">Full battery</div>
+        <div class="eco-title">REALFITSCORE</div>
+        <div class="eco-desc">Score all 13 tests and get your REALFIT Absolute Score.</div>
+        <div class="eco-arrow">Score everything →</div>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<section class="protocol-section">
+  <div class="protocol-inner">
+    <div class="protocol-header">
+      <div class="protocol-title-block">
+        <div class="protocol-eyebrow">
+          FITDAT test specification
+          <span class="protocol-id">proto_bench_press_1rm_v1</span>
+          <a href="https://fitdat.com/library.html" target="_blank" rel="noopener">Full spec &rarr;</a>
+        </div>
+        <div class="protocol-title">Bench Press 1RM &mdash; test protocol</div>
+        <div class="protocol-desc">Measures maximal upper-body pressing strength. Supine on bench, barbell lowered to chest under control, full extension at top. Direct 1RM or estimated from a 1&ndash;8 rep set.</div>
+      </div>
+    </div>
+    <div class="protocol-grid">
+      <div class="protocol-card">
+        <div class="pc-label">Equipment required</div>
+        <ul class="pc-list">
+          <li class="equip-item">Barbell &mdash; standard 45 lb / 20.4 kg</li>
+          <li class="equip-item">Weight bench</li>
+          <li class="equip-item">Weight plates (45, 25, 10, 5, 2.5 lb)</li>
+          <li class="equip-item">Safety spotter or rack with safeties</li>
+        </ul>
+      </div>
+      <div class="protocol-card">
+        <div class="pc-label">Test guidelines</div>
+        <ul class="pc-list">
+          <li>Lie supine on bench, feet flat on floor</li>
+          <li>Lower barbell to chest under control &mdash; no bounce</li>
+          <li>Full arm extension at the top of each rep</li>
+          <li>No leg drive or arch that lifts glutes off bench</li>
+          <li>Use a safety spotter or rack safeties at all times</li>
+        </ul>
+      </div>
+      <div class="protocol-card">
+        <div class="pc-label">Accepted protocols</div>
+        <ul class="pc-list">
+          <li class="proto-item">Direct 1RM &mdash; single maximal lift</li>
+          <li class="proto-item">Estimated 1RM &mdash; enter weight + reps completed (1&ndash;8)</li>
+        </ul>
+        <div class="pc-note"><strong>Estimated 1RM.</strong> Enter the weight you lifted and the reps you completed (1&ndash;8). The app uses the Epley formula to calculate your estimated 1RM. Canonical value is always stored in kg.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="footer-left">
+    <strong style="color:var(--text);font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">ScoreMyBench</strong>
+    <span class="divider">·</span>
+    A <a href="https://realfit.com">REALFIT</a> app
+    <span class="divider">·</span>
+    <a href="https://fitdat.com/scoring-spec.html">Scoring methodology</a>
+    <span class="divider">·</span>
+    <a href="https://scoremyfitness.com">All tests</a>
+  </div>
+  <div class="footer-right">© 2026 REALFIT® · FITDAT® v1.1</div>
+</footer>
+
+<script>
+// ── SCORING TABLE (from RFS20 - Max Bench Press - Absolute.csv, kg canonical)
+const BENCH_TABLE = [[0,20.411,0],[20.412,21.318,10],[21.319,22.225,20],[22.226,23.133,30],[23.134,24.040,40],[24.041,24.947,50],[24.948,25.854,60],[25.855,26.761,70],[26.762,27.669,80],[27.670,28.576,90],[28.577,29.483,100],[29.484,30.390,110],[30.391,31.297,120],[31.298,32.205,130],[32.206,33.112,140],[33.113,34.019,150],[34.020,34.926,160],[34.927,35.833,170],[35.834,36.741,180],[36.742,37.648,190],[37.649,38.555,200],[38.556,39.462,210],[39.463,40.369,220],[40.370,41.277,230],[41.278,43.091,240],[43.092,43.817,250],[43.818,44.543,260],[44.544,45.268,270],[45.269,45.994,280],[45.995,46.720,290],[46.721,47.446,300],[47.447,48.171,310],[48.172,48.897,320],[48.898,49.623,330],[49.624,50.349,340],[50.350,51.074,350],[51.075,51.800,360],[51.801,52.526,370],[52.527,53.252,380],[53.253,53.977,390],[53.978,54.703,400],[54.704,55.429,410],[55.430,56.155,420],[56.156,56.880,430],[56.881,57.606,440],[57.607,58.332,450],[58.333,59.058,460],[59.059,59.783,470],[59.784,60.509,480],[60.510,61.235,490],[61.236,62.505,500],[62.506,63.775,510],[63.776,65.045,520],[65.046,66.315,530],[66.316,67.585,540],[67.586,68.855,550],[68.856,70.126,560],[70.127,71.396,570],[71.397,72.666,580],[72.667,73.936,590],[73.937,75.206,600],[75.207,76.476,610],[76.477,77.746,620],[77.747,79.016,630],[79.017,80.286,640],[80.287,81.556,650],[81.557,82.826,660],[82.827,84.096,670],[84.097,85.367,680],[85.368,86.637,690],[86.638,87.907,700],[87.908,89.177,710],[89.178,90.447,720],[90.448,91.717,730],[91.718,92.987,740],[92.988,95.104,750],[95.105,97.221,760],[97.222,99.337,770],[99.338,101.454,780],[101.455,103.571,790],[103.572,105.688,800],[105.689,107.805,810],[107.806,109.921,820],[109.922,112.038,830],[112.039,114.155,840],[114.156,116.272,850],[116.273,118.389,860],[118.390,120.505,870],[120.506,122.622,880],[122.623,124.739,890],[124.740,132.904,900],[132.905,141.069,910],[141.070,149.233,920],[149.234,157.398,930],[157.399,165.563,940],[165.564,186.429,950],[186.430,207.294,960],[207.295,228.160,970],[228.161,249.025,980],[249.026,269.891,990],[269.892,999,1000]];
+
+const BANDS = [{min:951,max:1000,label:'Near Maximum',bg:'#c8a800',fg:'#0f0e0c'},{min:900,max:950,label:'Elite',bg:'#c8a800',fg:'#0f0e0c'},{min:750,max:899,label:'Near Elite',bg:'#1D9E75',fg:'#04342C'},{min:650,max:749,label:'Well Above Average',bg:'#3A7BFF',fg:'#E6F1FB'},{min:551,max:649,label:'Above Average',bg:'#3A7BFF',fg:'#E6F1FB'},{min:500,max:550,label:'Average',bg:'#5F5E5A',fg:'#F1EFE8'},{min:300,max:499,label:'Below Average',bg:'#D85A30',fg:'#FAECE7'},{min:100,max:299,label:'Well Below Average',bg:'#a32d2d',fg:'#FCEBEB'},{min:0,max:99,label:'Near Minimum',bg:'#a32d2d',fg:'#FCEBEB'}];
+
+const STANDARDS = {
+  general:{
+    label:'REALFIT Absolute Score benchmarks',
+    rows:[
+      {name:'Average adult male',kg:61.2,lbs:135},
+      {name:'Active adult male',kg:79.4,lbs:175},
+      {name:'Recreational lifter',kg:102.1,lbs:225},
+      {name:'Competitive athlete',kg:124.7,lbs:275},
+      {name:'Strength sport athlete',kg:158.8,lbs:350},
+    ]
+  },
+  powerlifting:{
+    label:'Powerlifting benchmarks',
+    rows:[
+      {name:'Untrained',kg:61.2,lbs:135},
+      {name:'Novice',kg:97.5,lbs:215},
+      {name:'Intermediate',kg:120.2,lbs:265},
+      {name:'Advanced',kg:147.4,lbs:325},
+      {name:'Elite',kg:192.8,lbs:425},
+    ]
+  },
+  football:{
+    label:'Football benchmarks',
+    rows:[
+      {name:'NFL Combine avg (skill)',kg:97.5,lbs:215},
+      {name:'NFL Combine avg (OL)',kg:147.4,lbs:325},
+      {name:'225 lb reps test — 20 reps',kg:102.1,lbs:225},
+      {name:'225 lb reps test — 30 reps',kg:124.7,lbs:275},
+      {name:'NFL Combine elite',kg:179.6,lbs:396},
+    ]
+  },
+  military:{
+    label:'Military benchmarks',
+    rows:[
+      {name:'Army minimum (est.)',kg:54.4,lbs:120},
+      {name:'Army average (est.)',kg:79.4,lbs:175},
+      {name:'Special operations (est.)',kg:113.4,lbs:250},
+      {name:'Elite operator (est.)',kg:136.1,lbs:300},
+      {name:'Record level',kg:170.1,lbs:375},
+    ]
+  }
+};
+
+// ── STATE
+let unit = 'lbs';
+let currentKg = 83.9; // 185 lbs
+let currentStd = 'general';
+let ormEstKg = null;
+
+function lbsToKg(lbs){ return lbs / 2.20462; }
+function kgToLbs(kg){ return kg * 2.20462; }
+
+function getScore(kg){
+  for(const [lo,hi,sc] of BENCH_TABLE){
+    if(kg >= lo && kg <= hi) return sc;
+  }
+  return kg < 20 ? 0 : 1000;
+}
+
+function getBand(score){
+  return BANDS.find(b => score >= b.min && score <= b.max) || BANDS[BANDS.length-1];
+}
+
+// ── PLATE CALCULATOR
+// Bar = 20.4kg / 45lbs
+// Plates available: 45, 25, 10, 5, 2.5 lbs — standard gym set
+function calcPlates(totalKg){
+  const barKg = 20.412;
+  let remaining = Math.max(0, totalKg - barKg) / 2; // per side
+  const plates = [];
+  const available = [
+    {kg:20.412,lbs:45, cls:'p45'},
+    {kg:11.340,lbs:25, cls:'p25'},
+    {kg:4.536, lbs:10, cls:'p10'},
+    {kg:2.268, lbs:5,  cls:'p5'},
+    {kg:1.134, lbs:2.5,cls:'p2'},
+  ];
+  for(const p of available){
+    while(remaining >= p.kg - 0.05){
+      plates.push(p);
+      remaining -= p.kg;
+    }
+  }
+  return plates;
+}
+
+function plateBreakdown(plates){
+  const counts = {};
+  for(const p of plates){
+    counts[p.lbs] = (counts[p.lbs]||0)+1;
+  }
+  const barLbs = 45;
+  const totalPlateWeight = plates.reduce((s,p)=>s+p.lbs*2,0);
+  const total = barLbs + totalPlateWeight;
+  const parts = Object.entries(counts).reverse()
+    .map(([lbs,n])=>`${n>1?n+'×':''}${lbs}`).join(' + ');
+  return {total, parts, barLbs};
+}
+
+// ── RENDER BAR
+function renderBar(kg){
+  const plates = calcPlates(kg);
+  const platesL = document.getElementById('platesL');
+  const platesR = document.getElementById('platesR');
+  const sleeveL = document.getElementById('sleeveL');
+  const sleeveR = document.getElementById('sleeveR');
+
+  // Clear existing plates with fade
+  platesL.innerHTML = '';
+  platesR.innerHTML = '';
+
+  // Render plates largest-first (innermost against collar), smallest outermost
+  const platesReversed = [...plates].reverse();
+  platesReversed.forEach((p, i) => {
+    const makeEl = () => {
+      const el = document.createElement('div');
+      el.className = 'plate ' + p.cls;
+      el.style.opacity = '0';
+      el.style.transform = 'scaleY(0.4)';
+      return el;
+    };
+    const elL = makeEl();
+    const elR = makeEl();
+    platesL.appendChild(elL);
+    platesR.appendChild(elR);
+    setTimeout(()=>{
+      elL.style.transition = 'all .3s cubic-bezier(.34,1.56,.64,1)';
+      elR.style.transition = 'all .3s cubic-bezier(.34,1.56,.64,1)';
+      elL.style.opacity = '1';
+      elR.style.opacity = '1';
+      elL.style.transform = 'scaleY(1)';
+      elR.style.transform = 'scaleY(1)';
+    }, i * 60);
+  });
+
+  // Extend sleeves based on plate count
+  const sleeveWidth = Math.min(20 + plates.length * 14, 140);
+  sleeveL.style.width = sleeveWidth + 'px';
+  sleeveR.style.width = sleeveWidth + 'px';
+
+  // Breakdown text
+  const bd = plateBreakdown(plates);
+  const lbsTotal = Math.round(kgToLbs(kg));
+  const kgRounded = Math.round(kg * 10) / 10;
+  let breakdownHtml;
+  if(plates.length === 0){
+    breakdownHtml = `<strong>Bar only</strong> — ${bd.barLbs} lbs / 20.4 kg`;
+  } else {
+    breakdownHtml = unit === 'lbs'
+      ? `<strong>${lbsTotal} lbs / ${kgRounded} kg</strong><br>Bar (45) + ${bd.parts} per side`
+      : `<strong>${kgRounded} kg / ${lbsTotal} lbs</strong><br>Bar (20.4 kg) + ${bd.parts} per side`;
+  }
+  document.getElementById('weightBreakdown').innerHTML = breakdownHtml;
+}
+
+// ── RENDER SCORE
+function renderScore(kg){
+  const score = getScore(kg);
+  const band = getBand(score);
+  const numEl = document.getElementById('scoreNum');
+  const bandEl = document.getElementById('scoreBand');
+  const kgEl = document.getElementById('scoreKg');
+
+  numEl.textContent = score;
+  numEl.style.color = score === 0 ? 'var(--muted)' : 'var(--text)';
+  bandEl.textContent = band.label;
+  bandEl.style.background = band.bg;
+  bandEl.style.color = band.fg;
+
+  const lbsVal = Math.round(kgToLbs(kg));
+  const kgVal = Math.round(kg * 10) / 10;
+  kgEl.textContent = unit === 'lbs' ? `${lbsVal} lbs · ${kgVal} kg canonical` : `${kgVal} kg · ${lbsVal} lbs`;
+}
+
+// ── RENDER COMPARISONS
+function renderComparisons(kg){
+  const std = STANDARDS[currentStd];
+  document.getElementById('compLabel').textContent = std.label;
+  const container = document.getElementById('compRows');
+  const maxKg = std.rows[std.rows.length-1].kg * 1.1;
+
+  // Compute score for user
+  const userScore = getScore(kg);
+
+  let html = '';
+  // User row first
+  const userLbs = Math.round(kgToLbs(kg));
+  const userKgR = Math.round(kg*10)/10;
+  const userPct = Math.min(100, Math.round(kg/maxKg*100));
+  const userVal = unit==='lbs' ? userLbs+'lbs' : userKgR+'kg';
+  html += `<div class="comparison-row you"><div class="cr-name">You</div><div class="cr-bar-track"><div class="cr-bar-fill" style="width:${userPct}%"></div></div><div class="cr-val">${userVal}</div></div>`;
+
+  for(const row of std.rows){
+    const benchKg = row.kg;
+    const benchVal = unit==='lbs' ? row.lbs+'lbs' : Math.round(row.kg)+'kg';
+    const pct = Math.min(100, Math.round(benchKg/maxKg*100));
+    const rowScore = getScore(benchKg);
+    const isBeaten = kg > benchKg;
+    const color = isBeaten ? 'var(--teal)' : 'var(--border2)';
+    html += `<div class="comparison-row"><div class="cr-name">${row.name}</div><div class="cr-bar-track"><div class="cr-bar-fill" style="width:${pct}%;background:${color}"></div></div><div class="cr-val" style="color:${isBeaten?'var(--teal)':'var(--muted)'}">${benchVal}</div></div>`;
+  }
+  container.innerHTML = html;
+}
+
+// ── MAIN UPDATE
+function update(kg){
+  currentKg = kg;
+  renderScore(kg);
+  renderBar(kg);
+  renderComparisons(kg);
+
+  // Sync inputs
+  const sliderVal = Math.round(unit==='lbs' ? kgToLbs(kg) : kg);
+  document.getElementById('weightSlider').value = sliderVal;
+  document.getElementById('weightInput').value = sliderVal;
+  document.getElementById('sliderDisplay').textContent = sliderVal + ' ' + unit;
+}
+
+// ── INPUT HANDLERS
+function onSlider(val){
+  const kg = unit==='lbs' ? lbsToKg(parseFloat(val)) : parseFloat(val);
+  document.getElementById('weightInput').value = val;
+  document.getElementById('sliderDisplay').textContent = val + ' ' + unit;
+  update(kg);
+}
+
+function onDirectInput(val){
+  const num = parseFloat(val);
+  if(isNaN(num) || num <= 0) return;
+  const kg = unit==='lbs' ? lbsToKg(num) : num;
+  document.getElementById('weightSlider').value = num;
+  document.getElementById('sliderDisplay').textContent = num + ' ' + unit;
+  update(kg);
+}
+
+function setUnit(u, btn){
+  unit = u;
+  document.querySelectorAll('.unit-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('unitLabel').textContent = u;
+  document.getElementById('ormUnitLabel').textContent = u;
+
+  // Update slider range and labels
+  const slider = document.getElementById('weightSlider');
+  if(u === 'lbs'){
+    slider.min = 45; slider.max = 650; slider.step = 5;
+    document.getElementById('sliderMin').textContent = '45 lbs';
+    document.getElementById('sliderMax').textContent = '650 lbs';
+    const lbs = Math.round(kgToLbs(currentKg));
+    slider.value = lbs;
+    document.getElementById('weightInput').value = lbs;
+    document.getElementById('sliderDisplay').textContent = lbs + ' lbs';
+  } else {
+    slider.min = 20; slider.max = 300; slider.step = 2.5;
+    document.getElementById('sliderMin').textContent = '20 kg';
+    document.getElementById('sliderMax').textContent = '300 kg';
+    const kg = Math.round(currentKg*10)/10;
+    slider.value = kg;
+    document.getElementById('weightInput').value = kg;
+    document.getElementById('sliderDisplay').textContent = kg + ' kg';
+  }
+  renderComparisons(currentKg);
+  renderScore(currentKg);
+  const bd = plateBreakdown(calcPlates(currentKg));
+  const lbsTotal = Math.round(kgToLbs(currentKg));
+  const kgRounded = Math.round(currentKg*10)/10;
+  const plates = calcPlates(currentKg);
+  let bh = plates.length===0 ? `<strong>Bar only</strong> — 45 lbs / 20.4 kg`
+    : unit==='lbs' ? `<strong>${lbsTotal} lbs / ${kgRounded} kg</strong><br>Bar (45) + ${bd.parts} per side`
+    : `<strong>${kgRounded} kg / ${lbsTotal} lbs</strong><br>Bar (20.4 kg) + ${bd.parts} per side`;
+  document.getElementById('weightBreakdown').innerHTML = bh;
+}
+
+function setStd(std, btn){
+  currentStd = std;
+  document.querySelectorAll('.std-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('stdDisclaimer').classList.toggle('visible', std !== 'general');
+  renderComparisons(currentKg);
+}
+
+// ── 1RM ESTIMATOR (Epley formula)
+function toggleOrm(){
+  const toggle = document.getElementById('ormToggle');
+  const body = document.getElementById('ormBody');
+  toggle.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+let ormKg = null;
+function calcOrm(){
+  const w = parseFloat(document.getElementById('ormWeight').value);
+  const r = parseFloat(document.getElementById('ormReps').value);
+  if(isNaN(w)||isNaN(r)||r<1||r>30) return;
+  const orm1rm = r===1 ? w : w*(1 + r/30);
+  ormKg = unit==='lbs' ? lbsToKg(orm1rm) : orm1rm;
+  const display = unit==='lbs' ? Math.round(orm1rm)+' lbs ('+Math.round(ormKg)+' kg)' : Math.round(orm1rm*10)/10+' kg ('+Math.round(kgToLbs(orm1rm))+' lbs)';
+  document.getElementById('ormResult').textContent = 'Estimated 1RM: ' + display;
+  document.getElementById('ormUseBtn').style.display = 'inline-block';
+}
+
+function useOrmResult(){
+  if(!ormKg) return;
+  update(ormKg);
+}
+
+// ── THEME
+function toggleTheme(){
+  const t = document.documentElement.getAttribute('data-theme');
+  document.documentElement.setAttribute('data-theme', t==='dark'?'light':'dark');
+  localStorage.setItem('smb-theme', t==='dark'?'light':'dark');
+}
+const saved = localStorage.getItem('smb-theme');
+if(saved) document.documentElement.setAttribute('data-theme', saved);
+
+// ── INIT
+update(lbsToKg(185));
+</script>
+</body>
+</html>

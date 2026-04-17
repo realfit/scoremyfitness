@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScoreMyThrow — How far can you throw?</title>
+<meta name="description" content="Enter your medicine ball overhead throw distance and see your arc compared against key benchmarks. Powered by the REALFIT Absolute Score.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--surface:#1a1c22;--surface2:#22242c;--surface3:#2a2d36;--text:#f0ede8;--muted:#8a8880;--faint:#5a5856;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--accent:#e8f02a;--accent2:#3A7BFF;--teal:#5DCAA5;}
+[data-theme="light"]{--surface:#f4f2ee;--surface2:#eeebe5;--surface3:#e5e2dc;--text:#0f0e0c;--muted:#6b6860;--faint:#9a9890;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);--accent:#c0392b;--accent2:#1a56db;--teal:#0a6e56;}
+[data-theme="light"] header{background:rgba(244,242,238,0.94);border-bottom-color:rgba(0,0,0,0.1)}
+[data-theme="light"] .realfit-badge{border-color:rgba(0,0,0,0.14)}
+[data-theme="light"] .theme-toggle{color:var(--muted);border-color:rgba(0,0,0,0.16)}
+[data-theme="light"] .std-tab.active{background:var(--text);color:#f4f2ee;border-color:var(--text)}
+[data-theme="light"] .dev-intro{border-color:rgba(26,86,219,0.2);background:rgba(26,86,219,0.04)}
+[data-theme="light"] .dev-intro-tag{background:rgba(26,86,219,0.1);color:var(--accent2)}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.6;color:var(--text);background:var(--surface);transition:background .2s,color .2s}
+header{position:sticky;top:0;z-index:100;background:rgba(26,28,34,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.logo-group{display:flex;align-items:center;gap:12px}
+.site-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--text);text-decoration:none}
+.site-logo span{color:var(--accent)}
+.realfit-badge{padding:4px 10px;border-radius:5px;border:1px solid var(--border2);font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:.04em;display:flex;align-items:center;gap:6px;transition:all .15s}
+.realfit-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0}
+.realfit-badge:hover{border-color:var(--teal);color:var(--teal)}
+.header-right{display:flex;align-items:center;gap:10px}
+.nav-link{padding:6px 12px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none;transition:all .15s}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.theme-toggle{border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;transition:all .15s}
+.theme-toggle:hover{border-color:var(--text);color:var(--text)}
+.dev-intro{margin:24px auto 0;padding:14px 18px;border:1px solid rgba(58,123,255,0.25);border-radius:10px;background:rgba(58,123,255,0.06);display:flex;align-items:flex-start;gap:12px;max-width:1052px}
+.dev-intro-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(58,123,255,0.15);color:var(--accent2);flex-shrink:0;margin-top:1px;white-space:nowrap}
+.dev-intro-text{font-size:13px;color:var(--muted);line-height:1.65}
+.dev-intro-text a{color:var(--accent2);text-decoration:none}
+.dev-intro-text a:hover{text-decoration:underline}
+.hero{padding:40px 24px 28px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(44px,7vw,72px);font-weight:900;line-height:.95;letter-spacing:-.01em;color:var(--text);margin-bottom:10px}
+.hero h1 span{color:var(--accent)}
+.hero-sub{font-size:16px;color:var(--muted);max-width:500px;margin:0 auto}
+.main{max-width:1100px;margin:0 auto;padding:36px 24px;display:grid;grid-template-columns:1fr 1.4fr;gap:40px;align-items:start}
+.panel-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.unit-toggle{display:flex;gap:6px;margin-bottom:22px}
+.unit-btn{padding:7px 18px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:13px;font-weight:500;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s}
+.unit-btn.active{background:var(--text);color:var(--surface);border-color:var(--text)}
+.unit-btn:hover:not(.active){color:var(--text)}
+.dist-input-wrap{margin-bottom:26px}
+.dist-input-label{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.dist-input-label span{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
+.dist-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--surface3);outline:none;cursor:pointer;margin-bottom:8px}
+.dist-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--surface);box-shadow:0 0 0 1px var(--accent)}
+.dist-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--surface)}
+.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);font-family:'Barlow Condensed',sans-serif}
+.direct-input-row{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+.direct-input-row input[type=number]{width:110px;padding:10px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;font-weight:600;font-family:'Barlow Condensed',sans-serif;text-align:center;outline:none;transition:border-color .15s}
+.direct-input-row input[type=number]:focus{border-color:var(--accent)}
+.direct-input-row input[type=number]::-webkit-outer-spin-button,.direct-input-row input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.direct-input-label{font-size:14px;color:var(--muted)}
+.ftin-wrap{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+.ftin-group{display:flex;align-items:center;gap:6px}
+.ftin-input{width:76px;padding:10px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;font-weight:600;font-family:'Barlow Condensed',sans-serif;text-align:center;outline:none;transition:border-color .15s}
+.ftin-input:focus{border-color:var(--accent)}
+.ftin-input::-webkit-outer-spin-button,.ftin-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.ftin-label{font-size:16px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:600}
+.m-wrap{display:none;align-items:center;gap:10px;margin-bottom:26px}
+.m-wrap input{width:110px;padding:10px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;font-weight:600;font-family:'Barlow Condensed',sans-serif;text-align:center;outline:none;transition:border-color .15s}
+.m-wrap input:focus{border-color:var(--accent)}
+.m-wrap input::-webkit-outer-spin-button,.m-wrap input::-webkit-inner-spin-button{-webkit-appearance:none}
+.m-unit{font-size:14px;color:var(--muted)}
+.ball-note{font-size:12px;color:var(--faint);margin-bottom:24px;line-height:1.5;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px}
+.std-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.std-tab{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:12px;font-weight:500;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s;letter-spacing:.02em}
+.std-tab.active{background:var(--accent);color:#0f0e0c;border-color:var(--accent)}
+.std-tab:hover:not(.active){color:var(--text)}
+.std-disclaimer{display:none;font-size:12px;color:var(--muted);line-height:1.6;padding:10px 12px;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;margin-bottom:16px}
+.std-disclaimer.visible{display:block}
+.std-disclaimer strong{color:var(--text);font-weight:500}
+.comparison-section{margin-bottom:0}
+.comp-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.comparison-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.comparison-row.you .cr-name{color:var(--accent);font-weight:600}
+.cr-name{color:var(--muted);width:130px;flex-shrink:0;font-size:12px}
+.cr-bar-track{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
+.cr-bar-fill{height:6px;border-radius:3px;background:var(--border2);transition:width .6s cubic-bezier(.25,.46,.45,.94)}
+.comparison-row.you .cr-bar-fill{background:var(--accent)}
+.cr-val{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);width:52px;text-align:right;flex-shrink:0}
+.score-display{text-align:center;margin-bottom:20px;padding:20px 24px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:72px;font-weight:900;line-height:1;letter-spacing:-.02em;color:var(--text);transition:all .3s}
+.score-right{text-align:right}
+.score-band{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;padding:5px 14px;border-radius:6px;display:inline-block;letter-spacing:.04em;transition:all .3s;margin-bottom:6px}
+.score-dist{font-size:12px;color:var(--muted);margin-top:4px}
+.arc-stage{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.arc-stage-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:12px;text-align:center}
+.arc-canvas-wrap{position:relative;width:100%;height:220px}
+#arcCanvas{width:100%;height:100%;display:block}
+.arc-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;justify-content:center}
+.arc-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.arc-leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.eco-strip{display:flex;gap:12px;flex-wrap:wrap}
+.eco-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-decoration:none;color:var(--text);flex:1;min-width:160px;transition:border-color .15s}
+.eco-card:hover{border-color:var(--border2)}
+.eco-card.featured{border-color:rgba(58,123,255,0.3)}
+.eco-card.featured:hover{border-color:var(--accent2)}
+.eco-badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);margin-bottom:6px}
+.eco-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;margin-bottom:3px}
+.eco-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.eco-arrow{font-size:12px;color:var(--muted);margin-top:8px}
+footer{padding:24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-left{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.footer-left a{color:var(--muted);text-decoration:none}.footer-left a:hover{color:var(--text)}
+.divider{opacity:.3}
+.footer-right{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--faint);letter-spacing:.06em}
+@media(max-width:768px){.main{grid-template-columns:1fr;gap:24px}.hero h1{font-size:44px}.dev-intro{flex-direction:column;gap:8px}}
+
+  /* ── PROTOCOL SECTION ── */
+  .protocol-section{border-top:1px solid var(--border);padding:40px 24px;background:var(--surface2)}
+  .protocol-inner{max-width:1100px;margin:0 auto}
+  .protocol-header{margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .protocol-title-block{}
+  .protocol-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .protocol-eyebrow a{color:var(--accent2);text-decoration:none;transition:color .15s}
+  .protocol-eyebrow a:hover{color:var(--text)}
+  .protocol-id{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--faint);background:var(--surface3);border:1px solid var(--border2);padding:2px 8px;border-radius:4px;letter-spacing:.06em}
+  .protocol-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:.01em}
+  .protocol-desc{font-size:14px;color:var(--muted);line-height:1.6}
+  .protocol-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .protocol-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+  .pc-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:12px}
+  .pc-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .pc-list li{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+  .pc-list li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:6px}
+  .pc-list li.equip-item::before{background:var(--accent2)}
+  .pc-list li.proto-item::before{background:var(--accent)}
+  .pc-note{margin-top:14px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--muted);line-height:1.6}
+  .pc-note strong{color:var(--text);font-weight:500}
+  @media(max-width:768px){.protocol-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <a href="https://scoremyfitness.com" class="site-logo">ScoreMy<span>Throw</span></a>
+    <a href="https://realfit.com" target="_blank" rel="noopener" class="realfit-badge">A REALFIT app</a>
+  </div>
+  <div class="header-right">
+    <a href="https://scoremy40.com" class="nav-link">ScoreMy40</a>
+    <a href="https://scoremyfitness.com/bench" class="nav-link">ScoreMyBench</a>
+    <button class="theme-toggle" onclick="toggleTheme()">&#9728; / &#9790;</button>
+  </div>
+</header>
+
+<div class="dev-intro">
+  <span class="dev-intro-tag">Built on FITDAT</span>
+  <p class="dev-intro-text">
+    ScoreMyThrow is a sample app built on the <a href="https://fitdat.com">FITDAT open library</a> using the <a href="https://fitdat.com/scoring-spec.html">REALFIT Absolute Score</a> specification. Every score matches the live iOS app exactly &mdash; same test definition, same protocol, same scoring table. Developers can build their own scoring apps on the same foundation. <a href="https://fitdat.com/architecture.html">Learn how &rarr;</a>
+  </p>
+</div>
+
+<section class="hero">
+  <div class="hero-eyebrow">Medicine Ball OH Toss &middot; Standardized ball &middot; REALFIT Absolute Score &middot; Power</div>
+  <h1>How far can you<br><span>really</span> throw?</h1>
+  <p class="hero-sub">Enter your overhead throw distance and watch your arc drawn to scale &mdash; compared against real benchmarks.</p>
+</section>
+
+<div class="main">
+  <div class="input-panel">
+    <div class="panel-label">Your throw</div>
+    <div class="unit-toggle">
+      <button class="unit-btn active" onclick="setUnit('ft',this)">feet</button>
+      <button class="unit-btn" onclick="setUnit('m',this)">meters</button>
+    </div>
+    <div class="dist-input-wrap">
+      <div class="dist-input-label">Distance <span id="sliderDisplay">22 ft</span></div>
+      <input type="range" class="dist-slider" id="distSlider" min="5" max="80" value="22" step="1" oninput="onSlider(this.value)">
+      <div class="slider-labels"><span id="sliderMin">5 ft</span><span id="sliderMax">80 ft</span></div>
+    </div>
+    <div class="ftin-wrap" id="ftinWrap">
+      <div class="ftin-group">
+        <input type="number" class="ftin-input" id="ftInput" value="22" min="0" max="80" oninput="onFtInInput()">
+        <span class="ftin-label">ft</span>
+      </div>
+      <div class="ftin-group">
+        <input type="number" class="ftin-input" id="inInput" value="0" min="0" max="11" oninput="onFtInInput()">
+        <span class="ftin-label">in</span>
+      </div>
+    </div>
+    <div class="m-wrap" id="mWrap" style="display:none">
+      <input type="number" id="mInput" value="6.71" min="0.1" max="30" step="0.01" oninput="onMInput(this.value)">
+      <span class="m-unit">m</span>
+    </div>
+    <div class="ball-note">This scoring table uses an <strong>8 lb ball</strong> — the REALFIT Absolute Score standard. Results from other ball weights are not directly comparable and must be noted alongside the result.</div>
+    <div class="panel-label">Standard</div>
+    <div class="std-tabs">
+      <button class="std-tab active" onclick="setStd('absolute',this)">REALFIT Absolute</button>
+      <button class="std-tab" onclick="setStd('football',this)">Football</button>
+      <button class="std-tab" onclick="setStd('military',this)">Military</button>
+    </div>
+    <div class="std-disclaimer" id="stdDisclaimer">
+      <strong>Estimated benchmarks.</strong> These figures are based on publicly available information and REALFIT research. They are provided for context only and are not official standards. Only the REALFIT Absolute tab reflects scores derived directly from the published scoring specification.
+    </div>
+    <div class="comparison-section">
+      <div class="comp-label" id="compLabel">REALFIT Absolute Score benchmarks</div>
+      <div id="compRows"></div>
+    </div>
+  </div>
+
+  <div class="result-panel">
+    <div class="score-display">
+      <div class="score-num" id="scoreNum">&mdash;</div>
+      <div class="score-right">
+        <div><span class="score-band" id="scoreBand" style="background:var(--surface3);color:var(--muted)">Enter distance</span></div>
+        <div class="score-dist" id="scoreDist"></div>
+      </div>
+    </div>
+    <div class="arc-stage">
+      <div class="arc-stage-label">Throw comparison &mdash; drawn to scale</div>
+      <div class="arc-canvas-wrap">
+        <canvas id="arcCanvas" role="img" aria-label="Throw arc comparison chart"></canvas>
+      </div>
+      <div class="arc-legend" id="arcLegend"></div>
+    </div>
+    <div class="eco-strip">
+      <a href="https://scoremyfitness.com/bench" class="eco-card">
+        <div class="eco-badge">Strength test</div>
+        <div class="eco-title">ScoreMyBench</div>
+        <div class="eco-desc">How much can you bench? Watch the plates load.</div>
+        <div class="eco-arrow">Try it &rarr;</div>
+      </a>
+      <a href="https://scoremy40.com" class="eco-card">
+        <div class="eco-badge">Speed test</div>
+        <div class="eco-title">ScoreMy40</div>
+        <div class="eco-desc">How fast are you? Race 8 athletes over 40 yards.</div>
+        <div class="eco-arrow">Try it &rarr;</div>
+      </a>
+      <a href="https://realfitscore.com" class="eco-card featured">
+        <div class="eco-badge">Full battery</div>
+        <div class="eco-title">REALFITSCORE</div>
+        <div class="eco-desc">Score all 13 tests. Get your Absolute Score.</div>
+        <div class="eco-arrow">Score everything &rarr;</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<section class="protocol-section">
+  <div class="protocol-inner">
+    <div class="protocol-header">
+      <div class="protocol-title-block">
+        <div class="protocol-eyebrow">
+          FITDAT test specification
+          <span class="protocol-id">proto_medicine_ball_throw_v1</span>
+          <a href="https://fitdat.com/library.html" target="_blank" rel="noopener">Full spec &rarr;</a>
+        </div>
+        <div class="protocol-title">Medicine Ball Throw &mdash; test protocol</div>
+        <div class="protocol-desc">Measures explosive total-body power and force transfer. Standing two-handed overhead toss from behind a marked release line. Distance measured to first landing contact. Best of two attempts.</div>
+      </div>
+    </div>
+    <div class="protocol-grid">
+      <div class="protocol-card">
+        <div class="pc-label">Equipment required</div>
+        <ul class="pc-list">
+          <li class="equip-item">Medicine ball &mdash; 8 lbs (REALFIT Absolute Score standard)</li>
+          <li class="equip-item">Measuring tape or marked floor grid</li>
+          <li class="equip-item">Flat surface with clear throw lane</li>
+          <li class="equip-item">Marked release line</li>
+        </ul>
+      </div>
+      <div class="protocol-card">
+        <div class="pc-label">Test guidelines</div>
+        <ul class="pc-list">
+          <li>Stand behind the marked release line</li>
+          <li>Hold ball overhead with both hands &mdash; no rotation or single-arm throw</li>
+          <li>Feet must be stationary at the moment of release</li>
+          <li>You may extend onto toes at release</li>
+          <li>Measure from release line to first landing contact point</li>
+          <li>Best of two attempts</li>
+        </ul>
+      </div>
+      <div class="protocol-card">
+        <div class="pc-label">Accepted protocols</div>
+        <ul class="pc-list">
+          <li class="proto-item">Standing Overhead Toss</li>
+        </ul>
+        <div class="pc-note"><strong>Ball weight.</strong> The REALFIT Absolute Score uses an <strong>8 lb ball</strong>. FITDAT defines the protocol — the Score Set defines the standard weight. Ball weight must always be recorded alongside the result. Results from different ball weights are not directly comparable.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="footer-left">
+    <strong style="color:var(--text);font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">ScoreMyThrow</strong>
+    <span class="divider">&middot;</span>
+    A <a href="https://realfit.com">REALFIT</a> app
+    <span class="divider">&middot;</span>
+    <a href="https://fitdat.com/scoring-spec.html">Scoring methodology</a>
+    <span class="divider">&middot;</span>
+    <a href="https://scoremyfitness.com">All tests</a>
+  </div>
+  <div class="footer-right">&copy; 2026 REALFIT&reg; &middot; FITDAT&reg; v1.1</div>
+</footer>
+
+<script>
+// Scoring table — meters canonical (from RFS20 - Med Ball OH Toss - Absolute.csv)
+const THROW_TABLE=[[0,1.523,0],[1.524,1.608,10],[1.609,1.694,20],[1.695,1.779,30],[1.78,1.864,40],[1.865,1.95,50],[1.951,2.035,60],[2.036,2.12,70],[2.121,2.206,80],[2.207,2.291,90],[2.292,2.376,100],[2.377,2.462,110],[2.463,2.547,120],[2.548,2.632,130],[2.633,2.718,140],[2.719,2.803,150],[2.804,2.889,160],[2.89,2.974,170],[2.975,3.059,180],[3.06,3.145,190],[3.146,3.23,200],[3.231,3.315,210],[3.316,3.401,220],[3.402,3.486,230],[3.487,3.657,240],[3.658,3.754,250],[3.755,3.852,260],[3.853,3.949,270],[3.95,4.047,280],[4.048,4.144,290],[4.145,4.242,300],[4.243,4.339,310],[4.34,4.437,320],[4.438,4.534,330],[4.535,4.632,340],[4.633,4.729,350],[4.73,4.827,360],[4.828,4.925,370],[4.926,5.022,380],[5.023,5.12,390],[5.121,5.217,400],[5.218,5.315,410],[5.316,5.412,420],[5.413,5.51,430],[5.511,5.607,440],[5.608,5.705,450],[5.706,5.802,460],[5.803,5.9,470],[5.901,5.997,480],[5.998,6.095,490],[6.096,6.217,500],[6.218,6.339,510],[6.34,6.461,520],[6.462,6.583,530],[6.584,6.705,540],[6.706,6.827,550],[6.828,6.948,560],[6.949,7.07,570],[7.071,7.192,580],[7.193,7.314,590],[7.315,7.436,600],[7.437,7.558,610],[7.559,7.68,620],[7.681,7.802,630],[7.803,7.924,640],[7.925,8.046,650],[8.047,8.168,660],[8.169,8.29,670],[8.291,8.411,680],[8.412,8.533,690],[8.534,8.655,700],[8.656,8.777,710],[8.778,8.899,720],[8.9,9.021,730],[9.022,9.143,740],[9.144,9.346,750],[9.347,9.549,760],[9.55,9.753,770],[9.754,9.956,780],[9.957,10.159,790],[10.16,10.362,800],[10.363,10.565,810],[10.566,10.769,820],[10.77,10.972,830],[10.973,11.175,840],[11.176,11.378,850],[11.379,11.581,860],[11.582,11.785,870],[11.786,11.988,880],[11.989,12.191,890],[12.192,12.801,900],[12.802,13.41,910],[13.411,14.02,920],[14.021,14.629,930],[14.63,15.239,940],[15.24,16.458,950],[16.459,17.677,960],[17.678,18.897,970],[18.898,20.116,980],[20.117,21.335,990],[21.336,24.384,1000]];
+
+// Canvas scale: always use full table range so arcs are true-to-scale
+const TABLE_MAX_M = 24.384; // 80 ft — scoring table maximum
+
+const BANDS=[{min:951,max:1000,label:"Near Maximum",bg:"#c8a800",fg:"#0f0e0c"},{min:900,max:950,label:"Elite",bg:"#c8a800",fg:"#0f0e0c"},{min:750,max:899,label:"Near Elite",bg:"#1D9E75",fg:"#04342C"},{min:650,max:749,label:"Well Above Average",bg:"#3A7BFF",fg:"#E6F1FB"},{min:551,max:649,label:"Above Average",bg:"#3A7BFF",fg:"#E6F1FB"},{min:500,max:550,label:"Average",bg:"#5F5E5A",fg:"#F1EFE8"},{min:300,max:499,label:"Below Average",bg:"#D85A30",fg:"#FAECE7"},{min:100,max:299,label:"Well Below Average",bg:"#a32d2d",fg:"#FCEBEB"},{min:0,max:99,label:"Near Minimum",bg:"#a32d2d",fg:"#FCEBEB"}];
+
+const STANDARDS={
+  absolute:{
+    label:"REALFIT Absolute Score benchmarks",
+    arcs:[
+      {name:"Average (500)",m:6.10,color:"#5F5E5A"},
+      {name:"Above avg (600)",m:7.32,color:"#3A7BFF"},
+      {name:"Near Elite (750)",m:9.14,color:"#1D9E75"},
+      {name:"Elite (900)",m:12.19,color:"#c8a800"},
+      {name:"Near Max (950)",m:15.24,color:"#e8f02a"}
+    ]
+  },
+  football:{
+    label:"Football benchmarks — estimated",
+    arcs:[
+      {name:"Skill avg (est.)",m:8.53,color:"#5F5E5A"},
+      {name:"D-line avg (est.)",m:10.06,color:"#3A7BFF"},
+      {name:"Combine avg (est.)",m:11.28,color:"#1D9E75"},
+      {name:"Combine elite (est.)",m:14.02,color:"#c8a800"}
+    ]
+  },
+  military:{
+    label:"Military benchmarks — estimated",
+    arcs:[
+      {name:"Army avg (est.)",m:6.71,color:"#5F5E5A"},
+      {name:"Infantry (est.)",m:8.23,color:"#3A7BFF"},
+      {name:"Special ops (est.)",m:10.67,color:"#1D9E75"},
+      {name:"Elite (est.)",m:12.80,color:"#c8a800"}
+    ]
+  }
+};
+
+let unit="ft", currentM=ftToM(22), currentStd="absolute";
+
+function ftToM(ft){return ft*0.3048}
+function mToFt(m){return m/0.3048}
+
+function getScore(m){
+  // Find best matching row — use >= lower bound to handle floating point gaps
+  for(const[lo,hi,sc]of THROW_TABLE){
+    if(m>=lo&&m<=hi) return sc;
+  }
+  // Clamp to table edges
+  if(m<THROW_TABLE[0][1]) return 0;
+  if(m>THROW_TABLE[THROW_TABLE.length-1][1]) return 1000;
+  // Find nearest row for edge gaps
+  let best=null, bestDist=Infinity;
+  for(const[lo,hi,sc]of THROW_TABLE){
+    const mid=(lo+hi)/2;
+    const d=Math.abs(m-mid);
+    if(d<bestDist){bestDist=d;best=sc;}
+  }
+  return best||0;
+}
+
+function getBand(s){return BANDS.find(b=>s>=b.min&&s<=b.max)||BANDS[BANDS.length-1]}
+
+function drawArcs(userM){
+  const canvas=document.getElementById("arcCanvas");
+  const wrap=canvas.parentElement;
+  canvas.width=wrap.clientWidth;
+  canvas.height=wrap.clientHeight;
+  const W=canvas.width, H=canvas.height;
+  const ctx=canvas.getContext("2d");
+  const isDark=document.documentElement.getAttribute("data-theme")!=="light";
+  const textColor=isDark?"rgba(240,237,232,0.55)":"rgba(15,14,12,0.45)";
+  const groundColor=isDark?"rgba(255,255,255,0.1)":"rgba(0,0,0,0.15)";
+
+  // Canvas always scales to full table max so relative distance is accurate
+  const maxM = TABLE_MAX_M;
+
+  const PAD_L=28, PAD_R=16, PAD_TOP=20, PAD_BOT=34;
+  const plotW=W-PAD_L-PAD_R;
+  const plotH=H-PAD_TOP-PAD_BOT;
+  const originX=PAD_L;
+  const originY=H-PAD_BOT;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Ground line
+  ctx.beginPath();
+  ctx.moveTo(PAD_L,originY);
+  ctx.lineTo(W-PAD_R,originY);
+  ctx.strokeStyle=groundColor;
+  ctx.lineWidth=1;
+  ctx.stroke();
+
+  // Distance tick marks — every 10ft
+  ctx.fillStyle=textColor;
+  ctx.font="10px Barlow Condensed,sans-serif";
+  ctx.textAlign="center";
+  const tickFt=10;
+  const tickM=ftToM(tickFt);
+  for(let m=0;m<=maxM+0.1;m+=tickM){
+    const x=originX+(m/maxM)*plotW;
+    ctx.beginPath();ctx.moveTo(x,originY);ctx.lineTo(x,originY+4);
+    ctx.strokeStyle=groundColor;ctx.lineWidth=1;ctx.stroke();
+    const label=unit==="ft"?Math.round(mToFt(m))+"'":Math.round(m)+"m";
+    ctx.fillText(label,x,originY+16);
+  }
+
+  // Build arc list — comparisons first, user arc on top
+  const std=STANDARDS[currentStd];
+  const compArcs=std.arcs;
+  const userArc={name:"You",m:userM,color:"#e8f02a",isYou:true};
+  const allArcs=[...compArcs,userArc];
+
+  allArcs.forEach(arc=>{
+    const distX=originX+(arc.m/maxM)*plotW;
+    // Peak at midpoint horizontally, height scales with distance
+    const peakX=originX+(arc.m/maxM)*plotW*0.5;
+    const peakHeight=Math.min(plotH*0.92, (arc.m/maxM)*plotH*0.95+8);
+    const peakY=originY-peakHeight;
+
+    ctx.beginPath();
+    ctx.moveTo(originX,originY);
+    ctx.quadraticCurveTo(peakX,peakY,distX,originY);
+    ctx.strokeStyle=arc.color;
+    ctx.lineWidth=arc.isYou?3:1.5;
+    ctx.globalAlpha=arc.isYou?1:0.5;
+    ctx.setLineDash(arc.isYou?[]:[5,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha=1;
+
+    // Landing dot
+    ctx.beginPath();
+    ctx.arc(distX,originY,arc.isYou?6:3.5,0,Math.PI*2);
+    ctx.fillStyle=arc.color;
+    ctx.globalAlpha=arc.isYou?1:0.6;
+    ctx.fill();
+    ctx.globalAlpha=1;
+
+    // Ball at peak + distance label (user only)
+    if(arc.isYou){
+      ctx.beginPath();
+      ctx.arc(peakX,peakY,7,0,Math.PI*2);
+      ctx.fillStyle=arc.color;
+      ctx.globalAlpha=0.9;
+      ctx.fill();
+      ctx.globalAlpha=1;
+      const label=unit==="ft"
+        ?fmtFtIn(arc.m)
+        :Math.round(arc.m*100)/100+" m";
+      ctx.fillStyle=arc.color;
+      ctx.font="bold 11px Barlow Condensed,sans-serif";
+      ctx.textAlign="center";
+      ctx.fillText(label,distX,originY-12);
+    }
+  });
+
+  // Legend
+  const legendEl=document.getElementById("arcLegend");
+  legendEl.innerHTML="";
+  allArcs.forEach(arc=>{
+    const val=unit==="ft"
+      ?fmtFtIn(arc.m)
+      :Math.round(arc.m*100)/100+" m";
+    const item=document.createElement("div");
+    item.className="arc-leg-item";
+    item.innerHTML=`<div class="arc-leg-dot" style="background:${arc.color};${arc.isYou?"":"opacity:.55"}"></div>${arc.isYou?"<strong>You</strong>":arc.name} &mdash; ${val}`;
+    legendEl.appendChild(item);
+  });
+}
+
+function renderScore(m){
+  const score=getScore(m);
+  const band=getBand(score);
+  document.getElementById("scoreNum").textContent=score;
+  const bandEl=document.getElementById("scoreBand");
+  bandEl.textContent=band.label;
+  bandEl.style.background=band.bg;
+  bandEl.style.color=band.fg;
+  const ftDisp=fmtFtIn(m);
+  const mv=Math.round(m*100)/100;
+  document.getElementById("scoreDist").textContent=unit==="ft"
+    ?ftDisp+" \u00b7 "+mv+" m canonical"
+    :mv+" m \u00b7 "+fmtFtIn(m);
+}
+
+function renderComparisons(m){
+  const std=STANDARDS[currentStd];
+  document.getElementById("compLabel").textContent=std.label;
+  // Bar scale: use TABLE_MAX_M so bars are proportional to actual distance
+  const maxM=TABLE_MAX_M;
+  let html="";
+  const uVal=unit==="ft"?fmtFtIn(m):Math.round(m*100)/100+"m";
+  const uPct=Math.min(100,Math.round(m/maxM*100));
+  html+=`<div class="comparison-row you"><div class="cr-name">You</div><div class="cr-bar-track"><div class="cr-bar-fill" style="width:${uPct}%"></div></div><div class="cr-val">${uVal}</div></div>`;
+  for(const arc of std.arcs){
+    const pct=Math.min(100,Math.round(arc.m/maxM*100));
+    const val=unit==="ft"?fmtFtIn(arc.m):arc.m+"m";
+    const beaten=m>arc.m;
+    html+=`<div class="comparison-row"><div class="cr-name">${arc.name}</div><div class="cr-bar-track"><div class="cr-bar-fill" style="width:${pct}%;background:${beaten?"var(--teal)":"var(--border2)"}"></div></div><div class="cr-val" style="color:${beaten?"var(--teal)":"var(--muted)"}">${val}</div></div>`;
+  }
+  document.getElementById("compRows").innerHTML=html;
+}
+
+function fmtFtIn(m){
+  const totalFt=mToFt(m);
+  const ft=Math.floor(totalFt);
+  const ins=Math.round((totalFt-ft)*12);
+  if(ins===12){return (ft+1)+"'";}
+  return ins>0?ft+"' "+ins+'"':ft+"'";
+}
+function syncFtIn(m){
+  const totalFt=mToFt(m);
+  const ft=Math.floor(totalFt);
+  const ins=Math.round((totalFt-ft)*12);
+  document.getElementById("ftInput").value=ins===12?ft+1:ft;
+  document.getElementById("inInput").value=ins===12?0:ins;
+}
+function update(m){
+  currentM=m;
+  renderScore(m);
+  renderComparisons(m);
+  drawArcs(m);
+  if(unit==="ft"){
+    document.getElementById("distSlider").value=Math.round(mToFt(m));
+    syncFtIn(m);
+    document.getElementById("sliderDisplay").textContent=fmtFtIn(m);
+  } else {
+    const mv=Math.round(m*100)/100;
+    document.getElementById("distSlider").value=mv;
+    document.getElementById("mInput").value=mv;
+    document.getElementById("sliderDisplay").textContent=mv+" m";
+  }
+}
+function onSlider(v){
+  if(unit==="ft"){
+    const m=ftToM(parseFloat(v));
+    document.getElementById("ftInput").value=v;
+    document.getElementById("inInput").value=0;
+    document.getElementById("sliderDisplay").textContent=v+"'";
+    currentM=m; renderScore(m); renderComparisons(m); drawArcs(m);
+  } else {
+    const m=parseFloat(v);
+    document.getElementById("mInput").value=v;
+    document.getElementById("sliderDisplay").textContent=v+" m";
+    currentM=m; renderScore(m); renderComparisons(m); drawArcs(m);
+  }
+}
+function onFtInInput(){
+  const ft=parseFloat(document.getElementById("ftInput").value)||0;
+  let ins=parseFloat(document.getElementById("inInput").value)||0;
+  if(ins>11){ins=11; document.getElementById("inInput").value=11;}
+  if(ins<0){ins=0; document.getElementById("inInput").value=0;}
+  const ftDec=ft+ins/12;
+  if(ftDec<=0) return;
+  const m=ftToM(ftDec);
+  document.getElementById("distSlider").value=Math.round(ftDec);
+  document.getElementById("sliderDisplay").textContent=fmtFtIn(m);
+  currentM=m; renderScore(m); renderComparisons(m); drawArcs(m);
+}
+function onMInput(v){
+  const m=parseFloat(v);
+  if(isNaN(m)||m<=0) return;
+  document.getElementById("distSlider").value=Math.round(m*10)/10;
+  document.getElementById("sliderDisplay").textContent=Math.round(m*100)/100+" m";
+  currentM=m; renderScore(m); renderComparisons(m); drawArcs(m);
+}
+
+function setUnit(u,btn){
+  unit=u;
+  document.querySelectorAll(".unit-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  // Show/hide correct input
+  document.getElementById("ftinWrap").style.display=u==="ft"?"flex":"none";
+  document.getElementById("mWrap").style.display=u==="m"?"flex":"none";
+  const slider=document.getElementById("distSlider");
+  if(u==="ft"){
+    slider.min=5;slider.max=80;slider.step=1;
+    document.getElementById("sliderMin").textContent="5 ft";
+    document.getElementById("sliderMax").textContent="80 ft";
+    slider.value=Math.round(mToFt(currentM));
+    syncFtIn(currentM);
+    document.getElementById("sliderDisplay").textContent=fmtFtIn(currentM);
+  } else {
+    slider.min=1.5;slider.max=25;slider.step=0.1;
+    document.getElementById("sliderMin").textContent="1.5 m";
+    document.getElementById("sliderMax").textContent="25 m";
+    const mv=Math.round(currentM*100)/100;
+    slider.value=mv;
+    document.getElementById("mInput").value=mv;
+    document.getElementById("sliderDisplay").textContent=mv+" m";
+  }
+  renderScore(currentM);renderComparisons(currentM);drawArcs(currentM);
+}
+
+function setStd(std,btn){
+  currentStd=std;
+  document.querySelectorAll(".std-tab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("stdDisclaimer").classList.toggle("visible",std!=="absolute");
+  renderComparisons(currentM);
+  drawArcs(currentM);
+}
+
+function toggleTheme(){
+  const t=document.documentElement.getAttribute("data-theme");
+  document.documentElement.setAttribute("data-theme",t==="dark"?"light":"dark");
+  localStorage.setItem("smt-theme",t==="dark"?"light":"dark");
+  drawArcs(currentM);
+}
+const saved=localStorage.getItem("smt-theme");
+if(saved) document.documentElement.setAttribute("data-theme",saved);
+window.addEventListener("resize",()=>drawArcs(currentM));
+window.addEventListener("load",()=>update(ftToM(22)));
+</script>
+</body>
+</html>
