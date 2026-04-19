@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ScoreMyThrow — How far can you throw?</title>
+<title>ScoreMyThrow — How does your throw compare?</title>
 <meta name="description" content="Enter your medicine ball overhead throw distance and see your arc compared against key benchmarks. Powered by the REALFIT Absolute Score.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -144,26 +144,24 @@ footer{padding:24px;border-top:1px solid var(--border);display:flex;align-items:
 
 <header>
   <div class="logo-group">
-    <a href="https://scoremyfitness.com" class="site-logo">ScoreMy<span>Throw</span></a>
-    <a href="https://realfit.com" target="_blank" rel="noopener" class="realfit-badge">A REALFIT app</a>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <a href="https://scoremyfitness.com" class="site-logo">ScoreMy<span>Throw</span></a>
+      <a href="https://realfit.com" target="_blank" rel="noopener" style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .15s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">A REALFIT App</a>
+    </div>
   </div>
   <div class="header-right">
-    <a href="https://scoremy40.com" class="nav-link">ScoreMy40</a>
-    <a href="https://scoremyfitness.com/bench" class="nav-link">ScoreMyBench</a>
+    <a href="https://scoremyfitness.com" class="nav-link">ScoreMyFitness.com</a>
+    <a href="https://fitdat.com" class="nav-link">FITDAT.com</a>
+    <a href="https://realfit.com" class="nav-link">REALFIT.com</a>
     <button class="theme-toggle" onclick="toggleTheme()">&#9728; / &#9790;</button>
+    <a href="https://realfitscore.com" class="nav-cta" style="padding:9px 20px;font-size:14px;font-weight:700;letter-spacing:.04em;white-space:nowrap;background:var(--accent);color:var(--black);border-radius:4px;text-decoration:none;transition:opacity .15s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Get your overall fitness score →</a>
   </div>
 </header>
 
-<div class="dev-intro">
-  <span class="dev-intro-tag">Built on FITDAT</span>
-  <p class="dev-intro-text">
-    ScoreMyThrow is a sample app built on the <a href="https://fitdat.com">FITDAT open library</a> using the <a href="https://fitdat.com/scoring-spec.html">REALFIT Absolute Score</a> specification. Every score matches the live iOS app exactly &mdash; same test definition, same protocol, same scoring table. Developers can build their own scoring apps on the same foundation. <a href="https://fitdat.com/architecture.html">Learn how &rarr;</a>
-  </p>
-</div>
 
 <section class="hero">
   <div class="hero-eyebrow">Medicine Ball OH Toss &middot; Standardized ball &middot; REALFIT Absolute Score &middot; Power</div>
-  <h1>How far can you<br><span>really</span> throw?</h1>
+  <h1>How does your throw<br><span>compare?</span></h1>
   <p class="hero-sub">Enter your overhead throw distance and watch your arc drawn to scale &mdash; compared against real benchmarks.</p>
 </section>
 
@@ -224,6 +222,12 @@ footer{padding:24px;border-top:1px solid var(--border);display:flex;align-items:
       </div>
       <div class="arc-legend" id="arcLegend"></div>
     </div>
+<div class="dev-intro">
+  <span class="dev-intro-tag">Built on FITDAT</span>
+  <p class="dev-intro-text">
+    ScoreMyThrow is a sample app built on the <a href="https://fitdat.com">FITDAT open library</a> using the <a href="https://fitdat.com/scoring-spec.html">REALFIT Absolute Score</a> specification. Every score matches the live iOS app exactly &mdash; same test definition, same protocol, same scoring table. Developers can build their own scoring apps on the same foundation. <a href="https://fitdat.com/architecture.html">Learn how &rarr;</a>
+  </p>
+</div>
     <div class="eco-strip">
       <a href="https://scoremyfitness.com/bench" class="eco-card">
         <div class="eco-badge">Strength test</div>
@@ -247,6 +251,15 @@ footer{padding:24px;border-top:1px solid var(--border);display:flex;align-items:
   </div>
 </div>
 
+<div style="background:var(--surface2,#f0eee9);border-top:1px solid var(--border,#dddad4);padding:20px 24px">
+  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span style="font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--faint,#a09d98);margin-right:4px">Also in the ecosystem</span>
+    <a href="https://realfit.com" style="font-size:12px;padding:5px 12px;border:1px solid var(--border,#dddad4);border-radius:4px;color:var(--muted,#6b6860);text-decoration:none;transition:all .15s" onmouseover="this.style.borderColor='#185EA5';this.style.color='#185EA5'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">REALFIT.com</a>
+    <a href="https://fitdat.com" style="font-size:12px;padding:5px 12px;border:1px solid var(--border,#dddad4);border-radius:4px;color:var(--muted,#6b6860);text-decoration:none;transition:all .15s" onmouseover="this.style.borderColor='#1D9E75';this.style.color='#1D9E75'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">FITDAT open library</a>
+    <a href="https://realfitscore.com" style="font-size:12px;padding:5px 12px;border:1px solid var(--border,#dddad4);border-radius:4px;color:var(--muted,#6b6860);text-decoration:none;transition:all .15s" onmouseover="this.style.borderColor='#534AB7';this.style.color='#534AB7'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Full score estimator</a>
+    <a href="https://scoremy40.com" style="font-size:12px;padding:5px 12px;border:1px solid var(--border,#dddad4);border-radius:4px;color:var(--muted,#6b6860);text-decoration:none;transition:all .15s" onmouseover="this.style.borderColor='#D85A30';this.style.color='#D85A30'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">ScoreMy40</a>
+  </div>
+</div>
 <section class="protocol-section">
   <div class="protocol-inner">
     <div class="protocol-header">
@@ -445,14 +458,8 @@ function drawArcs(userM){
     ctx.fill();
     ctx.globalAlpha=1;
 
-    // Ball at peak + distance label (user only)
+    // Distance label (user only)
     if(arc.isYou){
-      ctx.beginPath();
-      ctx.arc(peakX,peakY,7,0,Math.PI*2);
-      ctx.fillStyle=arc.color;
-      ctx.globalAlpha=0.9;
-      ctx.fill();
-      ctx.globalAlpha=1;
       const label=unit==="ft"
         ?fmtFtIn(arc.m)
         :Math.round(arc.m*100)/100+" m";
@@ -621,5 +628,21 @@ if(saved) document.documentElement.setAttribute("data-theme",saved);
 window.addEventListener("resize",()=>drawArcs(currentM));
 window.addEventListener("load",()=>update(ftToM(22)));
 </script>
+
+<div style="background:#0f0e0c;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+    <span style="font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.22)">REALFIT&reg; ecosystem</span>
+  </div>
+  <div style="display:flex;gap:18px;flex-wrap:wrap">
+    <a href="https://realfit.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">REALFIT.com</a>
+    <a href="https://fitdat.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">FITDAT.com</a>
+    <a href="https://realfitscore.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">Score estimator</a>
+    <a href="https://scoremyfitness.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">ScoreMyFitness</a>
+    <a href="https://scoremy40.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">ScoreMy40</a>
+    <a href="https://fitdat.com/scoring-spec.html" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">Scoring spec</a>
+    <a href="mailto:hello@realfit.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">Contact</a>
+  </div>
+  <div style="font-size:11px;color:rgba(255,255,255,.18)">&copy; 2026 REALFIT&reg; &middot; FITDAT&reg;</div>
+</div>
 </body>
 </html>

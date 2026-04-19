@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ScoreMyFitness — How do you actually measure up?</title>
-<meta name="description" content="Interactive fitness scoring tools for every test in the REALFIT Absolute Score battery. Pick a test. Enter your result. See exactly where you stand.">
+<meta name="description" content="Interactive fitness scoring tools for every test in the REALFIT Absolute Score Set. Pick a test. Enter your result. See exactly where you stand.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -80,6 +80,8 @@ header{
 }
 .realfit-badge:hover{border-color:var(--teal);color:var(--teal)}
 .header-right{display:flex;align-items:center;gap:10px}
+.nav-link{padding:6px 12px;border-radius:4px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:.02em;transition:color .15s,background .15s}
+.nav-link:hover{color:var(--text);background:var(--surface)}
 .nav-cta{
   padding:7px 16px;border-radius:6px;
   background:var(--accent);color:#0f0e0c;
@@ -386,6 +388,13 @@ footer{
   display:flex;align-items:center;justify-content:space-between;
   flex-wrap:wrap;gap:12px;
 }
+.dev-intro{padding:14px 18px;border:1px solid rgba(58,123,255,0.25);border-radius:10px;background:rgba(58,123,255,0.06);display:flex;align-items:flex-start;gap:12px}
+.dev-intro-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(58,123,255,0.15);color:var(--accent2);flex-shrink:0;margin-top:1px;white-space:nowrap}
+.dev-intro-text{font-size:13px;color:var(--muted);line-height:1.65}
+.dev-intro-text a{color:var(--accent2);text-decoration:none}
+.dev-intro-text a:hover{text-decoration:underline}
+[data-theme="light"] .dev-intro{border-color:rgba(26,86,219,0.2);background:rgba(26,86,219,0.04)}
+[data-theme="light"] .dev-intro-tag{background:rgba(26,86,219,0.1);color:var(--accent2)}
 .footer-left{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .footer-left a{color:var(--muted);text-decoration:none;transition:color .15s}
 .footer-left a:hover{color:var(--text)}
@@ -405,12 +414,17 @@ footer{
 
 <header>
   <div class="logo-group">
-    <a href="/" class="site-logo">ScoreMy<span>Fitness</span></a>
-    <a href="https://realfit.com" target="_blank" rel="noopener" class="realfit-badge">A REALFIT app</a>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <a href="/" class="site-logo">ScoreMy<span>Fitness</span></a>
+      <a href="https://realfit.com" target="_blank" rel="noopener" style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .15s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">A REALFIT App</a>
+    </div>
   </div>
   <div class="header-right">
+    <a href="https://scoremy40.com" class="nav-link">ScoreMy40.com</a>
+    <a href="https://fitdat.com" class="nav-link">FITDAT.com</a>
+    <a href="https://realfit.com" class="nav-link">REALFIT.com</a>
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀ / ☾</button>
-    <a href="https://realfitscore.com" class="nav-cta">Full battery →</a>
+    <a href="https://realfitscore.com" class="nav-cta" style="padding:9px 20px;font-size:14px;font-weight:700;letter-spacing:.04em;white-space:nowrap">Get your overall fitness score →</a>
   </div>
 </header>
 
@@ -422,7 +436,7 @@ footer{
   <div class="hero-stats">
     <div class="hero-stat">
       <div class="hero-stat-num"><span>13</span></div>
-      <div class="hero-stat-label">Tests in the battery</div>
+      <div class="hero-stat-label">Tests in the Score Set</div>
     </div>
     <div class="hero-divider"></div>
     <div class="hero-stat">
@@ -440,7 +454,7 @@ footer{
 <!-- ── TEST GRID ── -->
 <div class="tests-section">
   <div class="section-header">
-    <div class="section-label">The battery</div>
+    <div class="section-label">The REALFIT Absolute Score Set</div>
     <div class="section-title">Choose your test</div>
     <div class="section-sub">3 tests live now — more coming as we build them out.</div>
   </div>
@@ -719,17 +733,20 @@ footer{
   </div>
 </section>
 
+<div style="max-width:1100px;margin:0 auto;padding:0 24px 32px">
+  <div class="dev-intro">
+    <span class="dev-intro-tag">Built on FITDAT</span>
+    <p class="dev-intro-text">
+      ScoreMyFitness is a sample app built on the <a href="https://fitdat.com">FITDAT open library</a> using the <a href="https://fitdat.com/scoring-spec.html">REALFIT Absolute Score</a> specification. Every score matches the live iOS app exactly &mdash; same test definitions, same protocols, same scoring tables. Developers can build their own scoring apps on the same open foundation. <a href="https://fitdat.com/architecture.html">Learn how &rarr;</a>
+    </p>
+  </div>
+</div>
+
 <footer>
   <div class="footer-left">
     <strong style="color:var(--text);font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">ScoreMyFitness</strong>
     <span class="divider">·</span>
-    A <a href="https://realfit.com">REALFIT</a> app
-    <span class="divider">·</span>
-    <a href="https://scoremy40.com">ScoreMy40</a>
-    <span class="divider">·</span>
-    <a href="https://realfitscore.com">REALFITSCORE</a>
-    <span class="divider">·</span>
-    <a href="https://fitdat.com">FITDAT</a>
+    A <a href="https://realfit.com">REALFIT</a> App
   </div>
   <div class="footer-right">© 2026 REALFIT® · All rights reserved</div>
 </footer>
@@ -743,5 +760,21 @@ function toggleTheme(){
 const saved = localStorage.getItem('smf-theme');
 if(saved) document.documentElement.setAttribute('data-theme', saved);
 </script>
+
+<div style="background:#0f0e0c;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+    <span style="font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.22)">REALFIT&reg; ecosystem</span>
+  </div>
+  <div style="display:flex;gap:18px;flex-wrap:wrap">
+    <a href="https://realfit.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">REALFIT.com</a>
+    <a href="https://fitdat.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">FITDAT.com</a>
+    <a href="https://realfitscore.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">Score estimator</a>
+    <a href="https://scoremyfitness.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">ScoreMyFitness</a>
+    <a href="https://scoremy40.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">ScoreMy40</a>
+    <a href="https://fitdat.com/scoring-spec.html" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">Scoring spec</a>
+    <a href="mailto:hello@realfit.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">Contact</a>
+  </div>
+  <div style="font-size:11px;color:rgba(255,255,255,.18)">&copy; 2026 REALFIT&reg; &middot; FITDAT&reg;</div>
+</div>
 </body>
 </html>

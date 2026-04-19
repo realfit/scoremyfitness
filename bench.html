@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ScoreMyBench — How does your bench press stack up?</title>
+<title>ScoreMyBench — How does your bench press compare?</title>
 <meta name="description" content="Enter your bench press 1RM and see exactly where you stand with a live plate-loading animation. Powered by the REALFIT Absolute Score.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -221,6 +221,13 @@ header{position:sticky;top:0;z-index:100;background:rgba(26,28,34,0.92);backdrop
 .cr-val{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);width:50px;text-align:right;flex-shrink:0}
 
 /* Ecosystem */
+.dev-intro{margin:0 0 20px;padding:14px 18px;border:1px solid rgba(58,123,255,0.25);border-radius:10px;background:rgba(58,123,255,0.06);display:flex;align-items:flex-start;gap:12px}
+.dev-intro-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(58,123,255,0.15);color:var(--accent2);flex-shrink:0;margin-top:1px;white-space:nowrap}
+.dev-intro-text{font-size:13px;color:var(--muted);line-height:1.65}
+.dev-intro-text a{color:var(--accent2);text-decoration:none}
+.dev-intro-text a:hover{text-decoration:underline}
+[data-theme="light"] .dev-intro{border-color:rgba(26,86,219,0.2);background:rgba(26,86,219,0.04)}
+[data-theme="light"] .dev-intro-tag{background:rgba(26,86,219,0.1);color:var(--accent2)}
 .eco-strip{border-top:1px solid var(--border);padding-top:24px;display:flex;gap:12px;flex-wrap:wrap}
 .eco-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-decoration:none;color:var(--text);flex:1;min-width:180px;transition:border-color .15s}
 .eco-card:hover{border-color:var(--border2)}
@@ -275,18 +282,23 @@ footer{padding:24px;border-top:1px solid var(--border);display:flex;align-items:
 
 <header>
   <div class="logo-group">
-    <a href="https://scoremyfitness.com" class="site-logo">ScoreMy<span>Bench</span></a>
-    <a href="https://realfit.com" target="_blank" rel="noopener" class="realfit-badge">A REALFIT app</a>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <a href="https://scoremyfitness.com" class="site-logo">ScoreMy<span>Bench</span></a>
+      <a href="https://realfit.com" target="_blank" rel="noopener" style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .15s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">A REALFIT App</a>
+    </div>
   </div>
   <div class="header-right">
-    <a href="https://scoremy40.com" class="nav-link">ScoreMy40</a>
+    <a href="https://scoremyfitness.com" class="nav-link">ScoreMyFitness.com</a>
+    <a href="https://fitdat.com" class="nav-link">FITDAT.com</a>
+    <a href="https://realfit.com" class="nav-link">REALFIT.com</a>
     <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾</button>
+    <a href="https://realfitscore.com" class="nav-cta" style="padding:9px 20px;font-size:14px;font-weight:700;letter-spacing:.04em;white-space:nowrap;background:var(--accent);color:var(--black);border-radius:4px;text-decoration:none;transition:opacity .15s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Get your overall fitness score →</a>
   </div>
 </header>
 
 <section class="hero">
   <div class="hero-eyebrow">Bench Press · 1 Rep Max · REALFIT Absolute Score</div>
-  <h1>How much do you<br><span>really</span> bench?</h1>
+  <h1>How does your bench<br>press <span>compare?</span></h1>
   <p class="hero-sub">Enter your 1RM and watch the plates load — see exactly where you stand on the universal standard.</p>
 </section>
 
@@ -394,6 +406,12 @@ footer{padding:24px;border-top:1px solid var(--border);display:flex;align-items:
     </div>
 
     <!-- Ecosystem links -->
+    <div class="dev-intro" style="margin-bottom:20px">
+      <span class="dev-intro-tag">Built on FITDAT</span>
+      <p class="dev-intro-text">
+        ScoreMyBench is a sample app built on the <a href="https://fitdat.com">FITDAT open library</a> using the <a href="https://fitdat.com/scoring-spec.html">REALFIT Absolute Score</a> specification. Every score matches the live iOS app exactly &mdash; same test definition, same protocol, same scoring table. Developers can build their own scoring apps on the same foundation. <a href="https://fitdat.com/architecture.html">Learn how &rarr;</a>
+      </p>
+    </div>
     <div class="eco-strip">
       <a href="https://scoremy40.com" class="eco-card">
         <div class="eco-badge">Speed test</div>
