@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/bench", "destination": "/bench.html" },
-    { "source": "/throw", "destination": "/throw.html" }
+    { "source": "/throw", "destination": "/throw.html" },
+    { "source": "/1-5-mile", "destination": "/1-5-mile.html" }
   ]
 }

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScoreMy 1.5-Mile — How fast is fast enough?</title>
+<meta name="description" content="Enter your 1.5-mile run time and see exactly where it scores on the FBI Special Agent Physical Fitness Test. Built on FITDAT.">
+<meta property="og:title" content="ScoreMy 1.5-Mile — FBI PFT scoring">
+<meta property="og:description" content="See exactly where your 1.5-mile time scores on the FBI PFT — the selection standard for Special Agent candidates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --surface:#1a1c22;--surface2:#22242c;--surface3:#2a2d36;
+  --text:#f0ede8;--muted:#8a8880;--faint:#5a5856;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --accent:#e8f02a;--accent2:#3A7BFF;--teal:#5DCAA5;
+  --pass:#5DCAA5;--fail:#D85A30;--peak:#e8f02a;
+  --bar:#b8b4ae;
+  --black:#0f0e0c;
+}
+[data-theme="light"]{
+  --surface:#f4f2ee;--surface2:#eeebe5;--surface3:#e5e2dc;
+  --text:#0f0e0c;--muted:#6b6860;--faint:#9a9890;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);
+  --accent:#c0392b;--accent2:#1a56db;--teal:#0a6e56;
+  --pass:#0a6e56;--fail:#b33418;--peak:#c0392b;
+  --bar:#888480;
+}
+[data-theme="light"] header{background:rgba(244,242,238,0.94);border-bottom-color:rgba(0,0,0,0.1)}
+[data-theme="light"] .realfit-badge{border-color:rgba(0,0,0,0.14)}
+[data-theme="light"] .theme-toggle{color:var(--muted);border-color:rgba(0,0,0,0.16)}
+[data-theme="light"] .std-tab.active{background:var(--text);color:#f4f2ee;border-color:var(--text)}
+[data-theme="light"] .score-band{color:var(--surface)}
+[data-theme="light"] .chrono-digit{color:var(--text)}
+
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.6;color:var(--text);background:var(--surface);transition:background .2s,color .2s}
+
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:100;background:rgba(26,28,34,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.logo-group{display:flex;align-items:center;gap:12px}
+.site-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--text);text-decoration:none}
+.site-logo span{color:var(--accent)}
+.realfit-badge{padding:4px 10px;border-radius:5px;border:1px solid var(--border2);font-size:11px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:.04em;display:flex;align-items:center;gap:6px;transition:all .15s}
+.realfit-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0}
+.realfit-badge:hover{border-color:var(--teal);color:var(--teal)}
+.header-right{display:flex;align-items:center;gap:10px}
+.nav-link{padding:6px 12px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none;transition:all .15s}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.theme-toggle{border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;transition:all .15s}
+.theme-toggle:hover{border-color:var(--text);color:var(--text)}
+
+/* ── HERO ── */
+.hero{padding:48px 24px 32px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(44px,7vw,72px);font-weight:900;line-height:.95;letter-spacing:-.01em;color:var(--text);margin-bottom:10px}
+.hero h1 span{color:var(--accent)}
+.hero-sub{font-size:16px;color:var(--muted);max-width:520px;margin:0 auto}
+
+/* ── MAIN LAYOUT ── */
+.main{max-width:1100px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+
+@media (max-width: 860px){
+  .main{grid-template-columns:1fr;gap:28px}
+}
+
+/* ── INPUT PANEL ── */
+.panel-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+
+/* Standard (sex) selector */
+.std-tabs{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap}
+.std-tab{flex:1;min-width:0;padding:10px 14px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:13px;font-weight:500;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s;text-align:center;white-space:nowrap}
+.std-tab.active{background:var(--text);color:var(--surface);border-color:var(--text)}
+.std-tab:hover:not(.active){border-color:var(--text);color:var(--text)}
+
+/* Time input — minutes:seconds chronograph style */
+.time-wrap{margin-bottom:32px}
+.time-label{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.time-label span{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
+
+.chrono{display:flex;align-items:baseline;gap:12px;padding:28px 24px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;justify-content:center;margin-bottom:14px}
+.chrono-input{
+  width:120px;font-family:'JetBrains Mono',monospace;font-size:72px;font-weight:500;
+  background:transparent;color:var(--text);border:none;outline:none;text-align:center;padding:0;
+  font-variant-numeric:tabular-nums;border-bottom:2px solid var(--accent);
+  transition:border-color .15s;
+}
+.chrono-input:focus{border-bottom-color:var(--text)}
+.chrono-input::-webkit-inner-spin-button,.chrono-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.chrono-input{-moz-appearance:textfield}
+.chrono-colon{font-family:'JetBrains Mono',monospace;font-size:52px;font-weight:300;color:var(--muted);padding-bottom:4px}
+.chrono-unit{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);display:flex;flex-direction:column;gap:4px;margin-left:4px}
+
+.time-slider-wrap{margin-bottom:8px}
+.time-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;background:var(--surface3);outline:none;cursor:pointer;margin-bottom:8px}
+.time-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--surface);box-shadow:0 0 0 1px var(--accent)}
+.time-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--surface)}
+.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);font-family:'Barlow Condensed',sans-serif}
+
+/* Full scoring table */
+.table-section{margin-top:32px}
+.scoring-table{width:100%;border-collapse:collapse;font-size:13px;font-family:'Barlow',sans-serif}
+.scoring-table thead th{text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:10px 10px 10px 0;border-bottom:1px solid var(--border2)}
+.scoring-table thead th:nth-child(2){text-align:right;padding-right:14px}
+.scoring-table td{padding:9px 10px 9px 0;border-bottom:1px solid var(--border);color:var(--muted);font-variant-numeric:tabular-nums}
+.scoring-table td:nth-child(1){font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;color:var(--text);width:60px}
+.scoring-table td:nth-child(2){font-family:'JetBrains Mono',monospace;font-weight:500;text-align:right;padding-right:14px;color:var(--text);width:140px}
+.scoring-table tr.current td{background:color-mix(in srgb, var(--accent) 14%, transparent);color:var(--text) !important}
+.scoring-table tr.current td:first-child{color:var(--accent) !important;position:relative}
+.scoring-table tr.current td:first-child::before{content:'▸';position:absolute;left:-16px;color:var(--accent)}
+
+/* ── RESULT PANEL ── */
+
+/* Score display (mirrors bench's .score-display) */
+.score-display{text-align:center;padding:32px 24px 28px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:20px}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:clamp(96px,16vw,148px);font-weight:900;line-height:.85;letter-spacing:-.02em;color:var(--text);font-variant-numeric:tabular-nums;margin-bottom:6px}
+.score-num.fail{color:var(--fail)}
+.score-scale{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:18px}
+.score-band{display:inline-block;padding:8px 18px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--surface3);color:var(--text);margin-bottom:10px}
+.score-band.pass-peak{background:var(--peak);color:var(--black)}
+.score-band.pass{background:var(--pass);color:#04342C}
+.score-band.fail{background:var(--fail);color:#FAECE7}
+.score-status{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.score-feedback{font-size:14px;line-height:1.5;color:var(--muted);max-width:360px;margin:0 auto}
+
+/* Chronograph strip visualization — the signature visual */
+.chrono-strip-wrap{padding:24px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:20px}
+.chrono-strip-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.chrono-strip-label .live{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);letter-spacing:0}
+.chrono-strip{position:relative;height:48px;border-radius:4px;background:var(--surface3);overflow:visible;margin-bottom:10px}
+.strip-tier{position:absolute;top:0;bottom:0;transition:opacity .2s}
+.strip-tier.current{opacity:1 !important}
+.strip-marker{position:absolute;top:-6px;bottom:-6px;width:3px;background:var(--accent);box-shadow:0 0 10px var(--accent);border-radius:2px;transition:left .25s ease-out;pointer-events:none}
+.strip-marker-label{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+.strip-legend{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);margin-top:6px}
+.strip-guide{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.strip-guide-item{display:flex;align-items:center;gap:6px}
+.strip-guide-swatch{width:10px;height:10px;border-radius:2px}
+
+/* Dev intro + eco strip (match bench) */
+.dev-intro{padding:20px 22px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:20px}
+.dev-intro-tag{display:inline-block;padding:3px 9px;background:var(--surface3);border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.dev-intro-text{font-size:14px;line-height:1.55;color:var(--muted)}
+.dev-intro-text a{color:var(--text);text-decoration:underline;text-decoration-color:var(--border2);text-underline-offset:3px}
+.dev-intro-text a:hover{text-decoration-color:var(--accent)}
+.dev-intro-text code,.dev-intro-text .mono{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surface3);padding:1px 5px;border-radius:3px;color:var(--text)}
+
+.eco-strip{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.eco-card{padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;text-decoration:none;color:var(--text);transition:all .15s}
+.eco-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.eco-card.featured{background:var(--surface3)}
+.eco-badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.eco-title{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;letter-spacing:.02em;margin-bottom:2px}
+.eco-desc{font-size:12px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.eco-arrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+@media (max-width: 540px){
+  .eco-strip{grid-template-columns:1fr}
+}
+
+/* ── PROTOCOL SECTION (match bench exactly) ── */
+.protocol-section{border-top:1px solid var(--border);padding:48px 24px;background:var(--surface2)}
+.protocol-inner{max-width:1100px;margin:0 auto}
+.protocol-header{margin-bottom:28px}
+.protocol-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.protocol-id{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:0;text-transform:none;padding:2px 6px;background:var(--surface);border-radius:3px}
+.protocol-eyebrow a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--muted);padding-bottom:1px;transition:all .15s}
+.protocol-eyebrow a:hover{color:var(--accent);border-color:var(--accent)}
+.protocol-title{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;color:var(--text);letter-spacing:-.01em;margin-bottom:8px}
+.protocol-desc{font-size:15px;color:var(--muted);max-width:680px;line-height:1.55}
+.protocol-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.protocol-card{padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.pc-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.pc-list{list-style:none;padding:0}
+.pc-list li{padding:6px 0;padding-left:18px;position:relative;font-size:14px;line-height:1.5;color:var(--text);border-bottom:1px dashed var(--border)}
+.pc-list li:last-child{border-bottom:none}
+.pc-list li::before{content:'';position:absolute;left:0;top:14px;width:8px;height:1px;background:var(--accent)}
+.pc-note{margin-top:14px;padding:12px 14px;background:var(--surface2);border-radius:6px;font-size:13px;color:var(--muted);line-height:1.5}
+.pc-note strong{color:var(--text)}
+
+/* ── FOOTER (match bench exactly) ── */
+footer{border-top:1px solid var(--border);padding:22px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);max-width:1100px;margin:0 auto}
+.footer-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.footer-left a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--border2);transition:all .15s}
+.footer-left a:hover{color:var(--accent);border-color:var(--accent)}
+.divider{color:var(--faint)}
+.footer-right{font-size:12px;color:var(--faint)}
+
+@media (max-width: 620px){
+  header{padding:0 14px;height:auto;min-height:52px;flex-wrap:wrap;padding:10px 14px;gap:8px}
+  .header-right{gap:6px;flex-wrap:wrap}
+  .nav-link{font-size:12px;padding:4px 8px}
+  .nav-cta{padding:7px 12px !important;font-size:12px !important}
+  .main{padding:28px 14px}
+  .hero{padding:36px 14px 24px}
+  .chrono-input{width:90px;font-size:54px}
+  .chrono-colon{font-size:38px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <a href="https://scoremyfitness.com" class="site-logo">ScoreMy<span>1.5-Mile</span></a>
+      <a href="https://realfit.com" target="_blank" rel="noopener" style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .15s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">A REALFIT App</a>
+    </div>
+  </div>
+  <div class="header-right">
+    <a href="https://scoremyfitness.com" class="nav-link">ScoreMyFitness.com</a>
+    <a href="https://fitdat.com" class="nav-link">FITDAT.com</a>
+    <a href="https://realfit.com" class="nav-link">REALFIT.com</a>
+    <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾</button>
+    <a href="https://realfitscore.com" class="nav-cta" style="padding:9px 20px;font-size:14px;font-weight:700;letter-spacing:.04em;white-space:nowrap;background:var(--accent);color:var(--black);border-radius:4px;text-decoration:none;transition:opacity .15s" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Get your overall fitness score →</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">1.5-Mile Run · FBI Special Agent PFT</div>
+  <h1>How fast is<br>fast <span>enough?</span></h1>
+  <p class="hero-sub">Enter your 1.5-mile time and see exactly where it scores on the FBI Special Agent Physical Fitness Test — the selection standard for Special Agent candidates.</p>
+</section>
+
+<div class="main">
+
+  <!-- LEFT: INPUT -->
+  <div class="input-panel">
+    <div class="panel-label">Standard</div>
+    <div class="std-tabs">
+      <button class="std-tab active" onclick="setStd('male',this)">FBI Male Candidate</button>
+      <button class="std-tab" onclick="setStd('female',this)">FBI Female Candidate</button>
+    </div>
+
+    <div class="time-wrap">
+      <div class="panel-label" style="margin-bottom:12px">Your 1.5-mile time</div>
+      <div class="chrono">
+        <input type="number" min="0" max="59" value="11" id="minInput" class="chrono-input" inputmode="numeric">
+        <span class="chrono-colon">:</span>
+        <input type="number" min="0" max="59" value="30" id="secInput" class="chrono-input" inputmode="numeric">
+        <div class="chrono-unit"><span>min</span><span>sec</span></div>
+      </div>
+      <div class="time-slider-wrap">
+        <input type="range" class="time-slider" id="timeSlider" min="420" max="1200" value="690" step="1" oninput="onSlider(this.value)">
+        <div class="slider-labels">
+          <span>7:00</span>
+          <span>11:40</span>
+          <span>20:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full scoring table for the selected standard -->
+    <div class="table-section">
+      <div class="panel-label" id="tableLabel">Full scoring scale · FBI Male</div>
+      <table class="scoring-table">
+        <thead>
+          <tr>
+            <th>Points</th>
+            <th>Time range</th>
+            <th>Band</th>
+          </tr>
+        </thead>
+        <tbody id="scoringTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RIGHT: RESULT -->
+  <div class="result-panel">
+
+    <!-- Score display -->
+    <div class="score-display">
+      <div class="score-num" id="scoreNum">—</div>
+      <div class="score-scale">FBI PFT scale · −2 to +10 points</div>
+      <div><span class="score-band" id="scoreBand">Enter your time</span></div>
+      <div class="score-status" id="scoreStatus" style="margin-top:14px">— · per event</div>
+      <div class="score-feedback" id="scoreFeedback"></div>
+    </div>
+
+    <!-- Signature visual: chronograph strip -->
+    <div class="chrono-strip-wrap">
+      <div class="chrono-strip-label">
+        <span>Where you land on the scale</span>
+        <span class="live" id="liveTime">11:30</span>
+      </div>
+      <div class="chrono-strip" id="chronoStrip">
+        <div class="strip-marker" id="stripMarker" style="left:50%">
+          <div class="strip-marker-label" id="stripMarkerLabel">You</div>
+        </div>
+      </div>
+      <div class="strip-legend">
+        <span id="stripLeft">8:59 or faster</span>
+        <span id="stripRight">14:00 or slower</span>
+      </div>
+      <div class="strip-guide">
+        <div class="strip-guide-item"><span class="strip-guide-swatch" style="background:var(--peak)"></span>+7 to +10</div>
+        <div class="strip-guide-item"><span class="strip-guide-swatch" style="background:var(--pass)"></span>+1 to +6 (pass)</div>
+        <div class="strip-guide-item"><span class="strip-guide-swatch" style="background:var(--fail)"></span>0 to −2 (fail)</div>
+      </div>
+    </div>
+
+    <!-- Built on FITDAT -->
+    <div class="dev-intro">
+      <span class="dev-intro-tag">Built on FITDAT</span>
+      <p class="dev-intro-text">
+        ScoreMy 1.5-Mile uses <span class="mono">test_1_5_mile_run v1.0.0</span> from the <a href="https://fitdat.com">FITDAT open library</a>, scored against the FBI's published <span class="mono">std_1_5_mile_fbi_pft_male</span> and <span class="mono">std_1_5_mile_fbi_pft_female</span> StandardSets. Same test, two populations, two distributions — one consistent spec. Developers can build their own scoring apps on the same foundation. <a href="https://fitdat.com/architecture.html">Learn how →</a>
+      </p>
+    </div>
+
+    <!-- Ecosystem links -->
+    <div class="eco-strip">
+      <a href="https://scoremyfitness.com/bench" class="eco-card">
+        <div class="eco-badge">Strength test</div>
+        <div class="eco-title">ScoreMyBench</div>
+        <div class="eco-desc">How does your bench press 1RM compare?</div>
+        <div class="eco-arrow">Try it →</div>
+      </a>
+      <a href="https://realfitscore.com" class="eco-card featured">
+        <div class="eco-badge">Full battery</div>
+        <div class="eco-title">REALFITSCORE</div>
+        <div class="eco-desc">Score all 13 tests and get your REALFIT Absolute Score.</div>
+        <div class="eco-arrow">Score everything →</div>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<section class="protocol-section">
+  <div class="protocol-inner">
+    <div class="protocol-header">
+      <div class="protocol-title-block">
+        <div class="protocol-eyebrow">
+          FITDAT test specification
+          <span class="protocol-id">proto_1_5_mile_run_v1</span>
+          <a href="https://fitdat.com/library.html" target="_blank" rel="noopener">Full spec &rarr;</a>
+        </div>
+        <div class="protocol-title">1.5-Mile Run &mdash; test protocol</div>
+        <div class="protocol-desc">Measures aerobic endurance. A single continuous timed run over 1.5 miles (2,414 m) on a flat, measured course. Standing start, single all-out effort, time from start signal to finish line crossing.</div>
+      </div>
+    </div>
+    <div class="protocol-grid">
+      <div class="protocol-card">
+        <div class="pc-label">Equipment required</div>
+        <ul class="pc-list">
+          <li>Stopwatch or electronic timing &mdash; accurate to 0.1s</li>
+          <li>Measured 1.5-mile course, 400m track (6 laps), or 1/4-mile track</li>
+          <li>GPS device with &plusmn;1% distance accuracy (alternative to measured course)</li>
+        </ul>
+      </div>
+      <div class="protocol-card">
+        <div class="pc-label">Test guidelines</div>
+        <ul class="pc-list">
+          <li>Standing start at the start line</li>
+          <li>Single all-out continuous effort &mdash; not paced for training</li>
+          <li>Time from start signal to finish line crossing</li>
+          <li>Course grade must not exceed &plusmn;2% over any 400m segment</li>
+          <li>No external pacing (vehicle or bicycle escort)</li>
+        </ul>
+      </div>
+      <div class="protocol-card">
+        <div class="pc-label">Valid surfaces</div>
+        <ul class="pc-list">
+          <li>Certified running track</li>
+          <li>Measured flat road or path</li>
+          <li>GPS-verified route (&plusmn;1% tolerance)</li>
+        </ul>
+        <div class="pc-note"><strong>Treadmill is not valid</strong> for certified administration. Belt speed and grade vary across machines, and treadmill running energy cost differs materially from overground.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">
+    <strong style="color:var(--text);font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">ScoreMy 1.5-Mile</strong>
+    <span class="divider">·</span>
+    A <a href="https://realfit.com">REALFIT</a> app
+    <span class="divider">·</span>
+    <a href="https://fitdat.com/scoring-spec.html">Scoring methodology</a>
+    <span class="divider">·</span>
+    <a href="https://scoremyfitness.com">All tests</a>
+  </div>
+  <div class="footer-right">© 2026 REALFIT® · FITDAT® v1.1</div>
+</footer>
+
+<script>
+// ========================================================================
+// FITDAT-backed scoring data
+// std_1_5_mile_fbi_pft_male v1.0.0  (seconds, anchor_points)
+// std_1_5_mile_fbi_pft_female v1.0.0
+// ========================================================================
+// Each tier: threshold is the SLOWEST time (in seconds) still earning these points
+// Ordered from best (+10, fastest) to worst (-2, slowest)
+const STANDARDS = {
+  male: {
+    label:'FBI Male',
+    stripBest: 480,   // 8:00 — a bit faster than +10 for visual headroom
+    stripWorst: 900,  // 15:00 — a bit slower than fail for visual headroom
+    tiers:[
+      {points:10, threshold:539, band:'Maximum',     feedback:'8:59 or faster. Maximum FBI PFT points on this event.'},
+      {points: 9, threshold:547, band:'Strong',      feedback:'9:00–9:07. Well above BFTC requirement.'},
+      {points: 8, threshold:568, band:'Strong',      feedback:'9:08–9:28.'},
+      {points: 7, threshold:589, band:'Strong',      feedback:'9:29–9:49.'},
+      {points: 6, threshold:613, band:'Competent',   feedback:'9:50–10:13.'},
+      {points: 5, threshold:634, band:'Competent',   feedback:'10:14–10:34.'},
+      {points: 4, threshold:665, band:'Competent',   feedback:'10:35–11:05.'},
+      {points: 3, threshold:693, band:'Competent',   feedback:'11:06–11:33.'},
+      {points: 2, threshold:720, band:'Solid pass',  feedback:'11:34–12:00.'},
+      {points: 1, threshold:749, band:'Minimum pass',feedback:'12:01–12:29. Minimum passing threshold.'},
+      {points: 0, threshold:840, band:'Below min',   feedback:'12:30–14:00. Does not clear per-event floor. Fails the PFT.'},
+      {points:-2, threshold:Infinity, band:'Disqualifying', feedback:'14:01 or slower. Disqualifying performance regardless of other event scores.'},
+    ],
+  },
+  female: {
+    label:'FBI Female',
+    stripBest: 540,   // 9:00
+    stripWorst: 1020, // 17:00
+    tiers:[
+      {points:10, threshold:634, band:'Maximum',     feedback:'10:34 or faster. Maximum FBI PFT points on this event.'},
+      {points: 9, threshold:649, band:'Strong',      feedback:'10:35–10:49.'},
+      {points: 8, threshold:664, band:'Strong',      feedback:'10:50–11:04.'},
+      {points: 7, threshold:679, band:'Strong',      feedback:'11:05–11:19.'},
+      {points: 6, threshold:694, band:'Competent',   feedback:'11:20–11:34.'},
+      {points: 5, threshold:709, band:'Competent',   feedback:'11:35–11:49.'},
+      {points: 4, threshold:729, band:'Competent',   feedback:'11:50–12:09.'},
+      {points: 3, threshold:749, band:'Competent',   feedback:'12:10–12:29.'},
+      {points: 2, threshold:764, band:'Solid pass',  feedback:'12:30–12:44.'},
+      {points: 1, threshold:778, band:'Minimum pass',feedback:'12:45–12:58. Minimum passing threshold.'},
+      {points: 0, threshold:843, band:'Below min',   feedback:'12:59–14:03. Does not clear per-event floor. Fails the PFT.'},
+      {points:-2, threshold:Infinity, band:'Disqualifying', feedback:'14:04 or slower. Disqualifying performance regardless of other event scores.'},
+    ],
+  },
+};
+
+// ========================================================================
+// State + utilities
+// ========================================================================
+let currentStd = 'male';
+
+function fmt(sec){
+  if(!isFinite(sec)) return '—';
+  const m = Math.floor(sec/60);
+  const s = Math.floor(sec%60);
+  return m+':'+String(s).padStart(2,'0');
+}
+
+function scoreRun(totalSec, std){
+  if(totalSec == null || !isFinite(totalSec) || totalSec <= 0) return null;
+  for(const tier of std.tiers){
+    if(totalSec <= tier.threshold) return tier;
+  }
+  return std.tiers[std.tiers.length-1];
+}
+
+// ========================================================================
+// Event handlers
+// ========================================================================
+function toggleTheme(){
+  const html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  render(); // re-render to pick up new colors in inline styles
+}
+
+function setStd(std, btn){
+  currentStd = std;
+  document.querySelectorAll('.std-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function getTotalSec(){
+  const m = parseInt(document.getElementById('minInput').value, 10);
+  const s = parseInt(document.getElementById('secInput').value, 10);
+  if(isNaN(m) || isNaN(s) || m<0 || s<0 || s>=60) return null;
+  return m*60 + s;
+}
+
+function onInputChange(){
+  const sec = getTotalSec();
+  if(sec != null){
+    document.getElementById('timeSlider').value = Math.max(420, Math.min(1200, sec));
+  }
+  render();
+}
+
+function onSlider(val){
+  const sec = parseInt(val,10);
+  document.getElementById('minInput').value = Math.floor(sec/60);
+  document.getElementById('secInput').value = sec%60;
+  render();
+}
+
+document.getElementById('minInput').addEventListener('input', onInputChange);
+document.getElementById('secInput').addEventListener('input', onInputChange);
+
+// ========================================================================
+// Render pipeline
+// ========================================================================
+function buildStrip(std, totalSec, currentTier){
+  const strip = document.getElementById('chronoStrip');
+  // Clear everything except the marker
+  const marker = document.getElementById('stripMarker');
+  Array.from(strip.children).forEach(c => { if(c !== marker) c.remove(); });
+
+  // Render tier segments left-to-right, fastest on left
+  // Sort tiers best-to-worst (tiers are already in that order)
+  const range = std.stripWorst - std.stripBest;
+  std.tiers.forEach((tier, idx) => {
+    if(tier.threshold === Infinity) return; // skip the -2 catch-all for the visual
+    const prevThresh = idx === 0 ? std.stripBest : std.tiers[idx-1].threshold;
+    const startSec = prevThresh;
+    const endSec = tier.threshold;
+    const leftPct = ((startSec - std.stripBest) / range) * 100;
+    const widthPct = ((endSec - startSec) / range) * 100;
+    if(leftPct < 0 || leftPct > 100) return;
+
+    let color = 'var(--surface3)';
+    if(tier.points >= 7) color = 'var(--peak)';
+    else if(tier.points >= 1) color = 'var(--pass)';
+    else color = 'var(--fail)';
+
+    const isCurrent = currentTier && tier.points === currentTier.points;
+    const seg = document.createElement('div');
+    seg.className = 'strip-tier' + (isCurrent ? ' current' : '');
+    seg.style.left = leftPct + '%';
+    seg.style.width = Math.max(0, Math.min(100 - leftPct, widthPct)) + '%';
+    seg.style.background = color;
+    seg.style.opacity = isCurrent ? '1' : '0.35';
+    strip.insertBefore(seg, marker);
+  });
+
+  // Position marker
+  const clampedSec = Math.max(std.stripBest, Math.min(std.stripWorst, totalSec));
+  const markerPct = ((clampedSec - std.stripBest) / range) * 100;
+  marker.style.left = markerPct + '%';
+  document.getElementById('stripMarkerLabel').textContent = 'You · ' + fmt(totalSec);
+  document.getElementById('liveTime').textContent = fmt(totalSec);
+  document.getElementById('stripLeft').textContent = fmt(std.tiers[0].threshold) + ' or faster';
+  document.getElementById('stripRight').textContent = fmt(std.tiers[std.tiers.length-2].threshold) + ' or slower';
+}
+
+function buildScoringTable(std, currentTier){
+  const tbody = document.getElementById('scoringTableBody');
+  tbody.innerHTML = '';
+  document.getElementById('tableLabel').textContent = 'Full scoring scale · ' + std.label;
+
+  std.tiers.forEach((tier, idx) => {
+    const prev = idx === 0 ? null : std.tiers[idx-1].threshold;
+    let rangeLabel;
+    if(tier.threshold === Infinity){
+      rangeLabel = fmt(prev + 1) + ' or slower';
+    } else if(prev === null){
+      rangeLabel = fmt(tier.threshold) + ' or faster';
+    } else {
+      rangeLabel = fmt(prev + 1) + '–' + fmt(tier.threshold);
+    }
+
+    const tr = document.createElement('tr');
+    if(currentTier && tier.points === currentTier.points) tr.className = 'current';
+    tr.innerHTML = `
+      <td>${tier.points > 0 ? '+' + tier.points : tier.points}</td>
+      <td>${rangeLabel}</td>
+      <td>${tier.band}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function render(){
+  const std = STANDARDS[currentStd];
+  const totalSec = getTotalSec();
+  const tier = scoreRun(totalSec, std);
+
+  if(tier){
+    const scoreNumEl = document.getElementById('scoreNum');
+    scoreNumEl.textContent = tier.points > 0 ? '+' + tier.points : tier.points;
+    scoreNumEl.classList.toggle('fail', tier.points < 1);
+
+    const bandEl = document.getElementById('scoreBand');
+    bandEl.textContent = tier.band;
+    bandEl.className = 'score-band';
+    if(tier.points >= 7) bandEl.classList.add('pass-peak');
+    else if(tier.points >= 1) bandEl.classList.add('pass');
+    else bandEl.classList.add('fail');
+
+    document.getElementById('scoreStatus').textContent =
+      (tier.points >= 1 ? 'Pass' : 'Fail') + ' · per event';
+    document.getElementById('scoreFeedback').textContent = tier.feedback;
+
+    buildStrip(std, totalSec, tier);
+    buildScoringTable(std, tier);
+  } else {
+    document.getElementById('scoreNum').textContent = '—';
+    document.getElementById('scoreNum').classList.remove('fail');
+    const bandEl = document.getElementById('scoreBand');
+    bandEl.textContent = 'Enter a valid time';
+    bandEl.className = 'score-band';
+    document.getElementById('scoreStatus').textContent = '— · per event';
+    document.getElementById('scoreFeedback').textContent = '';
+    buildScoringTable(std, null);
+  }
+}
+
+// initial render
+render();
+</script>
+
+</body>
+</html>
