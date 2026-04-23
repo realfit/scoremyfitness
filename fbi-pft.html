@@ -272,7 +272,7 @@ footer{border-top:1px solid var(--border);padding:22px 24px;display:flex;justify
   <div class="built-on">
     <span class="built-on-tag">Built on FITDAT</span>
     <p class="built-on-text">
-      This Score Set scorer uses four Tests from the FITDAT open library (<span class="mono">test_pullup_max</span>, <span class="mono">test_300m_sprint</span>, <span class="mono">test_pushup_max</span>, <span class="mono">test_1_5_mile_run</span>) scored against eight FBI-published StandardSets (four events × two candidate populations). Composite logic — sum total, per-event minimum of +1, disqualifying at −2 — is declared in the Score Set document itself, not hardcoded into this app. Same architecture works for Army AFT, NFL Combine, or any other Score Set built on FITDAT.
+      This Score Set scorer uses four Tests from the FITDAT open library (<span class="mono">test_pullup_max</span>, <span class="mono">test_300m_sprint</span>, <span class="mono">test_fbi_pushup_max</span>, <span class="mono">test_1_5_mile_run</span>) scored against eight FBI-published StandardSets (four events × two candidate populations). Composite logic — sum total, per-event minimum of +1, disqualifying at −2 — is declared in the Score Set document itself, not hardcoded into this app. Same architecture works for Army AFT, NFL Combine, or any other Score Set built on FITDAT.
     </p>
     <div class="disclaimer">
       <strong>Unofficial — for illustration.</strong> Threshold values drawn from third-party training resources cross-referenced for consistency. Verify against the authoritative FBI scoring scale at <a href="https://fbijobs.gov/special-agents/physical-requirements" style="color:var(--text)">fbijobs.gov</a> before treating any result as binding.
@@ -379,7 +379,7 @@ const EVENTS = {
   },
 
   pushups:{
-    id:'test_pushup_max', name:'Push-Ups', unit:'reps (60 sec)',
+    id:'test_fbi_pushup_max', name:'Push-Ups', unit:'reps (60 sec)',
     inputType:'integer', direction:'higher',
     protocol:'Maximum push-ups in 60 seconds, full extension at top, chest to within a fist of floor at bottom. FBI-specific protocol (proto_fbi_pushup_v1).',
     placeholder:'reps in 60 sec',

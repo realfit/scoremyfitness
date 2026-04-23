@@ -3,6 +3,7 @@
     { "source": "/bench", "destination": "/bench.html" },
     { "source": "/throw", "destination": "/throw.html" },
     { "source": "/1-5-mile", "destination": "/1-5-mile.html" },
-    { "source": "/fbi-pft", "destination": "/fbi-pft.html" }
+    { "source": "/fbi-pft", "destination": "/fbi-pft.html" },
+    { "source": "/aft", "destination": "/aft.html" }
   ]
 }
