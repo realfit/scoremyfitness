@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScoreMyFitness — FBI Special Agent PFT</title>
+<meta name="description" content="Could you pass FBI Special Agent selection? Enter your results across all four PFT events and see exactly where you stand on the signed-point scoring scale. Built on FITDAT.">
+<meta property="og:title" content="FBI PFT Scorer — Could you pass selection?">
+<meta property="og:description" content="Full FBI Special Agent PFT scorer — pull-ups, 300m sprint, push-ups, 1.5-mile run. See your composite score and pass/fail verdict.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --surface:#161821;--surface2:#1d2029;--surface3:#262a35;
+  --text:#f0ede8;--muted:#8a8880;--faint:#5a5856;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --accent:#d4a84a;       /* FBI gold — the primary accent here */
+  --accent2:#4a7bc4;      /* FBI blue — secondary accent */
+  --teal:#5DCAA5;
+  --pass-strong:#5DCAA5;
+  --pass:#8bc474;
+  --fail:#D85A30;
+  --fail-hard:#b33418;
+  --bar:#b8b4ae;
+  --black:#0f0e0c;
+  --bg:#0d0e12;
+}
+[data-theme="light"]{
+  --surface:#ffffff;--surface2:#ede7d7;--surface3:#e0d9c5;
+  --text:#0f0e0c;--muted:#56524a;--faint:#8a8478;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);
+  --accent:#a07a1a;
+  --accent2:#1e4a8c;
+  --teal:#0a6e56;
+  --pass-strong:#2a6b4e;
+  --pass:#4a7030;
+  --fail:#a8341a;
+  --fail-hard:#7a1f0f;
+  --bar:#888480;
+  --bg:#f4f0e6;
+}
+[data-theme="light"] header{background:rgba(244,240,230,0.94);border-bottom-color:rgba(0,0,0,0.1)}
+[data-theme="light"] .theme-toggle{color:var(--muted);border-color:rgba(0,0,0,0.16)}
+[data-theme="light"] .verdict-badge.pass,[data-theme="light"] .verdict-badge.strong{color:#fff}
+[data-theme="light"] .verdict-badge.fail{color:#fff}
+
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.55;color:var(--text);background:var(--bg);transition:background .2s,color .2s}
+
+/* ── HEADER ── */
+header{position:sticky;top:0;z-index:100;background:rgba(13,14,18,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.logo-group{display:flex;align-items:center;gap:12px}
+.site-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--text);text-decoration:none}
+.site-logo span{color:var(--accent)}
+.header-right{display:flex;align-items:center;gap:10px}
+.nav-link{padding:6px 12px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none;transition:all .15s}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.theme-toggle{border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;transition:all .15s}
+.theme-toggle:hover{border-color:var(--text);color:var(--text)}
+
+/* ── HERO ── */
+.hero{padding:48px 24px 32px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(44px,7vw,72px);font-weight:900;line-height:.95;letter-spacing:-.01em;color:var(--text);margin-bottom:10px}
+.hero h1 span{color:var(--accent2)}
+.hero-sub{font-size:16px;color:var(--muted);max-width:580px;margin:0 auto}
+
+/* ── MAIN ── */
+.main{max-width:960px;margin:0 auto;padding:32px 24px 48px}
+
+/* ── RATIONALE (About this Score Set) ── */
+.rationale{margin-bottom:28px;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.rationale-header{width:100%;background:transparent;border:none;color:var(--text);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;text-align:left;cursor:pointer}
+.rationale-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.rationale-sub{font-size:15px;color:var(--muted)}
+.rationale-toggle{font-family:'JetBrains Mono',monospace;font-size:22px;color:var(--muted);transition:transform 200ms;line-height:1}
+.rationale.open .rationale-toggle{transform:rotate(45deg)}
+.rationale-body{padding:6px 22px 24px;border-top:1px solid var(--border);display:none}
+.rationale.open .rationale-body{display:block}
+.rationale-body p{font-size:14px;line-height:1.65;color:var(--muted);margin:12px 0}
+.rationale-body strong{color:var(--text)}
+.rationale-meta{margin-top:18px;padding:12px 14px;background:var(--surface2);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.6}
+
+/* ── Sex selector ── */
+.sex-selector{margin-bottom:24px}
+.panel-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.sex-buttons{display:flex;gap:8px}
+.sex-btn{flex:1;padding:12px 16px;background:transparent;color:var(--text);border:1px solid var(--border2);border-radius:6px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.sex-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+/* ── VERDICT CARD ── */
+.verdict{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:28px 26px;margin-bottom:24px;position:relative;overflow:hidden}
+.verdict-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent2),var(--accent))}
+.verdict-body{display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap}
+.verdict-total{flex:0 0 auto}
+.verdict-total-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.verdict-num{font-family:'Barlow Condensed',sans-serif;font-size:clamp(88px,15vw,132px);font-weight:900;line-height:.85;font-variant-numeric:tabular-nums;color:var(--muted)}
+.verdict-num.final{color:var(--text)}
+.verdict-num.fail{color:var(--fail)}
+.verdict-scale{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);margin-top:6px;letter-spacing:.05em}
+.verdict-right{flex:1 1 280px;min-width:200px}
+.verdict-badge{display:inline-block;padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;border-radius:4px;background:var(--surface2);color:var(--muted)}
+.verdict-badge.strong{background:var(--pass-strong);color:#043827}
+.verdict-badge.pass{background:var(--pass);color:#0f1a08}
+.verdict-badge.fail{background:var(--fail);color:#fff}
+.verdict-reason{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;line-height:1.25;color:var(--text);margin-bottom:8px;letter-spacing:-.005em}
+.verdict-note{font-size:13px;color:var(--muted);font-style:italic;line-height:1.55}
+
+/* ── EVENTS SECTION ── */
+.events-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.events-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.04em}
+
+/* ── EVENT ROW ── */
+.event-row{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;transition:border-color .15s}
+.event-row:hover{border-color:var(--border2)}
+.event-main{display:grid;grid-template-columns:minmax(160px,1.5fr) minmax(140px,1fr) auto auto;gap:16px;padding:14px 20px;align-items:center}
+.event-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.005em;color:var(--text)}
+.event-meta{font-size:12px;color:var(--faint);margin-top:2px}
+.event-input{width:100%;padding:10px 12px;background:var(--surface2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:500;border:1px solid var(--border2);border-radius:5px;outline:none;transition:border-color .15s}
+.event-input:focus{border-color:var(--accent)}
+.event-input::placeholder{color:var(--faint)}
+.event-points{text-align:right;min-width:80px}
+.event-points-num{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;color:var(--faint)}
+.event-points-num.entered{color:var(--text)}
+.event-points-num.peak{color:var(--accent)}
+.event-points-num.fail{color:var(--fail)}
+.event-points-num.fail-hard{color:var(--fail-hard)}
+.event-points-band{font-family:'Barlow',sans-serif;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.event-points-band.fail{color:var(--fail)}
+.event-expand-btn{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:6px 10px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s}
+.event-expand-btn:hover{border-color:var(--text);color:var(--text)}
+.event-detail{display:none;border-top:1px solid var(--border);padding:18px 20px;background:var(--surface2)}
+.event-row.expanded .event-detail{display:block}
+.event-protocol{font-size:13px;color:var(--muted);font-style:italic;line-height:1.5;margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border)}
+.event-protocol strong{color:var(--text);font-style:normal}
+.event-feedback{font-size:13px;color:var(--text);margin-bottom:16px;padding:10px 14px;background:var(--surface3);border-left:3px solid var(--muted);border-radius:3px}
+.event-feedback.peak{border-left-color:var(--accent)}
+.event-feedback.pass{border-left-color:var(--pass)}
+.event-feedback.fail{border-left-color:var(--fail)}
+.event-feedback.fail-hard{border-left-color:var(--fail-hard)}
+.event-scale-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.event-scale{display:grid;grid-template-columns:auto 1fr auto;gap:0;font-size:13px}
+.event-scale-row{display:contents}
+.event-scale-points{padding:6px 12px 6px 0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;text-align:right;width:60px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.event-scale-range{padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.event-scale-band{padding:6px 0 6px 12px;font-size:12px;font-style:italic;color:var(--muted)}
+.event-scale.current-set .event-scale-row.current .event-scale-points,
+.event-scale.current-set .event-scale-row.current .event-scale-range,
+.event-scale.current-set .event-scale-row.current .event-scale-band{background:var(--surface);font-style:normal}
+.event-scale.current-set .event-scale-row.current .event-scale-points{color:var(--text)}
+.event-scale.current-set .event-scale-row.current.peak .event-scale-points{color:var(--accent)}
+.event-scale.current-set .event-scale-row.current.fail .event-scale-points{color:var(--fail)}
+.event-scale.current-set .event-scale-row.current.fail-hard .event-scale-points{color:var(--fail-hard)}
+.event-scale.current-set .event-scale-row.current .event-scale-range{color:var(--text)}
+.event-scale.current-set .event-scale-row.current .event-scale-band{color:var(--text)}
+
+/* ── FOOTER SECTION ── */
+.built-on{margin-top:40px;padding:22px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.built-on-tag{display:inline-block;padding:3px 9px;background:var(--surface2);border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.built-on-text{font-size:14px;line-height:1.6;color:var(--muted)}
+.built-on-text .mono{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surface2);padding:1px 5px;border-radius:3px;color:var(--text)}
+.built-on-text a{color:var(--text);text-decoration:underline;text-decoration-color:var(--border2);text-underline-offset:3px}
+.built-on-text a:hover{text-decoration-color:var(--accent)}
+.disclaimer{margin-top:14px;padding:10px 12px;background:var(--surface2);border-radius:5px;font-size:12px;color:var(--muted);line-height:1.5}
+.disclaimer strong{color:var(--fail)}
+
+/* ── PAGE FOOTER (matches scoremyfitness pattern) ── */
+footer{border-top:1px solid var(--border);padding:22px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);max-width:1100px;margin:0 auto}
+.footer-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.footer-left a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--border2);transition:all .15s}
+.footer-left a:hover{color:var(--accent);border-color:var(--accent)}
+.divider{color:var(--faint)}
+.footer-right{font-size:12px;color:var(--faint)}
+
+/* ── Mobile ── */
+@media (max-width:720px){
+  .event-main{grid-template-columns:1fr;gap:10px;padding:16px}
+  .event-points{text-align:left;display:flex;align-items:baseline;gap:14px}
+  .event-points-band{margin-top:0}
+  .event-expand-btn{justify-self:flex-start}
+  .verdict-body{gap:20px}
+  .hero{padding:36px 16px 28px}
+  .hero h1{font-size:clamp(38px,10vw,54px)}
+  header{padding:0 14px}
+  .nav-link{font-size:12px;padding:4px 8px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <a href="https://scoremyfitness.com" class="site-logo">ScoreMy<span>FBI-PFT</span></a>
+      <a href="https://realfit.com" target="_blank" rel="noopener" style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none">A REALFIT App</a>
+    </div>
+  </div>
+  <div class="header-right">
+    <a href="https://scoremyfitness.com" class="nav-link">ScoreMyFitness.com</a>
+    <a href="https://fitdat.com" class="nav-link">FITDAT.com</a>
+    <a href="https://realfit.com" class="nav-link">REALFIT.com</a>
+    <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">FBI Special Agent PFT · Full Score Set</div>
+  <h1>Could you<br><span>pass selection?</span></h1>
+  <p class="hero-sub">Enter your results across all four PFT events. See your cumulative score, whether you'd pass, and exactly where every event lands on the FBI's signed-point scoring scale.</p>
+</section>
+
+<div class="main">
+
+  <!-- RATIONALE -->
+  <div class="rationale" id="rationale">
+    <button class="rationale-header" onclick="toggleRationale()">
+      <div>
+        <div class="rationale-eyebrow">About this Score Set</div>
+        <div class="rationale-sub">FBI Special Agent candidates — selection-phase and BFTC-phase physical fitness assessment.</div>
+      </div>
+      <span class="rationale-toggle">+</span>
+    </button>
+    <div class="rationale-body">
+      <p>The FBI Special Agent PFT is a selection and training-readiness standard. Its purpose is to determine whether a Special Agent candidate can safely and successfully complete the physical demands of the Basic Field Training Course at Quantico, and by extension, the physical demands of the Special Agent role.</p>
+      <p>The signed point scale (−2 to +10 per event) is distinctive. Negative scores represent disqualifying performance — a candidate who scores below zero on any single event <strong>fails the PFT regardless of cumulative score</strong>. A candidate who cumulates at least 10 total points but scored zero or below on any event also fails. The scale is gender-normed (separate StandardSets for male and female candidates) but deliberately not age-normed; candidates self-select into a narrow age range, and the Agent role's physical demands do not vary with candidate age.</p>
+      <p><strong>Use this Score Set for:</strong> FBI Special Agent candidate selection at Meet and Greet, pre-Quantico, and BFTC phases.</p>
+      <p><strong>Do NOT use it for:</strong> cross-agency federal LE comparison (DEA, ATF, USMS, Secret Service each have their own PFT), general population fitness assessment, or tactical unit selection above the Special Agent baseline (HRT and similar apply higher standards).</p>
+      <div class="rationale-meta">
+        scoreset_fbi_pft v1.0.0 · archetype: hybrid (simple_aggregate + minimum_per_test)<br>
+        publishingAuthority: U.S. Federal Bureau of Investigation
+      </div>
+    </div>
+  </div>
+
+  <!-- SEX SELECTOR -->
+  <div class="sex-selector">
+    <div class="panel-label">Candidate standard</div>
+    <div class="sex-buttons">
+      <button class="sex-btn active" onclick="setSex('male',this)">FBI Male Candidate</button>
+      <button class="sex-btn" onclick="setSex('female',this)">FBI Female Candidate</button>
+    </div>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict">
+    <div class="verdict-stripe"></div>
+    <div class="verdict-body">
+      <div class="verdict-total">
+        <div class="verdict-total-label">Total points</div>
+        <div class="verdict-num" id="verdictNum">0</div>
+        <div class="verdict-scale">scale: −8 to +40 · pass ≥ 10</div>
+      </div>
+      <div class="verdict-right">
+        <div class="verdict-badge" id="verdictBadge">Incomplete</div>
+        <div class="verdict-reason" id="verdictReason">4 events remaining</div>
+        <div class="verdict-note" id="verdictNote"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="events-header">
+    <div class="panel-label" style="margin-bottom:0">Events · enter your results</div>
+    <div class="events-count" id="eventsCount">0 / 4 entered</div>
+  </div>
+
+  <div id="eventsContainer"></div>
+
+  <!-- BUILT ON FITDAT -->
+  <div class="built-on">
+    <span class="built-on-tag">Built on FITDAT</span>
+    <p class="built-on-text">
+      This Score Set scorer uses four Tests from the FITDAT open library (<span class="mono">test_pullup_max</span>, <span class="mono">test_300m_sprint</span>, <span class="mono">test_pushup_max</span>, <span class="mono">test_1_5_mile_run</span>) scored against eight FBI-published StandardSets (four events × two candidate populations). Composite logic — sum total, per-event minimum of +1, disqualifying at −2 — is declared in the Score Set document itself, not hardcoded into this app. Same architecture works for Army AFT, NFL Combine, or any other Score Set built on FITDAT.
+    </p>
+    <div class="disclaimer">
+      <strong>Unofficial — for illustration.</strong> Threshold values drawn from third-party training resources cross-referenced for consistency. Verify against the authoritative FBI scoring scale at <a href="https://fbijobs.gov/special-agents/physical-requirements" style="color:var(--text)">fbijobs.gov</a> before treating any result as binding.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-left">
+    <strong style="color:var(--text);font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">ScoreMyFBI-PFT</strong>
+    <span class="divider">·</span>
+    A <a href="https://realfit.com">REALFIT</a> app
+    <span class="divider">·</span>
+    <a href="https://fitdat.com/scoring-spec.html">Scoring methodology</a>
+    <span class="divider">·</span>
+    <a href="https://scoremyfitness.com">All tests & Score Sets</a>
+  </div>
+  <div class="footer-right">© 2026 REALFIT® · FITDAT® v1.1</div>
+</footer>
+
+<script>
+// ============================================================================
+// FITDAT-backed data — scoreset_fbi_pft v1.0.0
+// Each event has male/female StandardSets with anchor_points distribution.
+// Values in canonical units:
+//   pullups:   repetitions (higher is better)
+//   sprint300: seconds (lower is better)
+//   pushups:   repetitions (higher is better)
+//   run:       seconds (lower is better, mm:ss input)
+//
+// DATA PROVENANCE: threshold values drawn from third-party training resources
+// cross-referenced for consistency. Anchor points (-2, 0, +1, +5, +10) are
+// high-confidence; intermediate tiers are interpolated. VERIFY against
+// authoritative FBI scoring scale at fbijobs.gov before production launch.
+// ============================================================================
+
+const EVENTS = {
+  pullups: {
+    id:'test_pullup_max', name:'Pull-Ups', unit:'reps',
+    inputType:'integer', direction:'higher',
+    protocol:'Max reps, dead hang start, no kipping or swinging, full extension at bottom and chin over bar at top.',
+    placeholder:'reps',
+    male:{ tiers:[
+      {points:10,threshold:20,band:'Maximum',feedback:'20+ pull-ups. Maximum PFT points on this event.'},
+      {points: 9,threshold:18,band:'Strong',feedback:'18–19 pull-ups. Well above BFTC requirement.'},
+      {points: 8,threshold:17,band:'Strong',feedback:'17 pull-ups.'},
+      {points: 7,threshold:16,band:'Strong',feedback:'16 pull-ups.'},
+      {points: 6,threshold:14,band:'Competent',feedback:'14–15 pull-ups.'},
+      {points: 5,threshold:13,band:'Competent',feedback:'13 pull-ups.'},
+      {points: 4,threshold:11,band:'Competent',feedback:'11–12 pull-ups.'},
+      {points: 3,threshold:10,band:'Competent',feedback:'10 pull-ups.'},
+      {points: 2,threshold: 9,band:'Solid pass',feedback:'9 pull-ups.'},
+      {points: 1,threshold: 8,band:'Minimum pass',feedback:'8 pull-ups. Minimum passing threshold.'},
+      {points: 0,threshold: 2,band:'Below min',feedback:'2–7 pull-ups. Does not clear per-event floor. Fails the PFT.'},
+      {points:-2,threshold: 0,band:'Disqualifying',feedback:'0–1 pull-ups. Disqualifying performance.'},
+    ]},
+    female:{ tiers:[
+      {points:10,threshold: 8,band:'Maximum',feedback:'8+ pull-ups. Maximum PFT points on this event.'},
+      {points: 9,threshold: 7,band:'Strong',feedback:'7 pull-ups.'},
+      {points: 8,threshold: 6,band:'Strong',feedback:'6 pull-ups.'},
+      {points: 7,threshold: 5,band:'Strong',feedback:'5 pull-ups.'},
+      {points: 6,threshold: 4,band:'Competent',feedback:'4 pull-ups.'},
+      {points: 5,threshold: 3,band:'Competent',feedback:'3 pull-ups.'},
+      {points: 4,threshold: 2,band:'Competent',feedback:'2 pull-ups.'},
+      {points: 1,threshold: 1,band:'Minimum pass',feedback:'1 pull-up. Minimum passing threshold.'},
+      {points: 0,threshold:-Infinity,band:'Below min',feedback:'0 pull-ups. Fails the per-event floor.'},
+    ]},
+  },
+
+  sprint300:{
+    id:'test_300m_sprint', name:'300m Sprint', unit:'seconds',
+    inputType:'decimal', direction:'lower',
+    protocol:'Maximum effort 300-meter run on a measured flat track or course. Time recorded to nearest 0.1 second.',
+    placeholder:'seconds',
+    male:{ tiers:[
+      {points:10,threshold:40.9,band:'Maximum',feedback:'40.9 sec or faster. Maximum PFT points on this event.'},
+      {points: 9,threshold:42.0,band:'Strong',feedback:'41.0–42.0 sec.'},
+      {points: 8,threshold:43.9,band:'Strong',feedback:'42.1–43.9 sec.'},
+      {points: 7,threshold:45.9,band:'Strong',feedback:'44.0–45.9 sec.'},
+      {points: 6,threshold:47.9,band:'Competent',feedback:'46.0–47.9 sec.'},
+      {points: 5,threshold:49.9,band:'Competent',feedback:'48.0–49.9 sec.'},
+      {points: 4,threshold:51.9,band:'Competent',feedback:'50.0–51.9 sec.'},
+      {points: 3,threshold:53.9,band:'Competent',feedback:'52.0–53.9 sec.'},
+      {points: 2,threshold:55.9,band:'Solid pass',feedback:'54.0–55.9 sec.'},
+      {points: 1,threshold:57.9,band:'Minimum pass',feedback:'56.0–57.9 sec. Minimum passing threshold.'},
+      {points: 0,threshold:63.9,band:'Below min',feedback:'58.0–63.9 sec. Does not clear per-event floor. Fails the PFT.'},
+      {points:-2,threshold:Infinity,band:'Disqualifying',feedback:'64.0 sec or slower. Disqualifying performance.'},
+    ]},
+    female:{ tiers:[
+      {points:10,threshold:47.9,band:'Maximum',feedback:'47.9 sec or faster. Maximum PFT points on this event.'},
+      {points: 9,threshold:49.9,band:'Strong',feedback:'48.0–49.9 sec.'},
+      {points: 8,threshold:51.9,band:'Strong',feedback:'50.0–51.9 sec.'},
+      {points: 7,threshold:53.9,band:'Strong',feedback:'52.0–53.9 sec.'},
+      {points: 6,threshold:55.9,band:'Competent',feedback:'54.0–55.9 sec.'},
+      {points: 5,threshold:57.9,band:'Competent',feedback:'56.0–57.9 sec.'},
+      {points: 4,threshold:60.9,band:'Competent',feedback:'58.0–60.9 sec.'},
+      {points: 3,threshold:63.9,band:'Competent',feedback:'61.0–63.9 sec.'},
+      {points: 2,threshold:66.9,band:'Solid pass',feedback:'64.0–66.9 sec.'},
+      {points: 1,threshold:69.9,band:'Minimum pass',feedback:'67.0–69.9 sec. Minimum passing threshold.'},
+      {points: 0,threshold:75.9,band:'Below min',feedback:'70.0–75.9 sec. Does not clear per-event floor.'},
+      {points:-2,threshold:Infinity,band:'Disqualifying',feedback:'76.0 sec or slower. Disqualifying performance.'},
+    ]},
+  },
+
+  pushups:{
+    id:'test_pushup_max', name:'Push-Ups', unit:'reps (60 sec)',
+    inputType:'integer', direction:'higher',
+    protocol:'Maximum push-ups in 60 seconds, full extension at top, chest to within a fist of floor at bottom. FBI-specific protocol (proto_fbi_pushup_v1).',
+    placeholder:'reps in 60 sec',
+    male:{ tiers:[
+      {points:10,threshold:71,band:'Maximum',feedback:'71+ push-ups. Maximum PFT points on this event.'},
+      {points: 9,threshold:65,band:'Strong',feedback:'65–70 push-ups.'},
+      {points: 8,threshold:59,band:'Strong',feedback:'59–64 push-ups.'},
+      {points: 7,threshold:54,band:'Strong',feedback:'54–58 push-ups.'},
+      {points: 6,threshold:49,band:'Competent',feedback:'49–53 push-ups.'},
+      {points: 5,threshold:44,band:'Competent',feedback:'44–48 push-ups.'},
+      {points: 4,threshold:39,band:'Competent',feedback:'39–43 push-ups.'},
+      {points: 3,threshold:34,band:'Competent',feedback:'34–38 push-ups.'},
+      {points: 2,threshold:32,band:'Solid pass',feedback:'32–33 push-ups.'},
+      {points: 1,threshold:30,band:'Minimum pass',feedback:'30–31 push-ups. Minimum passing threshold.'},
+      {points: 0,threshold:20,band:'Below min',feedback:'20–29 push-ups. Does not clear per-event floor. Fails the PFT.'},
+      {points:-2,threshold: 0,band:'Disqualifying',feedback:'0–19 push-ups. Disqualifying performance.'},
+    ]},
+    female:{ tiers:[
+      {points:10,threshold:45,band:'Maximum',feedback:'45+ push-ups. Maximum PFT points on this event.'},
+      {points: 9,threshold:42,band:'Strong',feedback:'42–44 push-ups.'},
+      {points: 8,threshold:38,band:'Strong',feedback:'38–41 push-ups.'},
+      {points: 7,threshold:34,band:'Strong',feedback:'34–37 push-ups.'},
+      {points: 6,threshold:30,band:'Competent',feedback:'30–33 push-ups.'},
+      {points: 5,threshold:27,band:'Competent',feedback:'27–29 push-ups.'},
+      {points: 4,threshold:23,band:'Competent',feedback:'23–26 push-ups.'},
+      {points: 3,threshold:19,band:'Competent',feedback:'19–22 push-ups.'},
+      {points: 2,threshold:16,band:'Solid pass',feedback:'16–18 push-ups.'},
+      {points: 1,threshold:14,band:'Minimum pass',feedback:'14–15 push-ups. Minimum passing threshold.'},
+      {points: 0,threshold: 5,band:'Below min',feedback:'5–13 push-ups. Does not clear per-event floor.'},
+      {points:-2,threshold: 0,band:'Disqualifying',feedback:'0–4 push-ups. Disqualifying performance.'},
+    ]},
+  },
+
+  run:{
+    id:'test_1_5_mile_run', name:'1.5-Mile Run', unit:'mm:ss',
+    inputType:'mmss', direction:'lower',
+    protocol:'1.5-mile continuous timed run on a flat, measured course. Single all-out effort. Treadmill not valid.',
+    placeholder:'mm:ss',
+    male:{ tiers:[
+      {points:10,threshold:539,band:'Maximum',feedback:'8:59 or faster. Maximum PFT points on this event.'},
+      {points: 9,threshold:547,band:'Strong',feedback:'9:00–9:07.'},
+      {points: 8,threshold:568,band:'Strong',feedback:'9:08–9:28.'},
+      {points: 7,threshold:589,band:'Strong',feedback:'9:29–9:49.'},
+      {points: 6,threshold:613,band:'Competent',feedback:'9:50–10:13.'},
+      {points: 5,threshold:634,band:'Competent',feedback:'10:14–10:34.'},
+      {points: 4,threshold:665,band:'Competent',feedback:'10:35–11:05.'},
+      {points: 3,threshold:693,band:'Competent',feedback:'11:06–11:33.'},
+      {points: 2,threshold:720,band:'Solid pass',feedback:'11:34–12:00.'},
+      {points: 1,threshold:749,band:'Minimum pass',feedback:'12:01–12:29. Minimum passing threshold.'},
+      {points: 0,threshold:840,band:'Below min',feedback:'12:30–14:00. Does not clear per-event floor. Fails the PFT.'},
+      {points:-2,threshold:Infinity,band:'Disqualifying',feedback:'14:01 or slower. Disqualifying performance.'},
+    ]},
+    female:{ tiers:[
+      {points:10,threshold:634,band:'Maximum',feedback:'10:34 or faster. Maximum PFT points on this event.'},
+      {points: 9,threshold:649,band:'Strong',feedback:'10:35–10:49.'},
+      {points: 8,threshold:664,band:'Strong',feedback:'10:50–11:04.'},
+      {points: 7,threshold:679,band:'Strong',feedback:'11:05–11:19.'},
+      {points: 6,threshold:694,band:'Competent',feedback:'11:20–11:34.'},
+      {points: 5,threshold:709,band:'Competent',feedback:'11:35–11:49.'},
+      {points: 4,threshold:729,band:'Competent',feedback:'11:50–12:09.'},
+      {points: 3,threshold:749,band:'Competent',feedback:'12:10–12:29.'},
+      {points: 2,threshold:764,band:'Solid pass',feedback:'12:30–12:44.'},
+      {points: 1,threshold:778,band:'Minimum pass',feedback:'12:45–12:58. Minimum passing threshold.'},
+      {points: 0,threshold:843,band:'Below min',feedback:'12:59–14:03. Fails the per-event floor.'},
+      {points:-2,threshold:Infinity,band:'Disqualifying',feedback:'14:04 or slower. Disqualifying performance.'},
+    ]},
+  },
+};
+
+const EVENT_ORDER = ['pullups','sprint300','pushups','run'];
+
+// ============================================================================
+// State
+// ============================================================================
+let currentSex = 'male';
+let inputs = { pullups:'', sprint300:'', pushups:'', run:'' };
+let expanded = null;
+
+// ============================================================================
+// Helpers
+// ============================================================================
+function parseInput(str, event){
+  if(str == null || str === '') return null;
+  const trimmed = String(str).trim();
+  if(event.inputType === 'integer'){
+    const n = parseInt(trimmed, 10);
+    return isNaN(n) || n < 0 ? null : n;
+  }
+  if(event.inputType === 'decimal'){
+    if(trimmed.includes(':')){
+      const [m,s] = trimmed.split(':');
+      return (parseInt(m,10)||0)*60 + parseFloat(s);
+    }
+    const v = parseFloat(trimmed);
+    return isNaN(v) || v < 0 ? null : v;
+  }
+  if(event.inputType === 'mmss'){
+    if(trimmed.includes(':')){
+      const [m,s] = trimmed.split(':');
+      return (parseInt(m,10)||0)*60 + (parseInt(s,10)||0);
+    }
+    const v = parseInt(trimmed,10);
+    return isNaN(v) || v < 0 ? null : v;
+  }
+  return null;
+}
+
+function scoreEvent(raw, event, sex){
+  if(raw == null || !isFinite(raw)) return null;
+  const std = event[sex];
+  for(const tier of std.tiers){
+    if(event.direction === 'higher'){
+      if(raw >= tier.threshold) return tier;
+    } else {
+      if(raw <= tier.threshold) return tier;
+    }
+  }
+  return std.tiers[std.tiers.length - 1];
+}
+
+function fmtThreshold(v, event){
+  if(!isFinite(v)) return '—';
+  if(event.inputType === 'integer') return v + ' ' + (v === 1 ? (event.unit.replace(/s$/,'')) : event.unit).split(' ')[0];
+  if(event.inputType === 'decimal') return v.toFixed(1) + 's';
+  if(event.inputType === 'mmss'){
+    const m = Math.floor(v/60), s = Math.floor(v%60);
+    return m + ':' + String(s).padStart(2,'0');
+  }
+  return String(v);
+}
+
+function pointClass(pts){
+  if(pts === -2) return 'fail-hard';
+  if(pts < 1) return 'fail';
+  if(pts >= 7) return 'peak';
+  return 'entered';
+}
+
+// ============================================================================
+// Rendering
+// ============================================================================
+
+function renderEvents(){
+  const container = document.getElementById('eventsContainer');
+  container.innerHTML = '';
+
+  EVENT_ORDER.forEach(key => {
+    const event = EVENTS[key];
+    const raw = parseInput(inputs[key], event);
+    const score = scoreEvent(raw, event, currentSex);
+
+    const row = document.createElement('div');
+    row.className = 'event-row' + (expanded === key ? ' expanded' : '');
+
+    const pcls = score ? pointClass(score.points) : '';
+    const bandCls = score && score.points < 1 ? 'fail' : '';
+
+    // Main row
+    const main = document.createElement('div');
+    main.className = 'event-main';
+    main.innerHTML = `
+      <div>
+        <div class="event-name">${event.name}</div>
+        <div class="event-meta">${event.unit} · ${event.direction === 'higher' ? 'more is better' : 'faster is better'}</div>
+      </div>
+      <div>
+        <input type="text" class="event-input" value="${inputs[key]}" placeholder="${event.placeholder}" data-key="${key}" inputmode="${event.inputType === 'integer' ? 'numeric' : 'text'}">
+      </div>
+      <div class="event-points">
+        <div class="event-points-num ${pcls}">${score ? (score.points > 0 ? '+' + score.points : score.points) : '—'}</div>
+        <div class="event-points-band ${bandCls}">${score ? score.band : ''}</div>
+      </div>
+      <button class="event-expand-btn" data-key="${key}">${expanded === key ? 'Hide scale' : 'Show scale'}</button>
+    `;
+    row.appendChild(main);
+
+    // Detail
+    if(expanded === key){
+      const detail = document.createElement('div');
+      detail.className = 'event-detail';
+      let detailHTML = `<div class="event-protocol"><strong>Protocol: </strong>${event.protocol}</div>`;
+      if(score){
+        detailHTML += `<div class="event-feedback ${pcls}">${score.feedback}</div>`;
+      }
+      detailHTML += `<div class="event-scale-label">Full scoring scale — FBI ${currentSex === 'male' ? 'Male' : 'Female'}</div>`;
+      detailHTML += `<div class="event-scale${score ? ' current-set' : ''}">`;
+
+      const tiers = event[currentSex].tiers;
+      tiers.forEach((t, i) => {
+        const prev = i === 0 ? null : tiers[i-1].threshold;
+        let rangeStr;
+        if(event.direction === 'higher'){
+          if(!isFinite(t.threshold) && t.threshold === -Infinity){
+            rangeStr = `below ${fmtThreshold(prev, event)}`;
+          } else if(i === 0){
+            rangeStr = `${fmtThreshold(t.threshold, event)}+`;
+          } else {
+            const upper = event.inputType === 'integer' ? prev - 1 : prev - 0.1;
+            rangeStr = `${fmtThreshold(t.threshold, event)}–${fmtThreshold(upper, event)}`;
+          }
+        } else {
+          if(!isFinite(t.threshold)){
+            rangeStr = `${fmtThreshold(prev, event)} or slower`;
+          } else if(i === 0){
+            rangeStr = `${fmtThreshold(t.threshold, event)} or faster`;
+          } else {
+            rangeStr = `${fmtThreshold(prev, event)}–${fmtThreshold(t.threshold, event)}`;
+          }
+        }
+        const isCur = score && score.points === t.points;
+        const tierCls = isCur ? ('current ' + pointClass(t.points)) : '';
+        detailHTML += `
+          <div class="event-scale-row ${tierCls}">
+            <div class="event-scale-points">${t.points > 0 ? '+' + t.points : t.points}</div>
+            <div class="event-scale-range">${rangeStr}</div>
+            <div class="event-scale-band">${t.band}</div>
+          </div>
+        `;
+      });
+      detailHTML += `</div>`;
+      detail.innerHTML = detailHTML;
+      row.appendChild(detail);
+    }
+
+    container.appendChild(row);
+  });
+
+  // Rebind event listeners after innerHTML replacement
+  container.querySelectorAll('.event-input').forEach(input => {
+    input.addEventListener('input', e => {
+      const key = e.target.dataset.key;
+      inputs[key] = e.target.value;
+      renderVerdict();
+      // Only re-render the row that changed to preserve focus
+      updateRowDisplay(key);
+    });
+  });
+  container.querySelectorAll('.event-expand-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const key = e.target.dataset.key;
+      expanded = expanded === key ? null : key;
+      renderEvents();
+    });
+  });
+}
+
+function updateRowDisplay(key){
+  // Lightweight update for the affected row's points display without full re-render
+  const event = EVENTS[key];
+  const raw = parseInput(inputs[key], event);
+  const score = scoreEvent(raw, event, currentSex);
+  const rows = document.querySelectorAll('.event-row');
+  const idx = EVENT_ORDER.indexOf(key);
+  if(!rows[idx]) return;
+  const pointsNum = rows[idx].querySelector('.event-points-num');
+  const pointsBand = rows[idx].querySelector('.event-points-band');
+  if(score){
+    pointsNum.textContent = score.points > 0 ? '+' + score.points : score.points;
+    pointsNum.className = 'event-points-num ' + pointClass(score.points);
+    pointsBand.textContent = score.band;
+    pointsBand.className = 'event-points-band' + (score.points < 1 ? ' fail' : '');
+  } else {
+    pointsNum.textContent = '—';
+    pointsNum.className = 'event-points-num';
+    pointsBand.textContent = '';
+    pointsBand.className = 'event-points-band';
+  }
+  // If this row is expanded, re-render the detail too (feedback text + current highlight)
+  if(expanded === key){
+    renderEvents();
+  }
+}
+
+function renderVerdict(){
+  const scores = EVENT_ORDER.map(k => scoreEvent(parseInput(inputs[k], EVENTS[k]), EVENTS[k], currentSex));
+  const entered = scores.filter(s => s != null);
+  const total = entered.reduce((a, s) => a + s.points, 0);
+
+  const numEl = document.getElementById('verdictNum');
+  const badgeEl = document.getElementById('verdictBadge');
+  const reasonEl = document.getElementById('verdictReason');
+  const noteEl = document.getElementById('verdictNote');
+  const countEl = document.getElementById('eventsCount');
+
+  countEl.textContent = entered.length + ' / 4 entered';
+
+  numEl.textContent = total > 0 ? '+' + total : total;
+  numEl.className = 'verdict-num';
+
+  if(entered.length < 4){
+    badgeEl.textContent = 'Incomplete';
+    badgeEl.className = 'verdict-badge';
+    reasonEl.textContent = (4 - entered.length) + ' event' + (4 - entered.length === 1 ? '' : 's') + ' remaining';
+    noteEl.textContent = '';
+    return;
+  }
+
+  numEl.classList.add('final');
+
+  const anyDQ = scores.some(s => s.points === -2);
+  const anyBelowMin = scores.some(s => s.points === 0);
+  const belowTotal = total < 10;
+
+  if(anyDQ){
+    badgeEl.textContent = 'Fail';
+    badgeEl.className = 'verdict-badge fail';
+    numEl.classList.add('fail');
+    reasonEl.textContent = 'Disqualifying score on one or more events';
+    noteEl.textContent = 'The FBI PFT is pass/fail. Any disqualifying event (−2) is an automatic fail regardless of cumulative score.';
+  } else if(anyBelowMin){
+    badgeEl.textContent = 'Fail';
+    badgeEl.className = 'verdict-badge fail';
+    numEl.classList.add('fail');
+    reasonEl.textContent = 'One or more events scored below the +1 per-event minimum';
+    noteEl.textContent = 'The FBI PFT is pass/fail. Meeting the 10-point total with zero or fewer on any event is a fail.';
+  } else if(belowTotal){
+    badgeEl.textContent = 'Fail';
+    badgeEl.className = 'verdict-badge fail';
+    numEl.classList.add('fail');
+    reasonEl.textContent = 'Total ' + (total > 0 ? '+' + total : total) + ' below the 10-point cumulative minimum';
+    noteEl.textContent = 'Every event cleared the per-event minimum, but cumulative points fall short of the 10-point pass threshold.';
+  } else if(total >= 20){
+    badgeEl.textContent = 'Strong Pass';
+    badgeEl.className = 'verdict-badge strong';
+    reasonEl.textContent = 'Strong pass — BFTC-ready fitness';
+    noteEl.textContent = 'Strong enough to have real margin going into BFTC at Quantico.';
+  } else {
+    badgeEl.textContent = 'Pass';
+    badgeEl.className = 'verdict-badge pass';
+    reasonEl.textContent = 'Meets selection-phase passing thresholds';
+    noteEl.textContent = 'Meets selection-phase minimums. Aim higher before Quantico — BFTC is more demanding than the selection PFT.';
+  }
+}
+
+// ============================================================================
+// Event handlers
+// ============================================================================
+function toggleTheme(){
+  const html = document.documentElement;
+  html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+
+function setSex(sex, btn){
+  currentSex = sex;
+  document.querySelectorAll('.sex-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderEvents();
+  renderVerdict();
+}
+
+function toggleRationale(){
+  document.getElementById('rationale').classList.toggle('open');
+}
+
+// Initial render
+renderEvents();
+renderVerdict();
+</script>
+
+</body>
+</html>

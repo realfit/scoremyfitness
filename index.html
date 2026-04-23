@@ -201,6 +201,25 @@ header{
   color:var(--text);line-height:1.2;
 }
 .tc-component{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* Score Set affiliation pill — inline badge on test tiles */
+.tc-scoreset-pills{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.tc-scoreset-pill{
+  display:inline-flex;align-items:center;
+  padding:2px 8px;border-radius:999px;
+  font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  background:rgba(255,255,255,0.05);border:1px solid var(--border2);
+  color:var(--muted);
+}
+[data-theme="light"] .tc-scoreset-pill{background:rgba(0,0,0,0.04)}
+.tc-scoreset-pill.rfs30{color:#c5cd20;border-color:rgba(232,240,42,0.35)}
+[data-theme="light"] .tc-scoreset-pill.rfs30{color:#8a7020;border-color:rgba(160,122,26,0.4)}
+.tc-scoreset-pill.fbi{color:#d4a84a;border-color:rgba(212,168,74,0.35)}
+[data-theme="light"] .tc-scoreset-pill.fbi{color:#a07a1a;border-color:rgba(160,122,26,0.4)}
+.tc-scoreset-pill.aft{color:#b0b0b0;border-color:rgba(255,255,255,0.15)}
+.tc-scoreset-pill.nfl{color:#b0b0b0;border-color:rgba(255,255,255,0.15)}
+
 .tc-arrow{
   font-size:13px;color:var(--accent2);
   margin-top:auto;padding-top:4px;
@@ -209,6 +228,80 @@ header{
   transition:gap .15s;display:flex;align-items:center;gap:4px;
 }
 .test-card:hover .tc-arrow{gap:8px}
+
+/* ── SCORE SETS SECTION (new) ── */
+.scoresets-section{padding:56px 24px 32px;max-width:1120px;margin:0 auto}
+.scoresets-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:18px;
+  margin-top:24px;
+}
+.scoreset-card{
+  position:relative;
+  padding:24px 22px 22px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--surface2);
+  display:flex;flex-direction:column;gap:12px;
+  text-decoration:none;color:var(--text);
+  transition:all .18s;
+  min-height:200px;
+}
+.scoreset-card.live{cursor:pointer;border-color:rgba(232,240,42,0.14)}
+.scoreset-card.live:hover{transform:translateY(-2px);border-color:var(--accent);background:var(--surface3)}
+.scoreset-card.coming{opacity:.6;cursor:default}
+.scoreset-card.external::after{
+  content:"↗";
+  position:absolute;top:16px;right:18px;
+  font-family:'Barlow Condensed',sans-serif;font-size:16px;
+  color:var(--muted);
+}
+.scoreset-card.external:hover::after{color:var(--accent)}
+.sc-badge{
+  display:inline-block;width:fit-content;
+  padding:3px 9px;border-radius:4px;
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+}
+.sc-badge.live{background:rgba(232,240,42,0.12);color:var(--accent);border:1px solid rgba(232,240,42,0.3)}
+.sc-badge.external{background:rgba(93,202,165,0.1);color:var(--teal);border:1px solid rgba(93,202,165,0.3)}
+.sc-badge.coming{background:rgba(255,255,255,0.05);color:var(--faint);border:1px solid var(--border2)}
+[data-theme="light"] .sc-badge.live{background:rgba(192,57,43,0.1);color:var(--accent);border-color:rgba(192,57,43,0.3)}
+[data-theme="light"] .sc-badge.external{background:rgba(10,110,86,0.08);color:var(--teal);border-color:rgba(10,110,86,0.3)}
+.sc-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:26px;font-weight:900;letter-spacing:-.005em;
+  line-height:1.05;color:var(--text);
+}
+.sc-publisher{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--muted);letter-spacing:.02em;
+  margin-top:-4px;
+}
+.sc-audience{
+  font-size:13px;line-height:1.5;color:var(--muted);flex:1;
+}
+.sc-meta{
+  display:flex;gap:10px;flex-wrap:wrap;
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  padding-top:10px;border-top:1px dashed var(--border);
+}
+.sc-meta-item::before{content:"·";margin-right:10px;color:var(--faint)}
+.sc-meta-item:first-child::before{content:""}
+.sc-arrow{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:.04em;
+  color:var(--accent);
+  display:flex;align-items:center;gap:4px;
+  margin-top:4px;
+  transition:gap .15s;
+}
+.scoreset-card.live:hover .sc-arrow{gap:8px}
+.scoreset-card.coming .sc-arrow{color:var(--faint)}
+.scoreset-card.external .sc-arrow{color:var(--teal)}
+[data-theme="light"] .scoreset-card.external .sc-arrow{color:var(--teal)}
 
 /* Animation previews */
 .preview-track{
@@ -430,33 +523,33 @@ footer{
 
 <!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-eyebrow">REALFIT Absolute Score · Interactive scoring tools</div>
+  <div class="hero-eyebrow">FITDAT sample scoring · Tests + Score Sets</div>
   <h1>How do you<br><span>actually</span> measure up?</h1>
-  <p class="hero-sub">Pick a test. Enter your result. See exactly where you stand — with the visuals to make it real.</p>
+  <p class="hero-sub">Pick a test. Pick a Score Set. Enter your result. See exactly where you stand — with the visuals to make it real.</p>
   <div class="hero-stats">
     <div class="hero-stat">
-      <div class="hero-stat-num"><span>13</span></div>
-      <div class="hero-stat-label">Tests in the Score Set</div>
-    </div>
-    <div class="hero-divider"></div>
-    <div class="hero-stat">
-      <div class="hero-stat-num"><span>0</span>–<span>1000</span></div>
-      <div class="hero-stat-label">Absolute Score scale</div>
-    </div>
-    <div class="hero-divider"></div>
-    <div class="hero-stat">
       <div class="hero-stat-num"><span>4</span></div>
-      <div class="hero-stat-label">Live scoring tools</div>
+      <div class="hero-stat-label">Live test scorers</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span>2</span></div>
+      <div class="hero-stat-label">Live Score Sets</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span>17</span></div>
+      <div class="hero-stat-label">Tests across Score Sets</div>
     </div>
   </div>
 </section>
 
-<!-- ── TEST GRID ── -->
+<!-- ── INDIVIDUAL TESTS SECTION ── -->
 <div class="tests-section">
   <div class="section-header">
-    <div class="section-label">The REALFIT Absolute Score Set</div>
-    <div class="section-title">Choose your test</div>
-    <div class="section-sub">4 tests live now — more coming as we build them out.</div>
+    <div class="section-label">Individual Tests</div>
+    <div class="section-title">Pick a single test</div>
+    <div class="section-sub">4 test scorers live now. Each tile shows which Score Set(s) use the test.</div>
   </div>
 
   <div class="test-grid">
@@ -474,6 +567,7 @@ footer{
       <div>
         <div class="tc-name">40 Yard Dash</div>
         <div class="tc-component">Speed · Power · Agility</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">scoremy40.com <span>→</span></div>
     </a>
@@ -492,6 +586,7 @@ footer{
       <div>
         <div class="tc-name">Bench Press — 1RM</div>
         <div class="tc-component">Muscular Strength · Power</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">Watch the plates load <span>→</span></div>
     </a>
@@ -508,6 +603,7 @@ footer{
       <div>
         <div class="tc-name">Medicine Ball Throw</div>
         <div class="tc-component">Power · Muscular Strength</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">Compare throw arcs <span>→</span></div>
     </a>
@@ -524,6 +620,7 @@ footer{
       <div>
         <div class="tc-name">1.5-Mile Run</div>
         <div class="tc-component">Cardiovascular · Endurance</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill fbi">FBI PFT</span></div>
       </div>
       <div class="tc-arrow">Beat the FBI clock <span>→</span></div>
     </a>
@@ -538,6 +635,7 @@ footer{
       <div>
         <div class="tc-name">Pull-Ups — Max Reps</div>
         <div class="tc-component">Muscular Endurance · Strength</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">See the rep count <span>→</span></div>
     </div>
@@ -553,6 +651,7 @@ footer{
       <div>
         <div class="tc-name">Back Squat — 1RM</div>
         <div class="tc-component">Muscular Strength · Power</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">Load the bar <span>→</span></div>
     </div>
@@ -570,6 +669,7 @@ footer{
       <div>
         <div class="tc-name">Shuttle Run — 60 Yds</div>
         <div class="tc-component">Agility · Speed</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">Cut and go <span>→</span></div>
     </div>
@@ -586,6 +686,7 @@ footer{
       <div>
         <div class="tc-name">5K Run</div>
         <div class="tc-component">Cardiovascular · Endurance</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">Pace yourself <span>→</span></div>
     </div>
@@ -603,6 +704,7 @@ footer{
       <div>
         <div class="tc-name">Wall Sit</div>
         <div class="tc-component">Muscular Endurance · Strength</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">Hold the clock <span>→</span></div>
     </div>
@@ -620,6 +722,7 @@ footer{
       <div>
         <div class="tc-name">Plank Hold</div>
         <div class="tc-component">Muscular Endurance · Strength</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">Don't break <span>→</span></div>
     </div>
@@ -640,6 +743,7 @@ footer{
       <div>
         <div class="tc-name">Push-Ups — Max Reps</div>
         <div class="tc-component">Muscular Endurance · Strength</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span><span class="tc-scoreset-pill fbi">FBI PFT</span></div>
       </div>
       <div class="tc-arrow">Count every rep <span>→</span></div>
     </div>
@@ -656,6 +760,7 @@ footer{
       <div>
         <div class="tc-name">Sprint — 400m</div>
         <div class="tc-component">Endurance · Speed</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">Around the track <span>→</span></div>
     </div>
@@ -674,6 +779,7 @@ footer{
       <div>
         <div class="tc-name">Squat Thrust Jumps</div>
         <div class="tc-component">Endurance · Cardio · Strength</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">2 minutes of work <span>→</span></div>
     </div>
@@ -690,8 +796,86 @@ footer{
       <div>
         <div class="tc-name">Concept2 Row — 2K</div>
         <div class="tc-component">Cardiovascular · Endurance</div>
+        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
       </div>
       <div class="tc-arrow">Pull every meter <span>→</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── SCORE SETS SECTION ── -->
+<div class="scoresets-section">
+  <div class="section-header">
+    <div class="section-label">Score Sets</div>
+    <div class="section-title">Score a full assessment</div>
+    <div class="section-sub">Complete Score Sets from FITDAT — all events in one scorer.</div>
+  </div>
+
+  <div class="scoresets-grid">
+
+    <!-- LIVE: FBI PFT -->
+    <a href="/fbi-pft" class="scoreset-card live">
+      <div class="sc-badge live">Live now</div>
+      <div>
+        <div class="sc-name">FBI Special Agent PFT</div>
+        <div class="sc-publisher">scoreset_fbi_pft · FBI</div>
+      </div>
+      <div class="sc-audience">Full 4-event selection standard for FBI Special Agent candidates. Signed-point scoring −2 to +10 per event, cumulative + per-event-minimum pass logic.</div>
+      <div class="sc-meta">
+        <span class="sc-meta-item">4 events</span>
+        <span class="sc-meta-item">Male + Female</span>
+        <span class="sc-meta-item">Pass/Fail</span>
+      </div>
+      <div class="sc-arrow">Run the assessment <span>→</span></div>
+    </a>
+
+    <!-- EXTERNAL: REALFIT Absolute -->
+    <a href="https://realfitscore.com" class="scoreset-card live external" target="_blank" rel="noopener">
+      <div class="sc-badge external">Live · realfitscore.com</div>
+      <div>
+        <div class="sc-name">REALFIT Absolute Score</div>
+        <div class="sc-publisher">scoreset_realfit_absolute · REALFIT</div>
+      </div>
+      <div class="sc-audience">Population-neutral universal fitness score across all six components. A 700 at 25 means the same as a 700 at 45. The full 13-test battery.</div>
+      <div class="sc-meta">
+        <span class="sc-meta-item">13 tests</span>
+        <span class="sc-meta-item">0–1,000 scale</span>
+        <span class="sc-meta-item">All adults</span>
+      </div>
+      <div class="sc-arrow">Open realfitscore.com <span>→</span></div>
+    </a>
+
+    <!-- COMING: Army AFT -->
+    <div class="scoreset-card coming">
+      <div class="sc-badge coming">Coming soon</div>
+      <div>
+        <div class="sc-name">U.S. Army AFT</div>
+        <div class="sc-publisher">scoreset_us_army_aft · U.S. Army</div>
+      </div>
+      <div class="sc-audience">The Army Fitness Test — 5 events, tiered combat / general MOS passing thresholds, 0–500 point scale. Effective June 1, 2025.</div>
+      <div class="sc-meta">
+        <span class="sc-meta-item">5 events</span>
+        <span class="sc-meta-item">Tiered thresholds</span>
+        <span class="sc-meta-item">Age + sex normed</span>
+      </div>
+      <div class="sc-arrow">Coming soon <span>→</span></div>
+    </div>
+
+    <!-- COMING: NFL Combine -->
+    <div class="scoreset-card coming">
+      <div class="sc-badge coming">Coming soon</div>
+      <div>
+        <div class="sc-name">NFL Scouting Combine</div>
+        <div class="sc-publisher">scoreset_nfl_combine · NFL</div>
+      </div>
+      <div class="sc-audience">Position-based athletic profile for draft prospects. No composite score — per-event interpretation against position-specific standards.</div>
+      <div class="sc-meta">
+        <span class="sc-meta-item">6 events</span>
+        <span class="sc-meta-item">10 positions</span>
+        <span class="sc-meta-item">Feedback-only</span>
+      </div>
+      <div class="sc-arrow">Coming soon <span>→</span></div>
     </div>
 
   </div>
