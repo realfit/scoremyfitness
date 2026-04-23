@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ScoreMyFitness — How do you actually measure up?</title>
 <meta name="description" content="Interactive fitness scoring tools for every test in the REALFIT Absolute Score Set. Pick a test. Enter your result. See exactly where you stand.">
+<meta name="apple-itunes-app" content="app-id=6760310323">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -258,6 +259,25 @@ header{
   color:var(--muted);
 }
 .scoreset-card.external:hover::after{color:var(--accent)}
+/* Dual-CTA card variant (App Store + web link) — used for REALFIT Absolute */
+.scoreset-card.dual-cta{cursor:default}
+.scoreset-card.dual-cta:hover{transform:none;border-color:var(--border);background:var(--surface2)}
+.sc-ctas{display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:6px}
+.sc-app-badge{display:inline-block;line-height:0;text-decoration:none;transition:transform .15s}
+.sc-app-badge:hover{transform:translateY(-1px)}
+.sc-app-badge img{height:44px;width:auto;display:block}
+.sc-web-link{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.04em;
+  color:var(--muted);text-decoration:none;
+  padding:2px 0;transition:color .15s;
+}
+.sc-web-link:hover{color:var(--accent)}
+.sc-web-link span{font-family:'Barlow',sans-serif;margin-left:4px;transition:transform .15s;display:inline-block}
+.sc-web-link:hover span{transform:translateX(3px)}
+.sc-web-label{
+  font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:.02em;
+  color:var(--faint);margin-right:6px;text-transform:none;
+}
 .sc-badge{
   display:inline-block;width:fit-content;
   padding:3px 9px;border-radius:4px;
@@ -448,6 +468,22 @@ header{
   transition:all .15s;
 }
 .rl-secondary:hover{border-color:var(--text);color:var(--text)}
+/* Dual-CTA variant for the "Want the full picture?" section */
+.realfit-cta-group{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.realfit-app-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.realfit-app-badge{display:inline-block;line-height:0;text-decoration:none;transition:transform .15s}
+.realfit-app-badge:hover{transform:translateY(-1px)}
+.realfit-app-badge img{height:52px;width:auto;display:block}
+.realfit-app-caption{font-family:'Barlow',sans-serif;font-size:13px;color:var(--muted);line-height:1.4}
+.realfit-secondary-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.rl-web-link{
+  font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:.03em;
+  color:var(--muted);text-decoration:none;padding:6px 0;
+  transition:color .15s;
+}
+.rl-web-link:hover{color:var(--text)}
+.rl-web-link span{font-family:'Barlow',sans-serif;margin-left:4px;transition:transform .15s;display:inline-block}
+.rl-web-link:hover span{transform:translateX(3px)}
 .score-card-preview{
   background:var(--surface3);border:1px solid var(--border);
   border-radius:12px;padding:24px;
@@ -830,9 +866,9 @@ footer{
       <div class="sc-arrow">Run the assessment <span>→</span></div>
     </a>
 
-    <!-- EXTERNAL: REALFIT Absolute -->
-    <a href="https://realfitscore.com" class="scoreset-card live external" target="_blank" rel="noopener">
-      <div class="sc-badge external">Live · realfitscore.com</div>
+    <!-- EXTERNAL: REALFIT Absolute (App + Web) -->
+    <div class="scoreset-card live dual-cta">
+      <div class="sc-badge live">Available on iOS</div>
       <div>
         <div class="sc-name">REALFIT Absolute Score</div>
         <div class="sc-publisher">scoreset_realfit_absolute · REALFIT</div>
@@ -843,8 +879,16 @@ footer{
         <span class="sc-meta-item">0–1,000 scale</span>
         <span class="sc-meta-item">All adults</span>
       </div>
-      <div class="sc-arrow">Open realfitscore.com <span>→</span></div>
-    </a>
+      <div class="sc-ctas">
+        <a class="sc-app-badge" href="https://apps.apple.com/us/app/realfit-absolute-score/id6760310323" target="_blank" rel="noopener" aria-label="Download REALFIT Absolute Score on the App Store">
+          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="Download on the App Store">
+        </a>
+        <div>
+          <span class="sc-web-label">or use the web version:</span>
+          <a href="https://realfitscore.com" class="sc-web-link" target="_blank" rel="noopener">realfitscore.com <span>→</span></a>
+        </div>
+      </div>
+    </div>
 
     <!-- LIVE: Army AFT -->
     <a href="/aft" class="scoreset-card live">
@@ -888,9 +932,17 @@ footer{
       <h2>Want the full picture?</h2>
       <p>Each test here scores one dimension of your fitness. The REALFIT Absolute Score combines all 13 tests into a single 0–1,000 number — the only score that tells you whether you are genuinely fitter than you were last year, regardless of your age or who you're comparing yourself to.</p>
       <p>A 700 at 25 and a 700 at 45 mean exactly the same thing. The standard doesn't move. Only your fitness does.</p>
-      <div class="realfit-links">
-        <a href="https://realfitscore.com" class="rl-primary">Score all 13 tests →</a>
-        <a href="https://fitdat.com/scoring-spec.html" class="rl-secondary">How the score works</a>
+      <div class="realfit-cta-group">
+        <div class="realfit-app-row">
+          <a class="realfit-app-badge" href="https://apps.apple.com/us/app/realfit-absolute-score/id6760310323" target="_blank" rel="noopener" aria-label="Download REALFIT Absolute Score on the App Store">
+            <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="Download on the App Store">
+          </a>
+          <div class="realfit-app-caption">Take your Absolute Score on iPhone.<br>Track it over time.</div>
+        </div>
+        <div class="realfit-secondary-row">
+          <a href="https://realfitscore.com" class="rl-web-link" target="_blank" rel="noopener">Or use the web version: realfitscore.com <span>→</span></a>
+          <a href="https://fitdat.com/scoring-spec.html" class="rl-secondary">How the score works</a>
+        </div>
       </div>
     </div>
     <div class="score-card-preview">
