@@ -3,7 +3,12 @@
     { "source": "/bench", "destination": "/bench.html" },
     { "source": "/throw", "destination": "/throw.html" },
     { "source": "/1-5-mile", "destination": "/1-5-mile.html" },
-    { "source": "/fbi-pft", "destination": "/fbi-pft.html" },
-    { "source": "/aft", "destination": "/aft.html" }
+    { "source": "/fbi-pft", "destination": "/fbi-pft.html" }
+  ],
+  "redirects": [
+    { "source": "/cft", "destination": "https://scoremycft.com", "permanent": true },
+    { "source": "/cft.html", "destination": "https://scoremycft.com", "permanent": true },
+    { "source": "/aft", "destination": "https://scoremyaft.com", "permanent": true },
+    { "source": "/aft.html", "destination": "https://scoremyaft.com", "permanent": true }
   ]
 }
