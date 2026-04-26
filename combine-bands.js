@@ -67,6 +67,7 @@ window.NFL_COMBINE_BANDS = {
     {
       id: "fortyYard",
       name: "40-Yard Dash",
+      slug: "40-yard-dash",
       unit: "seconds",
       direction: "lower",
       precision: 2,
@@ -78,6 +79,7 @@ window.NFL_COMBINE_BANDS = {
     {
       id: "verticalJump",
       name: "Vertical Jump",
+      slug: "vertical-jump",
       unit: "inches",
       direction: "higher",
       precision: 1,
@@ -89,6 +91,7 @@ window.NFL_COMBINE_BANDS = {
     {
       id: "broadJump",
       name: "Broad Jump",
+      slug: "broad-jump",
       unit: "inches",
       direction: "higher",
       precision: 0,
@@ -100,6 +103,7 @@ window.NFL_COMBINE_BANDS = {
     {
       id: "bench225",
       name: "Bench Press (225 lb reps)",
+      slug: "bench-225",
       unit: "reps",
       direction: "higher",
       precision: 0,
@@ -111,6 +115,7 @@ window.NFL_COMBINE_BANDS = {
     {
       id: "threeCone",
       name: "3-Cone Drill",
+      slug: "3-cone",
       unit: "seconds",
       direction: "lower",
       precision: 2,
@@ -122,6 +127,7 @@ window.NFL_COMBINE_BANDS = {
     {
       id: "shuttle",
       name: "20-Yard Shuttle",
+      slug: "shuttle",
       unit: "seconds",
       direction: "lower",
       precision: 2,
