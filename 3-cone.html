@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Score My 3-Cone Drill · ScoreMyFitness</title>
+<meta name="description" content="Score your 3-cone drill. Compare against NFL Combine position prospects. Built on FITDAT.">
+<meta property="og:title" content="Score My 3-Cone Drill">
+<meta property="og:description" content="Score your 3-cone drill. Compare against NFL Combine position prospects. Built on FITDAT.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://scoremyfitness.com/3-cone">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --surface:#13161c;--surface2:#1a1e27;--surface3:#232833;
+  --text:#ece9e1;--muted:#827f76;--faint:#555249;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --nfl-blue:#013369;
+  --nfl-red:#d50a0a;
+  --accent:#c9a04a;
+  --gold:#e8c97a;
+  --pass:#7fb069;
+  --pass-strong:#5d8a4a;
+  --fail:#d85a30;
+  --fail-hard:#b33418;
+  --bg:#0b0d10;
+}
+[data-theme="light"]{
+  --surface:#ffffff;--surface2:#f3eee0;--surface3:#e8e1cc;
+  --text:#13110a;--muted:#54503f;--faint:#8a8475;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);
+  --accent:#8a7020;
+  --gold:#a08234;
+  --pass:#5d8a4a;
+  --pass-strong:#3d6230;
+  --fail:#a83418;
+  --fail-hard:#7a1f0f;
+  --bg:#f5f0e6;
+}
+[data-theme="light"] header{background:rgba(245,240,230,0.94);border-bottom-color:rgba(0,0,0,0.1)}
+
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.55;color:var(--text);background:var(--bg);transition:background .2s,color .2s}
+
+header{position:sticky;top:0;z-index:100;background:rgba(11,13,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.logo-group{display:flex;flex-direction:column;gap:2px}
+.site-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--text);text-decoration:none;line-height:1}
+.site-logo span{color:var(--accent)}
+.logo-tagline{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.header-right{display:flex;align-items:center;gap:10px}
+.nav-link{padding:6px 12px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none;transition:all .15s}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.theme-toggle{border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;transition:all .15s}
+.theme-toggle:hover{border-color:var(--text);color:var(--text)}
+
+.hero{padding:48px 24px 32px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(42px,7vw,72px);font-weight:900;line-height:.95;letter-spacing:-.01em;color:var(--text);margin-bottom:10px}
+.hero h1 span{color:var(--gold);display:block}
+[data-theme="light"] .hero h1 span{color:var(--accent)}
+.hero-sub{font-size:16px;color:var(--muted);max-width:660px;margin:18px auto 0}
+
+.main{max-width:780px;margin:0 auto;padding:32px 24px 48px}
+
+.about-block{margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:20px 24px}
+.about-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.about-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.25}
+.about-body{font-size:14px;color:var(--muted);line-height:1.6}
+.about-meta{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);line-height:1.6}
+.about-meta strong{color:var(--text);font-weight:500}
+
+/* COMPARISON PICKER */
+.comparison-block{margin-bottom:18px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:20px 22px;position:relative;overflow:hidden}
+.comparison-block::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--nfl-blue),var(--accent),var(--nfl-red))}
+.comparison-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.comparison-pills{display:flex;flex-wrap:wrap;gap:6px}
+.comparison-pill{padding:7px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:5px;cursor:pointer;transition:all .15s}
+.comparison-pill:hover{color:var(--text);border-color:var(--border2)}
+.comparison-pill.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+[data-theme="light"] .comparison-pill.active{color:#fff}
+.comparison-help{font-size:12px;color:var(--faint);font-style:italic;margin-top:12px;line-height:1.5}
+
+/* INPUT CARD */
+.input-card{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:28px 24px;margin-bottom:18px;text-align:center;position:relative;overflow:hidden}
+.input-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.input-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
+.big-input{width:160px;padding:14px 12px;background:var(--surface2);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;border:1px solid var(--border2);border-radius:6px;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.big-input:focus{outline:none;border-color:var(--accent)}
+.big-input::placeholder{color:var(--faint)}
+.big-input::-webkit-outer-spin-button,.big-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.big-input[type=number]{-moz-appearance:textfield}
+.input-unit{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:.04em}
+.input-meta{font-size:12px;color:var(--faint);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;line-height:1.5}
+
+/* RESULT */
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px 24px;margin-bottom:24px;opacity:.4;transition:opacity .2s,border-color .2s}
+.result-card.has-value{opacity:1;border-color:var(--border2)}
+.result-label-row{margin-bottom:10px}
+.result-label{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:var(--muted);letter-spacing:-.005em;line-height:1.2;display:block}
+.result-label.tier-historic    { color:var(--gold) }
+.result-label.tier-elite       { color:var(--gold) }
+.result-label.tier-first-round { color:var(--pass-strong) }
+.result-label.tier-starter     { color:var(--text) }
+.result-label.tier-below       { color:var(--fail) }
+.result-feedback{font-size:13px;color:var(--muted);line-height:1.5;margin-top:8px}
+
+.gradient-bar{position:relative;height:14px;border-radius:7px;background:var(--surface2);overflow:hidden;margin:14px 0 6px;border:1px solid var(--border)}
+.gradient-fill{position:absolute;inset:0;background:linear-gradient(90deg,var(--fail-hard),var(--fail) 22%,#c08840 42%,var(--gold) 70%,var(--pass-strong) 100%);opacity:.92}
+.gradient-marker{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--text);border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,0.4);transition:left .25s ease-out}
+[data-theme="light"] .gradient-marker{box-shadow:0 0 8px rgba(0,0,0,0.4)}
+.gradient-anchors{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:.04em}
+
+/* CROSS LINKS */
+.cross-link{margin-top:12px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;text-decoration:none;color:var(--text);transition:all .15s}
+.cross-link:hover{border-color:var(--accent);background:var(--surface2)}
+.cross-link-text{flex:1}
+.cross-link-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.cross-link-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.cross-link-arrow{font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--accent)}
+
+/* FOOTER */
+footer{padding:24px;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--faint)}
+footer .footer-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+footer .footer-links{margin-bottom:14px}
+footer .footer-links a{color:var(--muted);text-decoration:none;margin:0 10px}
+footer .footer-links a:hover{color:var(--text)}
+footer .footer-disclaimer{max-width:680px;margin:0 auto;font-size:11px;color:var(--faint);line-height:1.55}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <a href="/" class="site-logo">ScoreMy<span>Fitness</span></a>
+    <span class="logo-tagline">A REALFIT reference tool</span>
+  </div>
+  <div class="header-right">
+    <a class="nav-link" href="/">All Score Sets</a>
+    <a class="nav-link" href="https://fitdat.com">FITDAT.com</a>
+    <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Single test · multi-comparison</div>
+  <h1>Score my<span>3-cone drill</span></h1>
+  <p class="hero-sub">Score your 3-cone drill. Compare against NFL Combine position prospects.</p>
+</section>
+
+<main class="main">
+
+<aside class="about-block">
+  <div class="about-eyebrow">About this test</div>
+  <div class="about-title">3-Cone Drill (L-Drill)</div>
+  <div class="about-body">The 3-cone (also called the L-drill) measures multi-directional agility — start, sprint, hard cut, run a tight L, sprint home. It tests bend, hip mobility, and change of direction. Pass rushers and slot receivers benefit most; offensive linemen care less. Participation has dropped in recent Combines as some teams have de-emphasized the drill, but historical data is robust.</div>
+  <div class="about-meta">
+    <strong>construct</strong> &middot; change-of-direction agility through an L-shaped course of three cones<br>
+    <strong>unit</strong> &middot; seconds<br>
+    <strong>NFL Combine record</strong> &middot; 6.28 seconds (Jordan Thomas, CB, 2018)
+  </div>
+</aside>
+
+<div id="scorer-root"></div>
+
+<a href="/combine" class="cross-link">
+  <div class="cross-link-text">
+    <div class="cross-link-eyebrow">Score all six combine events together</div>
+    <div class="cross-link-title">/combine — all six tests at one position</div>
+  </div>
+  <span class="cross-link-arrow">→</span>
+</a>
+
+</main>
+
+<footer>
+  <div class="footer-eyebrow">A REALFIT reference tool · part of the ScoreMyFitness family</div>
+  <div class="footer-links">
+    <a href="/">scoremyfitness.com</a>
+    <a href="https://realfit.com">realfit.com</a>
+    <a href="https://fitdat.com">fitdat.com</a>
+  </div>
+  <div class="footer-disclaimer">REALFIT&reg; and FITDAT&reg; are registered trademarks. NFL Combine performance data sourced from NFL.com, ESPN, A to Z Sports, and Pro Football Network. Position-specific bands are REALFIT's interpretation of those distributions, not NFL-published thresholds. Not affiliated with the NFL or any NFL team.</div>
+</footer>
+
+<script>
+function toggleTheme(){
+  const html=document.documentElement;
+  const cur=html.getAttribute('data-theme');
+  html.setAttribute('data-theme',cur==='dark'?'light':'dark');
+}
+window.SCORER_CONFIG = { eventId: 'threeCone' };
+</script>
+<script src="/combine-bands.js"></script>
+<script src="/single-test-scorer.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Score the NFL Scouting Combine — by position · ScoreMyFitness</title>
+<meta name="description" content="Score the NFL Scouting Combine. Six events, ten positions — see how your 40-yard dash, vertical jump, broad jump, bench press, 3-cone, and shuttle compare to NFL Combine prospects at your position. Built on FITDAT.">
+<meta property="og:title" content="Score the NFL Scouting Combine — by position">
+<meta property="og:description" content="The NFL Combine has no composite score — every test is interpreted relative to your position. Six events, ten positions, real distributions.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://scoremyfitness.com/combine">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --surface:#13161c;--surface2:#1a1e27;--surface3:#232833;
+  --text:#ece9e1;--muted:#827f76;--faint:#555249;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --nfl-blue:#013369;
+  --nfl-red:#d50a0a;
+  --accent:#c9a04a;
+  --gold:#e8c97a;
+  --pass:#7fb069;
+  --pass-strong:#5d8a4a;
+  --fail:#d85a30;
+  --fail-hard:#b33418;
+  --bg:#0b0d10;
+}
+[data-theme="light"]{
+  --surface:#ffffff;--surface2:#f3eee0;--surface3:#e8e1cc;
+  --text:#13110a;--muted:#54503f;--faint:#8a8475;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);
+  --nfl-blue:#013369;
+  --nfl-red:#a8090a;
+  --accent:#8a7020;
+  --gold:#a08234;
+  --pass:#5d8a4a;
+  --pass-strong:#3d6230;
+  --fail:#a83418;
+  --fail-hard:#7a1f0f;
+  --bg:#f5f0e6;
+}
+[data-theme="light"] header{background:rgba(245,240,230,0.94);border-bottom-color:rgba(0,0,0,0.1)}
+
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.55;color:var(--text);background:var(--bg);transition:background .2s,color .2s}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:rgba(11,13,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.logo-group{display:flex;flex-direction:column;gap:2px}
+.site-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--text);text-decoration:none;line-height:1}
+.site-logo span{color:var(--accent)}
+.logo-tagline{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.header-right{display:flex;align-items:center;gap:10px}
+.nav-link{padding:6px 12px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none;transition:all .15s}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.theme-toggle{border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;transition:all .15s}
+.theme-toggle:hover{border-color:var(--text);color:var(--text)}
+
+/* HERO */
+.hero{padding:48px 24px 32px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(42px,7vw,72px);font-weight:900;line-height:.95;letter-spacing:-.01em;color:var(--text);margin-bottom:10px}
+.hero h1 span{color:var(--nfl-blue);display:block}
+[data-theme="dark"] .hero h1 span{color:var(--gold)}
+.hero-sub{font-size:16px;color:var(--muted);max-width:660px;margin:18px auto 0}
+
+/* MAIN */
+.main{max-width:980px;margin:0 auto;padding:32px 24px 48px}
+
+/* WHY BLOCK */
+.why-block{margin-bottom:32px}
+.why-inner{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:22px 26px}
+.why-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.why-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.2}
+.why-body{font-size:14px;color:var(--muted);line-height:1.65}
+.why-body p{margin:8px 0}
+.why-body p:first-child{margin-top:0}
+.why-body p:last-child{margin-bottom:0}
+.why-body strong{color:var(--text)}
+.why-body a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(201,160,74,0.3);transition:border-color .15s}
+.why-body a:hover{border-color:var(--accent)}
+
+/* POSITION SELECTOR */
+.position-block{margin-bottom:28px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:24px 26px;position:relative;overflow:hidden}
+.position-block::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--nfl-blue),var(--accent),var(--nfl-red))}
+.position-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;justify-content:space-between;align-items:baseline}
+.position-label-current{color:var(--accent);font-weight:700}
+.position-pills{display:flex;flex-wrap:wrap;gap:6px}
+.position-pill{padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .15s;font-family:'Barlow Condensed',sans-serif}
+.position-pill:hover{color:var(--text);border-color:var(--border2)}
+.position-pill.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+[data-theme="light"] .position-pill.active{color:#fff}
+.position-help{font-size:12px;color:var(--faint);font-style:italic;margin-top:14px;line-height:1.5}
+
+/* EVENT CARDS */
+.events-list{display:flex;flex-direction:column;gap:18px}
+.event-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px 26px;transition:border-color .2s}
+.event-card.has-value{border-color:var(--border2)}
+.event-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.event-name{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text);line-height:1.2}
+.event-meta{font-size:12px;color:var(--faint);letter-spacing:.04em;font-family:'JetBrains Mono',monospace;margin-top:2px}
+.event-input-wrap{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.event-input{width:96px;padding:10px 8px;background:var(--surface2);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;border:1px solid var(--border2);border-radius:6px;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.event-input:focus{outline:none;border-color:var(--accent)}
+.event-input::placeholder{color:var(--faint)}
+.event-input::-webkit-outer-spin-button,.event-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.event-input[type=number]{-moz-appearance:textfield}
+.event-unit{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+
+/* RESULT GRADIENT */
+.result-block{margin-top:14px;display:none}
+.event-card.has-value .result-block{display:block}
+.result-label-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+.result-label{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.005em}
+.result-label.tier-historic    { color:var(--gold) }
+.result-label.tier-elite       { color:var(--gold) }
+.result-label.tier-first-round { color:var(--pass-strong) }
+.result-label.tier-starter     { color:var(--text) }
+.result-label.tier-below       { color:var(--fail) }
+.result-feedback{font-size:13px;color:var(--muted);line-height:1.45}
+
+.gradient-bar{position:relative;height:14px;border-radius:7px;background:var(--surface2);overflow:hidden;margin:14px 0 6px;border:1px solid var(--border)}
+.gradient-fill{position:absolute;inset:0;background:linear-gradient(90deg,var(--fail-hard),var(--fail) 22%,#c08840 42%,var(--gold) 70%,var(--pass-strong) 100%);opacity:.92}
+.gradient-marker{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--text);border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,0.4);transition:left .25s ease-out}
+[data-theme="light"] .gradient-marker{box-shadow:0 0 8px rgba(0,0,0,0.4)}
+.gradient-anchors{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:.04em}
+
+/* SUMMARY */
+.summary-block{margin-top:28px;padding:22px 26px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:none}
+.summary-block.visible{display:block}
+.summary-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:600px){.summary-grid{grid-template-columns:1fr}}
+.summary-cell{padding:12px 14px;background:var(--surface2);border-radius:6px}
+.summary-cell-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.summary-cell-event{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);line-height:1.2}
+.summary-cell-tier{font-size:13px;color:var(--muted);margin-top:2px}
+.summary-disclaimer{margin-top:16px;font-size:12px;color:var(--faint);line-height:1.55;font-style:italic}
+
+/* BUILT ON FITDAT */
+.built-on{margin-top:36px;padding:22px 26px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.built-on-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.built-on-body{font-size:14px;color:var(--muted);line-height:1.6;margin:0}
+.built-on-body .mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
+.built-on-body a{color:var(--accent);text-decoration:underline}
+.built-on-note{margin-top:14px;padding:10px 12px;background:var(--surface2);border-radius:5px;font-size:12px;color:var(--muted);line-height:1.55}
+.built-on-note strong{color:var(--text)}
+
+/* FOOTER */
+footer{padding:24px;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--faint)}
+footer .footer-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+footer .footer-links{margin-bottom:14px}
+footer .footer-links a{color:var(--muted);text-decoration:none;margin:0 10px}
+footer .footer-links a:hover{color:var(--text)}
+footer .footer-disclaimer{max-width:680px;margin:0 auto;font-size:11px;color:var(--faint);line-height:1.55}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <a href="/" class="site-logo">ScoreMy<span>Fitness</span></a>
+    <span class="logo-tagline">A REALFIT reference tool</span>
+  </div>
+  <div class="header-right">
+    <a class="nav-link" href="/">All Score Sets</a>
+    <a class="nav-link" href="https://fitdat.com">FITDAT.com</a>
+    <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">NFL Scouting Combine · 6 events · 10 positions · feedback-only</div>
+  <h1>Score the<span>NFL Scouting Combine</span></h1>
+  <p class="hero-sub">The NFL Combine has no composite score — every test is interpreted relative to your position. A 4.55-second 40 is below average for a wide receiver and historic for an offensive lineman. Pick a position. Enter your numbers. See what they mean.</p>
+</section>
+
+<main class="main">
+
+<aside class="why-block" aria-label="About this scorer">
+  <div class="why-inner">
+    <div class="why-eyebrow">Why this scorer is built this way</div>
+    <div class="why-title">The Combine doesn't have a composite score — and that's the point.</div>
+    <div class="why-body">
+      <p>Unlike the AFT, the FBI PFT, or the REALFIT Absolute Score, the NFL Scouting Combine produces no overall number. Every result is interpreted relative to the position the prospect plays. A 4.55 in the 40 is below-average WR speed and historic OL speed. A 32-rep bench is huge for a corner and middling for a defensive tackle. A composite would destroy the interpretive value, so we don't compute one.</p>
+      <p>This scorer reflects that exactly: <strong>pick your position once, enter your test results, and each result is rendered against position-specific bands</strong> built from real NFL Combine distributions. Bands are anchored to NFL.com per-position averages since 2003, ESPN's all-time records, A to Z Sports' position aggregations since 2000, and Pro Football Network records.</p>
+    </div>
+  </div>
+</aside>
+
+<!-- POSITION SELECTOR -->
+<div class="position-block" id="positionBlock">
+  <div class="position-label">
+    <span>Choose your position</span>
+    <span class="position-label-current" id="positionCurrent">— select to begin</span>
+  </div>
+  <div class="position-pills" id="positionPills"></div>
+  <div class="position-help">Position determines how every result on this page is interpreted. Switch positions at any time to see how the same numbers reframe.</div>
+</div>
+
+<!-- EVENTS -->
+<div class="events-list" id="eventsList"></div>
+
+<!-- SUMMARY -->
+<div class="summary-block" id="summaryBlock">
+  <div class="summary-eyebrow">Athletic profile · <span id="summaryPositionName"></span></div>
+  <div class="summary-grid" id="summaryGrid"></div>
+  <div class="summary-disclaimer">The NFL Combine is evaluated holistically. Even a Combine-record number doesn't determine draft outcome — game tape, medical review, interviews, and team need all weigh more heavily than any single test. This scorer shows where your athletic numbers fall relative to position peers; it doesn't predict NFL success.</div>
+</div>
+
+<!-- BUILT ON FITDAT -->
+<div class="built-on">
+  <div class="built-on-eyebrow">Built on FITDAT</div>
+  <p class="built-on-body">
+    This scorer implements <span class="mono">scoreset_nfl_combine</span> — an NFL-published Score Set on the FITDAT v1.0 Data Specification. The Combine exercises the <span class="mono">feedback_only</span> archetype because the test produces no composite — only per-event interpretation. The 10 position sub-populations (<span class="mono">pop_nfl_combine_qb</span>, <span class="mono">pop_nfl_combine_rb</span>, etc.) are referenced by 60 distinct StandardSets (10 positions × 6 events), each with position-scoped Reference Bands. Switching positions on this page is the same as switching which StandardSet the same input is interpreted against — exactly the architecture the FITDAT spec was designed for.
+  </p>
+  <div class="built-on-note">
+    <strong>About the data.</strong> Position-specific bands are constructed from real NFL Combine distributions. Per-position averages and records are sourced from <a href="https://www.nfl.com/combine/" style="color:inherit;text-decoration:underline" target="_blank" rel="noopener">NFL.com</a>, <a href="https://www.espn.com/nfl/story/_/id/39610217/who-holds-record-nfl-combine-drill" style="color:inherit;text-decoration:underline" target="_blank" rel="noopener">ESPN</a>, A to Z Sports' multi-decade aggregation, and Pro Football Network. The bands themselves are REALFIT's interpretation of those distributions; they are not NFL-published thresholds. Position averages and records are factual; band labels and verbal feedback are editorial.
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-eyebrow">A REALFIT reference tool · part of the ScoreMyFitness family</div>
+  <div class="footer-links">
+    <a href="/">scoremyfitness.com</a>
+    <a href="https://realfit.com">realfit.com</a>
+    <a href="https://fitdat.com">fitdat.com</a>
+  </div>
+  <div class="footer-disclaimer">REALFIT&reg; and FITDAT&reg; are registered trademarks. The NFL Scouting Combine is administered by the National Football League; this scorer is an independent reference tool implementing publicly disclosed performance distributions. Not affiliated with the NFL or any NFL team.</div>
+</footer>
+
+<script src="/combine-bands.js"></script>
+<script>
+function toggleTheme(){
+  const html=document.documentElement;
+  const cur=html.getAttribute('data-theme');
+  html.setAttribute('data-theme',cur==='dark'?'light':'dark');
+}
+
+// ─── State ───
+let currentPosition = null;
+let entries = {};  // { eventId: numericValue }
+
+// ─── Lookup helpers ───
+function findBand(eventId, positionId, value) {
+  const event = NFL_COMBINE_BANDS.events.find(e => e.id === eventId);
+  if (!event) return null;
+  const bands = NFL_COMBINE_BANDS.bands[eventId][positionId];
+  if (!bands) return null;
+
+  // For lower-is-better: find first band whose max >= value (or null max = open-ended top)
+  // For higher-is-better: find first band whose min <= value (or null min = open-ended bottom)
+  if (event.direction === 'lower') {
+    for (let i = 0; i < bands.length; i++) {
+      const b = bands[i];
+      if (b.max === null || value <= b.max) return { ...b, index: i, totalBands: bands.length };
+    }
+  } else {
+    for (let i = 0; i < bands.length; i++) {
+      const b = bands[i];
+      if (b.min === null || value >= b.min) return { ...b, index: i, totalBands: bands.length };
+    }
+  }
+  return null;
+}
+
+// Returns 0–1 representing position on the gradient bar (0 = worst, 1 = best)
+function gradientPosition(eventId, positionId, value) {
+  const event = NFL_COMBINE_BANDS.events.find(e => e.id === eventId);
+  if (!event) return 0;
+  const bands = NFL_COMBINE_BANDS.bands[eventId][positionId];
+  if (!bands || bands.length < 2) return 0.5;
+
+  // Compute the canonical thresholds for the bar
+  // For lower: best edge = bands[0].max (Historic top), worst edge = bands[N-2].max (Below top edge)
+  // For higher: best edge = bands[0].min (Historic bottom), worst edge = bands[N-2].min (Below top)
+  // We'll bracket the bar between an "extra-historic" floor and "extra-below" ceiling so most inputs map cleanly.
+
+  if (event.direction === 'lower') {
+    const bestEdge   = bands[0].max;            // anything ≤ this is Historic
+    const worstEdge  = bands[bands.length - 2].max;  // anything > this is Below
+    if (value <= bestEdge)  return 1;  // pegged best (right side of bar = best for lower-is-better; we'll flip in render)
+    if (value >= worstEdge) return 0;
+    // Linear interpolation: bestEdge → 1, worstEdge → 0
+    return (worstEdge - value) / (worstEdge - bestEdge);
+  } else {
+    const bestEdge  = bands[0].min;
+    const worstEdge = bands[bands.length - 2].min;
+    if (value >= bestEdge)  return 1;
+    if (value <= worstEdge) return 0;
+    return (value - worstEdge) / (bestEdge - worstEdge);
+  }
+}
+
+function tierClass(label) {
+  return 'tier-' + label.toLowerCase().replace(/[^a-z]+/g,'-').replace(/^-|-$/g,'').replace('first-round-caliber','first-round').replace('nfl-starter','starter').replace('below-positional','below');
+}
+
+// ─── Render ───
+function renderPositionPills() {
+  const container = document.getElementById('positionPills');
+  container.innerHTML = '';
+  NFL_COMBINE_BANDS.positions.forEach(pos => {
+    const pill = document.createElement('button');
+    pill.type = 'button';
+    pill.className = 'position-pill';
+    pill.dataset.position = pos.id;
+    pill.textContent = pos.short;
+    pill.title = pos.name;
+    pill.addEventListener('click', () => selectPosition(pos.id));
+    container.appendChild(pill);
+  });
+}
+
+function renderEventCards() {
+  const container = document.getElementById('eventsList');
+  container.innerHTML = '';
+  NFL_COMBINE_BANDS.events.forEach(event => {
+    const card = document.createElement('div');
+    card.className = 'event-card';
+    card.dataset.event = event.id;
+    card.innerHTML = `
+      <div class="event-card-header">
+        <div>
+          <div class="event-name">${event.name}</div>
+          <div class="event-meta">unit: ${event.unit} · ${event.direction === 'lower' ? 'lower is better' : 'higher is better'} · record: ${event.record.value} (${event.record.holder}, ${event.record.position}, ${event.record.year})</div>
+        </div>
+        <div class="event-input-wrap">
+          <input type="number" class="event-input" data-event="${event.id}"
+                 placeholder="${event.placeholder}" step="${event.precision === 0 ? '1' : (event.precision === 1 ? '0.1' : '0.01')}"
+                 inputmode="decimal" aria-label="${event.name} value">
+          <span class="event-unit">${event.unit}</span>
+        </div>
+      </div>
+      <div class="result-block">
+        <div class="result-label-row">
+          <span class="result-label" data-result-label></span>
+        </div>
+        <div class="gradient-bar">
+          <div class="gradient-fill"></div>
+          <div class="gradient-marker" data-marker></div>
+        </div>
+        <div class="gradient-anchors">
+          <span data-anchor-left></span>
+          <span data-anchor-right></span>
+        </div>
+        <div class="result-feedback" data-result-feedback></div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  // Wire input listeners
+  container.querySelectorAll('.event-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const eventId = input.dataset.event;
+      const raw = input.value.trim();
+      if (raw === '' || isNaN(parseFloat(raw))) {
+        delete entries[eventId];
+      } else {
+        entries[eventId] = parseFloat(raw);
+      }
+      renderResult(eventId);
+      renderSummary();
+    });
+  });
+}
+
+function selectPosition(positionId) {
+  currentPosition = positionId;
+  const pos = NFL_COMBINE_BANDS.positions.find(p => p.id === positionId);
+  document.getElementById('positionCurrent').textContent = pos.name;
+  document.querySelectorAll('.position-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.position === positionId);
+  });
+  // Re-render all results for new position
+  NFL_COMBINE_BANDS.events.forEach(e => renderResult(e.id));
+  renderSummary();
+}
+
+function renderResult(eventId) {
+  const card = document.querySelector(`.event-card[data-event="${eventId}"]`);
+  if (!card) return;
+  const value = entries[eventId];
+  if (value === undefined || !currentPosition) {
+    card.classList.remove('has-value');
+    return;
+  }
+  card.classList.add('has-value');
+
+  const event = NFL_COMBINE_BANDS.events.find(e => e.id === eventId);
+  const band = findBand(eventId, currentPosition, value);
+  if (!band) {
+    card.classList.remove('has-value');
+    return;
+  }
+
+  const positionShort = NFL_COMBINE_BANDS.positions.find(p => p.id === currentPosition).short;
+
+  const labelEl    = card.querySelector('[data-result-label]');
+  const feedbackEl = card.querySelector('[data-result-feedback]');
+  const markerEl   = card.querySelector('[data-marker]');
+  const anchorL    = card.querySelector('[data-anchor-left]');
+  const anchorR    = card.querySelector('[data-anchor-right]');
+
+  // Tier color class
+  labelEl.className = 'result-label ' + tierClass(band.label);
+  labelEl.textContent = band.label + ' for ' + (positionShort.match(/^[AEIOU]/i) ? 'an ' : 'a ') + positionShort;
+
+  feedbackEl.textContent = band.feedback;
+
+  // Gradient marker: 0 = worst (left), 1 = best (right)
+  const pos = gradientPosition(eventId, currentPosition, value);
+  const pct = Math.max(0, Math.min(1, pos)) * 100;
+  markerEl.style.left = pct + '%';
+
+  // Anchors
+  const bands = NFL_COMBINE_BANDS.bands[eventId][currentPosition];
+  if (event.direction === 'lower') {
+    anchorL.textContent = '> ' + bands[bands.length - 2].max + ' ' + event.unit + ' (below)';
+    anchorR.textContent = '≤ ' + bands[0].max + ' ' + event.unit + ' (historic)';
+  } else {
+    anchorL.textContent = '< ' + bands[bands.length - 2].min + ' ' + event.unit + ' (below)';
+    anchorR.textContent = '≥ ' + bands[0].min + ' ' + event.unit + ' (historic)';
+  }
+}
+
+function renderSummary() {
+  const block = document.getElementById('summaryBlock');
+  if (!currentPosition || Object.keys(entries).length < 2) {
+    block.classList.remove('visible');
+    return;
+  }
+  block.classList.add('visible');
+
+  const pos = NFL_COMBINE_BANDS.positions.find(p => p.id === currentPosition);
+  document.getElementById('summaryPositionName').textContent = pos.name;
+
+  // Find strongest and weakest events (by gradientPosition)
+  const ranked = Object.keys(entries).map(eventId => {
+    const value = entries[eventId];
+    const band = findBand(eventId, currentPosition, value);
+    const pos = gradientPosition(eventId, currentPosition, value);
+    const event = NFL_COMBINE_BANDS.events.find(e => e.id === eventId);
+    return { eventId, eventName: event.name, value, band, gradientPos: pos };
+  }).filter(r => r.band);
+
+  ranked.sort((a, b) => b.gradientPos - a.gradientPos);
+
+  const grid = document.getElementById('summaryGrid');
+  grid.innerHTML = '';
+
+  if (ranked.length === 0) {
+    grid.innerHTML = '<div class="summary-cell"><div class="summary-cell-label">Awaiting input</div></div>';
+    return;
+  }
+
+  const strongest = ranked[0];
+  const weakest = ranked[ranked.length - 1];
+
+  const strongestCell = document.createElement('div');
+  strongestCell.className = 'summary-cell';
+  strongestCell.innerHTML = `
+    <div class="summary-cell-label">Strongest event</div>
+    <div class="summary-cell-event">${strongest.eventName}</div>
+    <div class="summary-cell-tier">${strongest.band.label}: ${strongest.band.feedback}</div>
+  `;
+  grid.appendChild(strongestCell);
+
+  if (ranked.length > 1) {
+    const weakestCell = document.createElement('div');
+    weakestCell.className = 'summary-cell';
+    weakestCell.innerHTML = `
+      <div class="summary-cell-label">Lowest event</div>
+      <div class="summary-cell-event">${weakest.eventName}</div>
+      <div class="summary-cell-tier">${weakest.band.label}: ${weakest.band.feedback}</div>
+    `;
+    grid.appendChild(weakestCell);
+  }
+}
+
+// ─── Init ───
+function init() {
+  if (typeof NFL_COMBINE_BANDS === 'undefined' || !NFL_COMBINE_BANDS) {
+    console.error('NFL_COMBINE_BANDS data not loaded. Check that /combine-bands.js is served at the correct path.');
+    const root = document.getElementById('positionPills');
+    if (root) {
+      root.innerHTML = '<div style="color:#d85a30;font-size:13px;padding:12px">Data file failed to load. Please refresh.</div>';
+    }
+    return;
+  }
+  try {
+    renderPositionPills();
+    renderEventCards();
+  } catch (e) {
+    console.error('Combine page init failed:', e);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+
+</body>
+</html>

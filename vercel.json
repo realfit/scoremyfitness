@@ -3,7 +3,14 @@
     { "source": "/bench", "destination": "/bench.html" },
     { "source": "/throw", "destination": "/throw.html" },
     { "source": "/1-5-mile", "destination": "/1-5-mile.html" },
-    { "source": "/fbi-pft", "destination": "/fbi-pft.html" }
+    { "source": "/fbi-pft", "destination": "/fbi-pft.html" },
+    { "source": "/combine", "destination": "/combine.html" },
+    { "source": "/40-yard-dash", "destination": "/40-yard-dash.html" },
+    { "source": "/vertical-jump", "destination": "/vertical-jump.html" },
+    { "source": "/broad-jump", "destination": "/broad-jump.html" },
+    { "source": "/bench-225", "destination": "/bench-225.html" },
+    { "source": "/3-cone", "destination": "/3-cone.html" },
+    { "source": "/shuttle", "destination": "/shuttle.html" }
   ],
   "redirects": [
     { "source": "/cft", "destination": "https://scoremycft.com", "permanent": true },
