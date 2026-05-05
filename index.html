@@ -3,548 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ScoreMyFitness — How do you actually measure up?</title>
-<meta name="description" content="Interactive fitness scoring tools for every test in the REALFIT Absolute Score Set. Pick a test. Enter your result. See exactly where you stand.">
-<meta name="apple-itunes-app" content="app-id=6760310323">
+<title>ScoreMyPFT — Score the 2026 Presidential Physical Fitness Test</title>
+<meta name="description" content="Score the official 2026 Presidential Physical Fitness Test. Pick one test per category — Core, Cardio, Upper Body — and see whether you'd earn the Presidential Award. Free, no signup. Sourced from whitehouse.gov. Built on FITDAT.">
+<meta property="og:title" content="ScoreMyPFT — Presidential Physical Fitness Test 2026">
+<meta property="og:description" content="The official 2026 Presidential Physical Fitness Test, scored. Three categories, pick one test per category. Hit the threshold in all three to earn the Presidential Award.">
+<meta property="og:url" content="https://scoremypft.com">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ScoreMyPFT — Presidential Physical Fitness Test 2026">
+<meta name="twitter:description" content="The official 2026 Presidential Physical Fitness Test, scored.">
+<link rel="canonical" href="https://scoremypft.com">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230b0d10'/><text x='32' y='42' font-family='Helvetica,Arial,sans-serif' font-size='22' font-weight='900' text-anchor='middle' fill='%23c9a04a' letter-spacing='-0.02em'>PFT</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,900;1,700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-:root {
-  --surface:#1a1c22;--surface2:#22242c;--surface3:#2a2d36;
-  --text:#f0ede8;--muted:#8a8880;--faint:#5a5856;
+:root{
+  --surface:#13161c;--surface2:#1a1e27;--surface3:#232833;
+  --text:#ece9e1;--muted:#827f76;--faint:#555249;
   --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
-  --accent:#e8f02a;--accent2:#3A7BFF;--teal:#5DCAA5;
+  --pres-blue:#1e3a5f;
+  --pres-red:#a83418;
+  --pres-gold:#c9a04a;
+  --pass-strong:#7fb069;
+  --pass:#8bc474;
+  --fail:#d85a30;
+  --fail-hard:#b33418;
+  --bg:#0b0d10;
 }
-[data-theme="light"] {
-  --surface:#f4f2ee;--surface2:#eeebe5;--surface3:#e5e2dc;
-  --text:#0f0e0c;--muted:#6b6860;--faint:#9a9890;
+[data-theme="light"]{
+  --surface:#ffffff;--surface2:#f1ecdf;--surface3:#e8e1cc;
+  --text:#13110a;--muted:#54503f;--faint:#8a8475;
   --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);
-  --accent:#c0392b;--accent2:#1a56db;--teal:#0a6e56;
+  --pres-blue:#142a45;
+  --pres-red:#7a1f0f;
+  --pres-gold:#8a7020;
+  --pass-strong:#4a7030;
+  --pass:#567028;
+  --fail:#a83418;
+  --fail-hard:#7a1f0f;
+  --bg:#f5f0e6;
 }
-[data-theme="light"] header{background:rgba(244,242,238,0.94);border-bottom-color:rgba(0,0,0,0.1)}
-[data-theme="light"] .realfit-badge{border-color:rgba(0,0,0,0.14)}
-[data-theme="light"] .realfit-badge:hover{border-color:var(--accent);color:var(--accent)}
-[data-theme="light"] .realfit-badge::before{background:var(--accent)}
-[data-theme="light"] .hero-score{color:var(--accent)}
-[data-theme="light"] .test-card:hover{border-color:var(--accent2)}
-[data-theme="light"] .test-card.live:hover{border-color:var(--accent)}
-[data-theme="light"] .test-card.live .tc-badge{background:rgba(192,57,43,0.1);color:var(--accent)}
-[data-theme="light"] .test-card .tc-arrow{color:var(--accent2)}
-[data-theme="light"] .test-card.live .tc-arrow{color:var(--accent)}
-[data-theme="light"] .section-label{color:var(--accent2)}
-[data-theme="light"] .theme-toggle{color:var(--muted);border-color:rgba(0,0,0,0.16)}
-
-.theme-toggle{
-  border:1px solid var(--border2);background:transparent;
-  color:var(--muted);cursor:pointer;padding:6px 10px;
-  border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;
-  transition:all .15s;
-}
-.theme-toggle:hover{border-color:var(--text);color:var(--text);background:var(--surface)}
+[data-theme="light"] header{background:rgba(245,240,230,0.94);border-bottom-color:rgba(0,0,0,0.1)}
 
 html{scroll-behavior:smooth}
-body{
-  font-family:'Barlow',sans-serif;font-size:16px;line-height:1.6;
-  color:var(--text);background:var(--surface);
-  transition:background .2s,color .2s;
-}
+body{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.55;color:var(--text);background:var(--bg);transition:background .2s,color .2s}
 
-/* ── HEADER ── */
-header{
-  position:sticky;top:0;z-index:100;
-  background:rgba(26,28,34,0.92);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  padding:0 24px;height:52px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.logo-group{display:flex;align-items:center;gap:12px}
-.site-logo{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:20px;font-weight:700;letter-spacing:.04em;
-  color:var(--text);text-decoration:none;
-}
-.site-logo span{color:var(--accent)}
-.realfit-badge{
-  padding:4px 10px;border-radius:5px;
-  border:1px solid var(--border2);
-  font-size:11px;font-weight:500;color:var(--muted);
-  text-decoration:none;letter-spacing:.04em;
-  display:flex;align-items:center;gap:6px;
-  transition:all .15s;
-}
-.realfit-badge::before{
-  content:'';width:5px;height:5px;border-radius:50%;
-  background:var(--teal);flex-shrink:0;
-}
-.realfit-badge:hover{border-color:var(--teal);color:var(--teal)}
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:rgba(11,13,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.logo-group{display:flex;flex-direction:column;gap:2px}
+.site-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--text);text-decoration:none;line-height:1}
+.site-logo span{color:var(--pres-gold)}
+.logo-tagline{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .header-right{display:flex;align-items:center;gap:10px}
-.nav-link{padding:6px 12px;border-radius:4px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;letter-spacing:.02em;transition:color .15s,background .15s}
-.nav-link:hover{color:var(--text);background:var(--surface)}
-.nav-cta{
-  padding:7px 16px;border-radius:6px;
-  background:var(--accent);color:#0f0e0c;
-  font-size:13px;font-weight:600;letter-spacing:.02em;
-  text-decoration:none;font-family:'Barlow Condensed',sans-serif;
-  transition:opacity .15s;
-}
-.nav-cta:hover{opacity:.88}
+.nav-link{padding:6px 12px;border-radius:6px;font-size:13px;color:var(--muted);text-decoration:none;transition:all .15s}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.theme-toggle{border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:12px;font-family:'Barlow',sans-serif;transition:all .15s}
+.theme-toggle:hover{border-color:var(--text);color:var(--text)}
 
-/* ── HERO ── */
-.hero{
-  padding:72px 24px 56px;
-  text-align:center;
-  border-bottom:1px solid var(--border);
-}
-.hero-eyebrow{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:13px;font-weight:600;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--muted);margin-bottom:16px;
-}
-.hero h1{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:clamp(52px,8vw,88px);
-  font-weight:900;line-height:.95;
-  letter-spacing:-.01em;color:var(--text);
-  margin-bottom:12px;
-}
-.hero h1 span{color:var(--accent)}
-.hero-sub{
-  font-size:17px;color:var(--muted);
-  max-width:520px;margin:0 auto 32px;
-  line-height:1.65;
-}
-.hero-stats{
-  display:flex;align-items:center;justify-content:center;
-  gap:32px;flex-wrap:wrap;margin-bottom:0;
-}
-.hero-stat{text-align:center}
-.hero-stat-num{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:32px;font-weight:700;color:var(--text);
-  line-height:1;
-}
-.hero-stat-num span{color:var(--accent)}
-.hero-stat-label{font-size:12px;color:var(--muted);margin-top:3px;letter-spacing:.04em}
-.hero-divider{width:1px;height:32px;background:var(--border2)}
+/* HERO */
+.hero{padding:48px 24px 32px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pres-blue),var(--pres-gold),var(--pres-red))}
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--pres-gold);margin-bottom:12px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(42px,7vw,72px);font-weight:900;line-height:.95;letter-spacing:-.01em;color:var(--text);margin-bottom:10px}
+.hero h1 span{color:var(--pres-gold);display:block}
+[data-theme="light"] .hero h1 span{color:var(--pres-gold)}
+.hero-sub{font-size:16px;color:var(--muted);max-width:680px;margin:18px auto 0;line-height:1.55}
 
-/* ── TEST GRID ── */
-.tests-section{padding:56px 24px;max-width:1120px;margin:0 auto}
-.section-header{margin-bottom:28px}
-.section-label{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:12px;font-weight:600;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--accent);margin-bottom:6px;
-}
-.section-title{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:28px;font-weight:700;color:var(--text);
-  letter-spacing:.01em;
-}
-.section-sub{font-size:14px;color:var(--muted);margin-top:4px}
+/* MAIN */
+.main{max-width:960px;margin:0 auto;padding:32px 24px 48px}
 
-.test-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:12px;
-}
+/* WHY BLOCK */
+.why-block{margin-bottom:28px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--pres-gold);border-radius:8px;padding:22px 26px}
+.why-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--pres-gold);margin-bottom:8px}
+.why-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.2}
+.why-body{font-size:14px;color:var(--muted);line-height:1.65}
+.why-body p{margin:8px 0}
+.why-body p:first-child{margin-top:0}
+.why-body p:last-child{margin-bottom:0}
+.why-body strong{color:var(--text)}
+.why-body a{color:var(--pres-gold);text-decoration:none;border-bottom:1px solid rgba(201,160,74,0.3);transition:border-color .15s}
+.why-body a:hover{border-color:var(--pres-gold)}
 
-.test-card{
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:12px;padding:20px;
-  text-decoration:none;color:var(--text);
-  display:flex;flex-direction:column;gap:12px;
-  transition:border-color .15s,background .15s,transform .1s;
-  cursor:pointer;position:relative;
-}
-.test-card:hover{
-  border-color:var(--border2);
-  background:var(--surface3);
-  transform:translateY(-2px);
-}
-.test-card.live{border-color:rgba(232,240,42,0.2)}
-.test-card.live:hover{border-color:var(--accent);background:var(--surface3)}
-.test-card.coming{opacity:.55;cursor:default}
-.test-card.coming:hover{transform:none;border-color:var(--border)}
+/* PROFILE BLOCK */
+.profile-block{margin-bottom:28px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:22px 26px}
+.profile-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.profile-row{display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+.profile-field{display:flex;flex-direction:column;gap:6px}
+.profile-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--text)}
+.profile-pills{display:flex;gap:6px;flex-wrap:wrap}
+.profile-pill{padding:7px 13px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .15s}
+.profile-pill:hover{color:var(--text);border-color:var(--border2)}
+.profile-pill.active{background:var(--pres-gold);color:var(--bg);border-color:var(--pres-gold)}
+[data-theme="light"] .profile-pill.active{color:#fff}
+.profile-select{padding:7px 13px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:6px;cursor:pointer}
+.profile-select:focus{outline:none;border-color:var(--pres-gold)}
 
-.tc-badge{
-  display:inline-flex;align-items:center;gap:5px;
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:10px;font-weight:600;letter-spacing:.12em;
-  text-transform:uppercase;padding:3px 8px;
-  border-radius:4px;align-self:flex-start;
-}
-.tc-badge.live-badge{background:rgba(232,240,42,0.12);color:var(--accent)}
-.tc-badge.coming-badge{background:rgba(255,255,255,0.06);color:var(--faint)}
-.tc-badge.live-badge::before{
-  content:'';width:5px;height:5px;border-radius:50%;
-  background:var(--accent);animation:pulse 2s infinite;
-}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* SECTION HEADERS */
+.section-header{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:32px 0 14px;display:flex;align-items:center;gap:12px}
+.section-header::after{content:"";flex:1;height:1px;background:var(--border)}
 
-.tc-icon{
-  font-size:28px;line-height:1;
-  /* Using text chars not emoji for consistency */
-}
-.tc-anim-preview{
-  height:48px;display:flex;align-items:center;justify-content:center;
-  border-radius:8px;background:var(--surface3);
-  border:1px solid var(--border);
-  overflow:hidden;position:relative;
-}
+/* CATEGORY CARDS */
+.categories{display:flex;flex-direction:column;gap:18px}
+.category-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0;overflow:hidden;transition:border-color .2s}
+.category-card.has-pass{border-color:var(--pass)}
+.category-card.has-fail{border-color:var(--fail)}
+.category-header{padding:18px 24px;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.category-name{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:var(--text);line-height:1.2}
+.category-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--pres-gold);margin-bottom:4px}
+.category-instruction{font-size:12px;color:var(--muted);font-style:italic;margin-top:4px}
+.category-status{padding:5px 11px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border-radius:4px;flex-shrink:0}
+.category-status.pending{background:var(--surface2);color:var(--muted)}
+.category-status.pass{background:var(--pass-strong);color:#fff}
+.category-status.fail{background:var(--fail);color:#fff}
+[data-theme="light"] .category-status.pass{color:#fff}
 
-.tc-name{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:18px;font-weight:700;letter-spacing:.02em;
-  color:var(--text);line-height:1.2;
-}
-.tc-component{font-size:12px;color:var(--muted);margin-top:2px}
+/* TEST OPTIONS */
+.test-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--border)}
+.test-option{padding:18px 22px;background:var(--surface);position:relative;cursor:pointer;transition:background .15s}
+.test-option:hover{background:var(--surface2)}
+.test-option.selected{background:var(--surface2);box-shadow:inset 4px 0 0 var(--pres-gold)}
+.test-option-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px}
+.test-option-protocol{font-size:11px;color:var(--pres-gold);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;font-weight:500}
+.test-option-meta{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+.test-option-input-row{margin-top:14px;display:flex;align-items:center;gap:10px}
+.test-input{width:120px;padding:10px 8px;background:var(--bg);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;border:1px solid var(--border2);border-radius:6px;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.test-input:focus{outline:none;border-color:var(--pres-gold)}
+.test-input::placeholder{color:var(--faint)}
+.test-input::-webkit-outer-spin-button,.test-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.test-input[type=number]{-moz-appearance:textfield}
+.test-input-unit{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+.test-option-result{margin-top:12px;display:none}
+.test-option.has-value .test-option-result{display:block}
+.test-target-line{font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.02em}
+.test-target-line strong{color:var(--text);font-weight:600}
+.test-result-line{margin-top:6px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.test-result-line.pass{color:var(--pass-strong)}
+.test-result-line.fail{color:var(--fail)}
 
-/* Score Set affiliation pill — inline badge on test tiles */
-.tc-scoreset-pills{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
-.tc-scoreset-pill{
-  display:inline-flex;align-items:center;
-  padding:2px 8px;border-radius:999px;
-  font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;
-  letter-spacing:.06em;text-transform:uppercase;
-  background:rgba(255,255,255,0.05);border:1px solid var(--border2);
-  color:var(--muted);
-}
-[data-theme="light"] .tc-scoreset-pill{background:rgba(0,0,0,0.04)}
-.tc-scoreset-pill.rfs30{color:#c5cd20;border-color:rgba(232,240,42,0.35)}
-[data-theme="light"] .tc-scoreset-pill.rfs30{color:#8a7020;border-color:rgba(160,122,26,0.4)}
-.tc-scoreset-pill.fbi{color:#d4a84a;border-color:rgba(212,168,74,0.35)}
-[data-theme="light"] .tc-scoreset-pill.fbi{color:#a07a1a;border-color:rgba(160,122,26,0.4)}
-.tc-scoreset-pill.aft{color:#b0b0b0;border-color:rgba(255,255,255,0.15)}
-.tc-scoreset-pill.nfl{color:#b0b0b0;border-color:rgba(255,255,255,0.15)}
+/* OVERALL VERDICT */
+.verdict-block{margin-top:32px;padding:32px 32px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;text-align:center;position:relative;overflow:hidden}
+.verdict-block::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--pres-blue),var(--pres-gold),var(--pres-red))}
+.verdict-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.verdict-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,6vw,52px);font-weight:900;line-height:1.05;color:var(--text);letter-spacing:-.01em}
+.verdict-title.pass{color:var(--pres-gold)}
+.verdict-title.fail{color:var(--fail)}
+.verdict-title.pending{color:var(--muted)}
+.verdict-body{margin-top:14px;font-size:14px;color:var(--muted);line-height:1.6;max-width:540px;margin-left:auto;margin-right:auto}
+.verdict-body strong{color:var(--text)}
 
-.tc-arrow{
-  font-size:13px;color:var(--accent2);
-  margin-top:auto;padding-top:4px;
-  font-family:'Barlow Condensed',sans-serif;
-  font-weight:600;letter-spacing:.04em;
-  transition:gap .15s;display:flex;align-items:center;gap:4px;
-}
-.test-card:hover .tc-arrow{gap:8px}
+/* DEFERRED AWARDS */
+.deferred-block{margin-top:24px;padding:18px 22px;background:var(--surface);border:1px dashed var(--border2);border-radius:8px}
+.deferred-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.deferred-body{font-size:13px;color:var(--muted);line-height:1.55}
 
-/* ── SCORE SETS SECTION (new) ── */
-.scoresets-section{padding:56px 24px 32px;max-width:1120px;margin:0 auto}
-.scoresets-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-  gap:18px;
-  margin-top:24px;
-}
-.scoreset-card{
-  position:relative;
-  padding:24px 22px 22px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:var(--surface2);
-  display:flex;flex-direction:column;gap:12px;
-  text-decoration:none;color:var(--text);
-  transition:all .18s;
-  min-height:200px;
-}
-.scoreset-card.live{cursor:pointer;border-color:rgba(232,240,42,0.14)}
-.scoreset-card.live:hover{transform:translateY(-2px);border-color:var(--accent);background:var(--surface3)}
-.scoreset-card.coming{opacity:.6;cursor:default}
-.scoreset-card.external::after{
-  content:"↗";
-  position:absolute;top:16px;right:18px;
-  font-family:'Barlow Condensed',sans-serif;font-size:16px;
-  color:var(--muted);
-}
-.scoreset-card.external:hover::after{color:var(--accent)}
-/* Dual-CTA card variant (App Store + web link) — used for REALFIT Absolute */
-.scoreset-card.dual-cta{cursor:default}
-.scoreset-card.dual-cta:hover{transform:none;border-color:var(--border);background:var(--surface2)}
-.sc-ctas{display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:6px}
-.sc-app-badge{display:inline-block;line-height:0;text-decoration:none;transition:transform .15s}
-.sc-app-badge:hover{transform:translateY(-1px)}
-.sc-app-badge img{height:44px;width:auto;display:block}
-.sc-web-link{
-  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.04em;
-  color:var(--muted);text-decoration:none;
-  padding:2px 0;transition:color .15s;
-}
-.sc-web-link:hover{color:var(--accent)}
-.sc-web-link span{font-family:'Barlow',sans-serif;margin-left:4px;transition:transform .15s;display:inline-block}
-.sc-web-link:hover span{transform:translateX(3px)}
-.sc-web-label{
-  font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:.02em;
-  color:var(--faint);margin-right:6px;text-transform:none;
-}
-.sc-badge{
-  display:inline-block;width:fit-content;
-  padding:3px 9px;border-radius:4px;
-  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;
-}
-.sc-badge.live{background:rgba(232,240,42,0.12);color:var(--accent);border:1px solid rgba(232,240,42,0.3)}
-.sc-badge.external{background:rgba(93,202,165,0.1);color:var(--teal);border:1px solid rgba(93,202,165,0.3)}
-.sc-badge.coming{background:rgba(255,255,255,0.05);color:var(--faint);border:1px solid var(--border2)}
-[data-theme="light"] .sc-badge.live{background:rgba(192,57,43,0.1);color:var(--accent);border-color:rgba(192,57,43,0.3)}
-[data-theme="light"] .sc-badge.external{background:rgba(10,110,86,0.08);color:var(--teal);border-color:rgba(10,110,86,0.3)}
-.sc-name{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:26px;font-weight:900;letter-spacing:-.005em;
-  line-height:1.05;color:var(--text);
-}
-.sc-publisher{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;color:var(--muted);letter-spacing:.02em;
-  margin-top:-4px;
-}
-.sc-audience{
-  font-size:13px;line-height:1.5;color:var(--muted);flex:1;
-}
-.sc-meta{
-  display:flex;gap:10px;flex-wrap:wrap;
-  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
-  padding-top:10px;border-top:1px dashed var(--border);
-}
-.sc-meta-item::before{content:"·";margin-right:10px;color:var(--faint)}
-.sc-meta-item:first-child::before{content:""}
-.sc-arrow{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:13px;font-weight:700;letter-spacing:.04em;
-  color:var(--accent);
-  display:flex;align-items:center;gap:4px;
-  margin-top:4px;
-  transition:gap .15s;
-}
-.scoreset-card.live:hover .sc-arrow{gap:8px}
-.scoreset-card.coming .sc-arrow{color:var(--faint)}
-.scoreset-card.external .sc-arrow{color:var(--teal)}
-[data-theme="light"] .scoreset-card.external .sc-arrow{color:var(--teal)}
+/* SOURCE BLOCK */
+.source-block{margin-top:32px;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.source-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--pres-gold);margin-bottom:8px}
+.source-body{font-size:13px;color:var(--muted);line-height:1.65}
+.source-body strong{color:var(--text)}
+.source-body a{color:var(--pres-gold);text-decoration:none;border-bottom:1px solid rgba(201,160,74,0.3);font-family:'JetBrains Mono',monospace;font-size:12px}
+.source-body a:hover{border-color:var(--pres-gold)}
 
-/* Animation previews */
-.preview-track{
-  width:100%;height:100%;position:relative;
-  display:flex;align-items:center;padding:0 12px;
-}
-.preview-runner{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--accent);position:absolute;
-  animation:runpreview 1.8s ease-in-out infinite;
-}
-.preview-runner2{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--muted);position:absolute;
-  animation:runpreview 2.4s ease-in-out infinite .3s;
-}
-@keyframes runpreview{
-  0%{left:8px;opacity:.6}
-  50%{left:calc(100% - 20px);opacity:1}
-  100%{left:8px;opacity:.6}
-}
-@keyframes vjpreview{
-  0%,100%{height:18px;opacity:.7}
-  50%{height:48px;opacity:1}
-}
-@keyframes bjpreview{
-  0%{transform:translateX(-30px);opacity:.4}
-  50%{opacity:1}
-  100%{transform:translateX(30px);opacity:.4}
-}
-.preview-bar{
-  display:flex;align-items:flex-end;justify-content:center;
-  gap:2px;height:100%;padding:6px 8px;
-}
-.preview-plate{
-  width:14px;border-radius:2px 2px 0 0;
-  background:var(--border2);
-  animation:platerise 2s ease-in-out infinite;
-}
-.preview-plate:nth-child(1){height:40%;animation-delay:0s}
-.preview-plate:nth-child(2){height:60%;animation-delay:.15s}
-.preview-plate:nth-child(3){height:80%;animation-delay:.3s}
-.preview-plate:nth-child(4){height:95%;animation-delay:.45s;background:var(--accent);opacity:.7}
-@keyframes platerise{
-  0%,100%{opacity:.4;transform:scaleY(.85)}
-  50%{opacity:1;transform:scaleY(1)}
-}
-.preview-arc{
-  width:100%;height:100%;position:relative;overflow:hidden;
-}
-.preview-ball{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--accent);position:absolute;bottom:8px;left:10px;
-  animation:throwpreview 2s ease-in-out infinite;
-}
-@keyframes throwpreview{
-  0%{left:10px;bottom:8px;opacity:.5}
-  25%{bottom:32px}
-  50%{left:calc(100% - 18px);bottom:8px;opacity:1}
-  75%{bottom:32px;left:60%}
-  100%{left:10px;bottom:8px;opacity:.5}
-}
-.preview-pullup{
-  display:flex;align-items:center;justify-content:center;
-  height:100%;gap:4px;
-}
-.preview-bar-hang{
-  width:32px;height:3px;background:var(--border2);border-radius:2px;
-  position:absolute;top:8px;
-}
-.preview-figure{
-  width:6px;height:16px;border-radius:3px;
-  background:var(--muted);position:absolute;top:11px;
-  animation:pulluppreview 1.6s ease-in-out infinite;
-}
-@keyframes pulluppreview{
-  0%,100%{top:24px;opacity:.5}
-  50%{top:11px;opacity:1;background:var(--accent)}
-}
-.preview-clock{
-  display:flex;align-items:center;justify-content:center;
-  height:100%;
-}
-.preview-clock-ring{
-  width:28px;height:28px;border-radius:50%;
-  border:2px solid var(--border2);position:relative;
-}
-.preview-clock-hand{
-  width:1px;height:10px;background:var(--accent);
-  position:absolute;bottom:50%;left:50%;transform-origin:bottom center;
-  animation:clockspin 2s linear infinite;
-}
-@keyframes clockspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.preview-run{
-  display:flex;align-items:center;justify-content:center;
-  height:100%;position:relative;overflow:hidden;
-}
-.preview-road{
-  position:absolute;bottom:10px;left:0;right:0;
-  height:1px;background:var(--border2);
-}
-.preview-runner-sm{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--teal);position:absolute;bottom:11px;
-  animation:roadrunner 2.2s ease-in-out infinite;
-}
-@keyframes roadrunner{
-  0%{left:10%;opacity:.5}40%{opacity:1}
-  70%{left:80%;opacity:.8}100%{left:10%;opacity:.5}
-}
-.preview-squat{
-  display:flex;align-items:flex-end;justify-content:center;
-  height:100%;padding-bottom:6px;
-}
-.preview-squat-bar{
-  width:36px;height:3px;background:var(--border2);
-  border-radius:2px;position:relative;
-  animation:squatmove 1.8s ease-in-out infinite;
-}
-@keyframes squatmove{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-24px)}
-}
+/* BUILT ON FITDAT */
+.built-on{margin-top:24px;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.built-on-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--pres-gold);margin-bottom:8px}
+.built-on-body{font-size:13px;color:var(--muted);line-height:1.65}
+.built-on-body .mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text)}
 
-/* ── REALFIT SECTION ── */
-.realfit-section{
-  border-top:1px solid var(--border);
-  padding:48px 24px;background:var(--surface2);
-}
-.realfit-inner{
-  max-width:1120px;margin:0 auto;
-  display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
-}
-.realfit-text h2{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:32px;font-weight:800;color:var(--text);
-  letter-spacing:.01em;margin-bottom:10px;
-}
-.realfit-text p{font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:16px}
-.realfit-links{display:flex;gap:10px;flex-wrap:wrap}
-.rl-primary{
-  padding:10px 20px;border-radius:7px;
-  background:var(--accent);color:#0f0e0c;
-  font-size:13px;font-weight:600;letter-spacing:.02em;
-  text-decoration:none;font-family:'Barlow Condensed',sans-serif;
-  transition:opacity .15s;
-}
-.rl-primary:hover{opacity:.88}
-.rl-secondary{
-  padding:10px 20px;border-radius:7px;
-  border:1px solid var(--border2);color:var(--muted);
-  font-size:13px;font-weight:500;text-decoration:none;
-  transition:all .15s;
-}
-.rl-secondary:hover{border-color:var(--text);color:var(--text)}
-/* Dual-CTA variant for the "Want the full picture?" section */
-.realfit-cta-group{display:flex;flex-direction:column;gap:14px;margin-top:6px}
-.realfit-app-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.realfit-app-badge{display:inline-block;line-height:0;text-decoration:none;transition:transform .15s}
-.realfit-app-badge:hover{transform:translateY(-1px)}
-.realfit-app-badge img{height:52px;width:auto;display:block}
-.realfit-app-caption{font-family:'Barlow',sans-serif;font-size:13px;color:var(--muted);line-height:1.4}
-.realfit-secondary-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.rl-web-link{
-  font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:.03em;
-  color:var(--muted);text-decoration:none;padding:6px 0;
-  transition:color .15s;
-}
-.rl-web-link:hover{color:var(--text)}
-.rl-web-link span{font-family:'Barlow',sans-serif;margin-left:4px;transition:transform .15s;display:inline-block}
-.rl-web-link:hover span{transform:translateX(3px)}
-.score-card-preview{
-  background:var(--surface3);border:1px solid var(--border);
-  border-radius:12px;padding:24px;
-}
-.scp-label{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:11px;font-weight:600;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--muted);margin-bottom:12px;
-}
-.scp-score{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:64px;font-weight:900;color:var(--text);
-  line-height:1;letter-spacing:-.02em;margin-bottom:4px;
-}
-.scp-score span{color:var(--accent)}
-.scp-band{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:16px;font-weight:600;color:var(--teal);
-  margin-bottom:16px;
-}
-.scp-bars{display:flex;flex-direction:column;gap:7px}
-.scp-bar-row{display:flex;align-items:center;gap:10px;font-size:12px}
-.scp-bar-label{color:var(--muted);width:100px;flex-shrink:0;font-size:11px}
-.scp-bar-track{flex:1;height:5px;background:var(--border2);border-radius:3px}
-.scp-bar-fill{height:5px;border-radius:3px;background:var(--accent);transition:width .5s}
-.scp-bar-val{color:var(--muted);width:28px;text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:12px}
+/* FOOTER */
+footer{padding:24px;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--faint)}
+footer .footer-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+footer .footer-links{margin-bottom:14px}
+footer .footer-links a{color:var(--muted);text-decoration:none;margin:0 10px}
+footer .footer-links a:hover{color:var(--text)}
+footer .footer-disclaimer{max-width:680px;margin:0 auto;font-size:11px;color:var(--faint);line-height:1.55}
 
-/* ── FOOTER ── */
-footer{
-  padding:24px;border-top:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:12px;
-}
-.dev-intro{padding:14px 18px;border:1px solid rgba(58,123,255,0.25);border-radius:10px;background:rgba(58,123,255,0.06);display:flex;align-items:flex-start;gap:12px}
-.dev-intro-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(58,123,255,0.15);color:var(--accent2);flex-shrink:0;margin-top:1px;white-space:nowrap}
-.dev-intro-text{font-size:13px;color:var(--muted);line-height:1.65}
-.dev-intro-text a{color:var(--accent2);text-decoration:none}
-.dev-intro-text a:hover{text-decoration:underline}
-[data-theme="light"] .dev-intro{border-color:rgba(26,86,219,0.2);background:rgba(26,86,219,0.04)}
-[data-theme="light"] .dev-intro-tag{background:rgba(26,86,219,0.1);color:var(--accent2)}
-.footer-left{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.footer-left a{color:var(--muted);text-decoration:none;transition:color .15s}
-.footer-left a:hover{color:var(--text)}
-.divider{opacity:.3}
-.footer-right{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--faint);letter-spacing:.06em}
-
-@media(max-width:768px){
-  .hero h1{font-size:52px}
-  .hero-divider{display:none}
-  .realfit-inner{grid-template-columns:1fr}
-  .score-card-preview{display:none}
-  .test-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+@media (max-width:600px){
+  .test-options{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -552,608 +189,465 @@ footer{
 
 <header>
   <div class="logo-group">
-    <div style="display:flex;flex-direction:column;gap:2px">
-      <a href="/" class="site-logo">ScoreMy<span>Fitness</span></a>
-      <a href="https://realfit.com" target="_blank" rel="noopener" style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .15s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">A REALFIT App</a>
-    </div>
+    <a href="/" class="site-logo">ScoreMy<span>PFT</span></a>
+    <span class="logo-tagline">Presidential Physical Fitness Test · 2026</span>
   </div>
   <div class="header-right">
-    <a href="https://scoremy40.com" class="nav-link">ScoreMy40.com</a>
-    <a href="https://fitdat.com" class="nav-link">FITDAT.com</a>
-    <a href="https://realfit.com" class="nav-link">REALFIT.com</a>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀ / ☾</button>
-    <a href="https://realfitscore.com" class="nav-cta" style="padding:9px 20px;font-size:14px;font-weight:700;letter-spacing:.04em;white-space:nowrap">Get your overall fitness score →</a>
+    <a class="nav-link" href="https://scoremyfitness.com">More REALFIT tools</a>
+    <button class="theme-toggle" onclick="toggleTheme()">☀ / ☾</button>
   </div>
 </header>
 
-<!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-eyebrow">FITDAT sample scoring · Tests + Score Sets</div>
-  <h1>How do you<br><span>actually</span> measure up?</h1>
-  <p class="hero-sub">Pick a test. Pick a Score Set. Enter your result. See exactly where you stand — with the visuals to make it real.</p>
-  <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="hero-stat-num"><span>9</span></div>
-      <div class="hero-stat-label">Live test scorers</div>
-    </div>
-    <div class="hero-divider"></div>
-    <div class="hero-stat">
-      <div class="hero-stat-num"><span>6</span></div>
-      <div class="hero-stat-label">Live Score Sets</div>
-    </div>
-    <div class="hero-divider"></div>
-    <div class="hero-stat">
-      <div class="hero-stat-num"><span>28</span></div>
-      <div class="hero-stat-label">Tests across Score Sets</div>
-    </div>
-  </div>
+  <div class="hero-eyebrow">Official 2026 benchmarks · Sourced from whitehouse.gov · Updated May 2026</div>
+  <h1>Presidential<span>Physical Fitness Test</span></h1>
+  <p class="hero-sub">The Trump administration's reinstated Presidential Fitness Test, scored. Three categories &mdash; Core, Cardio, Upper Body. Pick one test per category. Hit the threshold for your age and sex in all three to earn the Presidential Award.</p>
 </section>
 
-<!-- ── INDIVIDUAL TESTS SECTION ── -->
-<div class="tests-section">
-  <div class="section-header">
-    <div class="section-label">Individual Tests</div>
-    <div class="section-title">Pick a single test</div>
-    <div class="section-sub">4 test scorers live now. Each tile shows which Score Set(s) use the test.</div>
+<main class="main">
+
+<aside class="why-block" aria-label="About this scorer">
+  <div class="why-eyebrow">About this scorer</div>
+  <div class="why-title">First independent scorer for the official 2026 Presidential Fitness Test.</div>
+  <div class="why-body">
+    <p>The Presidential Physical Fitness Test was reinstated by Executive Order on July 31, 2025, and the official benchmarks were published at <strong>whitehouse.gov/fitness</strong> in May 2026. This scorer implements the official Presidential Award benchmarks exactly as published, with no modifications.</p>
+    <p>The 2026 test introduces a new <strong>category-pick architecture</strong>: three categories (Core Strength, Cardiorespiratory Fitness, Upper Body Strength), each with two test options. A student picks one test per category. To earn the Presidential Award, the student must hit the age- and sex-stratified threshold for their chosen test in all three categories.</p>
+    <p>The <strong>National Award</strong> and <strong>Participation Award</strong> are part of the official Presidential Fitness Test program but their specific thresholds have not yet been publicly released by the President's Council. Both will be added to this scorer when the official thresholds are published.</p>
   </div>
+</aside>
 
-  <div class="test-grid">
-
-    <!-- LIVE: 40 Yard Dash -->
-    <a href="https://scoremy40.com" class="test-card live">
-      <div class="tc-badge live-badge">Live now</div>
-      <div class="tc-anim-preview">
-        <div class="preview-track">
-          <div class="preview-runner"></div>
-          <div class="preview-runner2" style="animation-delay:.6s"></div>
-          <div style="position:absolute;right:10px;width:2px;height:32px;background:var(--border2);border-radius:1px"></div>
-        </div>
+<!-- PROFILE -->
+<div class="profile-block">
+  <div class="profile-eyebrow">Pick your group · Pick your age</div>
+  <div class="profile-row">
+    <div class="profile-field">
+      <span class="profile-label">Group</span>
+      <div class="profile-pills" id="sexPills">
+        <button type="button" class="profile-pill" data-sex="boys">Boys</button>
+        <button type="button" class="profile-pill" data-sex="girls">Girls</button>
       </div>
-      <div>
-        <div class="tc-name">40 Yard Dash</div>
-        <div class="tc-component">Speed · Power · Agility</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span><span class="tc-scoreset-pill nfl">NFL Combine</span></div>
-      </div>
-      <div class="tc-arrow">scoremy40.com <span>→</span></div>
-    </a>
-
-    <!-- COMING: Bench Press -->
-    <a href="/bench" class="test-card live">
-      <div class="tc-badge live-badge">Live now</div>
-      <div class="tc-anim-preview">
-        <div class="preview-bar">
-          <div class="preview-plate"></div>
-          <div class="preview-plate"></div>
-          <div class="preview-plate"></div>
-          <div class="preview-plate"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Bench Press — 1RM</div>
-        <div class="tc-component">Muscular Strength · Power</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Watch the plates load <span>→</span></div>
-    </a>
-
-    <!-- LIVE: Medicine Ball Throw -->
-    <a href="/throw" class="test-card live">
-      <div class="tc-badge live-badge">Live now</div>
-      <div class="tc-anim-preview">
-        <div class="preview-arc">
-          <div class="preview-ball"></div>
-          <div style="position:absolute;bottom:6px;left:0;right:0;height:1px;background:var(--border2)"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Medicine Ball Throw</div>
-        <div class="tc-component">Power · Muscular Strength</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Compare throw arcs <span>→</span></div>
-    </a>
-
-    <!-- LIVE: 1.5-Mile Run -->
-    <a href="/1-5-mile" class="test-card live">
-      <div class="tc-badge live-badge">Live now</div>
-      <div class="tc-anim-preview">
-        <div class="preview-run">
-          <div class="preview-road"></div>
-          <div class="preview-runner-sm"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">1.5-Mile Run</div>
-        <div class="tc-component">Cardiovascular · Endurance</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill fbi">FBI PFT</span></div>
-      </div>
-      <div class="tc-arrow">Beat the FBI clock <span>→</span></div>
-    </a>
-
-    <!-- COMING: Pull-Ups -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview" style="position:relative">
-        <div class="preview-bar-hang"></div>
-        <div class="preview-figure"></div>
-      </div>
-      <div>
-        <div class="tc-name">Pull-Ups — Max Reps</div>
-        <div class="tc-component">Muscular Endurance · Strength</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">See the rep count <span>→</span></div>
     </div>
-
-    <!-- COMING: Back Squat -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview">
-        <div class="preview-squat">
-          <div class="preview-squat-bar"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Back Squat — 1RM</div>
-        <div class="tc-component">Muscular Strength · Power</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Load the bar <span>→</span></div>
+    <div class="profile-field">
+      <span class="profile-label">Age</span>
+      <select class="profile-select" id="ageSelect">
+        <option value="">Pick age</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        <option value="9">9</option><option value="10">10</option><option value="11">11</option>
+        <option value="12">12</option><option value="13">13</option><option value="14">14</option>
+        <option value="15">15</option><option value="16">16</option><option value="17">17+</option>
+      </select>
     </div>
-
-    <!-- COMING: Shuttle Run -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview">
-        <div class="preview-track">
-          <div class="preview-runner" style="animation:runpreview 1.4s ease-in-out infinite alternate"></div>
-          <div style="position:absolute;left:8px;width:2px;height:24px;background:var(--border2);border-radius:1px"></div>
-          <div style="position:absolute;right:8px;width:2px;height:24px;background:var(--border2);border-radius:1px"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Shuttle Run — 60 Yds</div>
-        <div class="tc-component">Agility · Speed</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Cut and go <span>→</span></div>
-    </div>
-
-    <!-- COMING: 5K Run -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview">
-        <div class="preview-run">
-          <div class="preview-road"></div>
-          <div class="preview-runner-sm"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">5K Run</div>
-        <div class="tc-component">Cardiovascular · Endurance</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Pace yourself <span>→</span></div>
-    </div>
-
-    <!-- COMING: Wall Sit -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview">
-        <div class="preview-clock">
-          <div class="preview-clock-ring">
-            <div class="preview-clock-hand"></div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Wall Sit</div>
-        <div class="tc-component">Muscular Endurance · Strength</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Hold the clock <span>→</span></div>
-    </div>
-
-    <!-- COMING: Plank Hold -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview">
-        <div class="preview-clock">
-          <div class="preview-clock-ring" style="border-color:var(--teal);opacity:.5">
-            <div class="preview-clock-hand" style="background:var(--teal);animation-duration:3s"></div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Plank Hold</div>
-        <div class="tc-component">Muscular Endurance · Strength</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Don't break <span>→</span></div>
-    </div>
-
-    <!-- COMING: Push-Ups -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview">
-        <div class="preview-bar">
-          <div class="preview-plate" style="width:10px;animation-delay:0s"></div>
-          <div class="preview-plate" style="width:10px;animation-delay:.1s"></div>
-          <div class="preview-plate" style="width:10px;animation-delay:.2s"></div>
-          <div class="preview-plate" style="width:10px;animation-delay:.3s;background:var(--teal)"></div>
-          <div class="preview-plate" style="width:10px;animation-delay:.4s;background:var(--teal)"></div>
-          <div class="preview-plate" style="width:10px;animation-delay:.5s;background:var(--accent)"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Push-Ups — Max Reps</div>
-        <div class="tc-component">Muscular Endurance · Strength</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Count every rep <span>→</span></div>
-    </div>
-
-    <!-- COMING: 400m Sprint -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview">
-        <div class="preview-run">
-          <div class="preview-road"></div>
-          <div class="preview-runner-sm" style="background:var(--accent);animation-duration:1.6s"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Sprint — 400m</div>
-        <div class="tc-component">Endurance · Speed</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Around the track <span>→</span></div>
-    </div>
-
-    <!-- COMING: Squat Thrust Jumps -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview">
-        <div class="preview-bar">
-          <div class="preview-plate" style="width:10px;animation-delay:0s"></div>
-          <div class="preview-plate" style="width:10px;animation-delay:.08s"></div>
-          <div class="preview-plate" style="width:10px;animation-delay:.16s"></div>
-          <div class="preview-plate" style="width:10px;animation-delay:.24s;background:var(--accent);opacity:.8"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Squat Thrust Jumps</div>
-        <div class="tc-component">Endurance · Cardio · Strength</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">2 minutes of work <span>→</span></div>
-    </div>
-
-    <!-- COMING: Concept2 / 5K choice -->
-    <div class="test-card coming">
-      <div class="tc-badge coming-badge">Coming soon</div>
-      <div class="tc-anim-preview">
-        <div class="preview-run">
-          <div class="preview-road"></div>
-          <div class="preview-runner-sm" style="background:var(--teal);animation-duration:2.8s"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Concept2 Row — 2K</div>
-        <div class="tc-component">Cardiovascular · Endurance</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill rfs30">REALFIT Absolute</span></div>
-      </div>
-      <div class="tc-arrow">Pull every meter <span>→</span></div>
-    </div>
-
-    <!-- LIVE: Vertical Jump (NFL Combine) -->
-    <a href="/vertical-jump" class="test-card live">
-      <div class="tc-badge live-badge">Live now</div>
-      <div class="tc-anim-preview">
-        <div style="position:relative;width:100%;height:60px;display:flex;align-items:flex-end;justify-content:center">
-          <div style="width:14px;height:32px;background:var(--accent);border-radius:3px;animation:vjpreview 1.6s ease-in-out infinite"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Vertical Jump</div>
-        <div class="tc-component">Power · Lower-body explosion</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill nfl">NFL Combine</span></div>
-      </div>
-      <div class="tc-arrow">Score by position <span>→</span></div>
-    </a>
-
-    <!-- LIVE: Broad Jump (NFL Combine) -->
-    <a href="/broad-jump" class="test-card live">
-      <div class="tc-badge live-badge">Live now</div>
-      <div class="tc-anim-preview">
-        <div style="position:relative;width:100%;height:60px;display:flex;align-items:center;justify-content:center;gap:6px">
-          <div style="width:8px;height:8px;background:var(--accent);border-radius:50%;animation:bjpreview 1.8s ease-in-out infinite"></div>
-          <div style="flex:1;height:1px;background:var(--border2)"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Broad Jump</div>
-        <div class="tc-component">Power · Horizontal explosion</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill nfl">NFL Combine</span></div>
-      </div>
-      <div class="tc-arrow">Score by position <span>→</span></div>
-    </a>
-
-    <!-- LIVE: Bench Press 225 reps (NFL Combine) -->
-    <a href="/bench-225" class="test-card live">
-      <div class="tc-badge live-badge">Live now</div>
-      <div class="tc-anim-preview">
-        <div class="preview-bar">
-          <div class="preview-plate" style="background:var(--accent)"></div>
-          <div class="preview-plate" style="background:var(--accent)"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">Bench Press · 225 reps</div>
-        <div class="tc-component">Strength-endurance · Fixed load</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill nfl">NFL Combine</span></div>
-      </div>
-      <div class="tc-arrow">Score by position <span>→</span></div>
-    </a>
-
-    <!-- LIVE: 3-Cone Drill (NFL Combine) -->
-    <a href="/3-cone" class="test-card live">
-      <div class="tc-badge live-badge">Live now</div>
-      <div class="tc-anim-preview">
-        <div style="position:relative;width:100%;height:60px;display:flex;align-items:center;justify-content:space-around">
-          <div style="width:6px;height:12px;background:var(--accent2);border-radius:2px"></div>
-          <div style="width:6px;height:12px;background:var(--accent2);border-radius:2px"></div>
-          <div style="width:6px;height:12px;background:var(--accent2);border-radius:2px"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">3-Cone Drill</div>
-        <div class="tc-component">Agility · Change of direction</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill nfl">NFL Combine</span></div>
-      </div>
-      <div class="tc-arrow">Score by position <span>→</span></div>
-    </a>
-
-    <!-- LIVE: 20-Yard Shuttle (NFL Combine) -->
-    <a href="/shuttle" class="test-card live">
-      <div class="tc-badge live-badge">Live now</div>
-      <div class="tc-anim-preview">
-        <div class="preview-track">
-          <div class="preview-runner" style="animation:runpreview 1.2s ease-in-out infinite alternate"></div>
-          <div style="position:absolute;left:8px;width:2px;height:24px;background:var(--border2)"></div>
-          <div style="position:absolute;right:8px;width:2px;height:24px;background:var(--border2)"></div>
-        </div>
-      </div>
-      <div>
-        <div class="tc-name">20-Yard Shuttle</div>
-        <div class="tc-component">Agility · Lateral quickness</div>
-        <div class="tc-scoreset-pills"><span class="tc-scoreset-pill nfl">NFL Combine</span></div>
-      </div>
-      <div class="tc-arrow">Score by position <span>→</span></div>
-    </a>
-
   </div>
 </div>
 
-<!-- ── SCORE SETS SECTION ── -->
-<div class="scoresets-section">
-  <div class="section-header">
-    <div class="section-label">Score Sets</div>
-    <div class="section-title">Score a full assessment</div>
-    <div class="section-sub">Complete Score Sets from FITDAT — all events in one scorer.</div>
-  </div>
+<div class="section-header">Three categories · Pick one test per category</div>
 
-  <div class="scoresets-grid">
+<!-- CATEGORIES -->
+<div class="categories" id="categoriesList"></div>
 
-    <!-- LIVE: FBI PFT -->
-    <a href="/fbi-pft" class="scoreset-card live">
-      <div class="sc-badge live">Live now</div>
-      <div>
-        <div class="sc-name">FBI Special Agent PFT</div>
-        <div class="sc-publisher">scoreset_fbi_pft · FBI</div>
-      </div>
-      <div class="sc-audience">Full 4-event selection standard for FBI Special Agent candidates. Signed-point scoring −2 to +10 per event, cumulative + per-event-minimum pass logic.</div>
-      <div class="sc-meta">
-        <span class="sc-meta-item">4 events</span>
-        <span class="sc-meta-item">Male + Female</span>
-        <span class="sc-meta-item">Pass/Fail</span>
-      </div>
-      <div class="sc-arrow">Run the assessment <span>→</span></div>
-    </a>
-
-    <!-- EXTERNAL: REALFIT Absolute (App + Web) -->
-    <div class="scoreset-card live dual-cta">
-      <div class="sc-badge live">Available on iOS</div>
-      <div>
-        <div class="sc-name">REALFIT Absolute Score</div>
-        <div class="sc-publisher">scoreset_realfit_absolute · REALFIT</div>
-      </div>
-      <div class="sc-audience">Population-neutral universal fitness score across all six components. A 700 at 25 means the same as a 700 at 45. The full 13-test battery.</div>
-      <div class="sc-meta">
-        <span class="sc-meta-item">13 tests</span>
-        <span class="sc-meta-item">0–1,000 scale</span>
-        <span class="sc-meta-item">All adults</span>
-      </div>
-      <div class="sc-ctas">
-        <a class="sc-app-badge" href="https://apps.apple.com/us/app/realfit-absolute-score/id6760310323" target="_blank" rel="noopener" aria-label="Download REALFIT Absolute Score on the App Store">
-          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="Download on the App Store">
-        </a>
-        <div>
-          <span class="sc-web-label">or use the web version:</span>
-          <a href="https://realfitscore.com" class="sc-web-link" target="_blank" rel="noopener">realfitscore.com <span>→</span></a>
-        </div>
-      </div>
-    </div>
-
-    <!-- LIVE: Army AFT (hosted at scoremyaft.com) -->
-    <a href="https://scoremyaft.com" class="scoreset-card live">
-      <div class="sc-badge live">Live now</div>
-      <div>
-        <div class="sc-name">U.S. Army AFT</div>
-        <div class="sc-publisher">scoreset_us_army_aft · U.S. Army</div>
-      </div>
-      <div class="sc-audience">The Army Fitness Test — 5 events, tiered combat / general MOS passing thresholds, 0–500 point scale. Effective June 1, 2025.</div>
-      <div class="sc-meta">
-        <span class="sc-meta-item">5 events</span>
-        <span class="sc-meta-item">Tiered thresholds</span>
-        <span class="sc-meta-item">Age + sex normed</span>
-      </div>
-      <div class="sc-arrow">Open scoremyaft.com <span>↗</span></div>
-    </a>
-
-    <!-- LIVE: Army CFT (hosted at scoremycft.com) -->
-    <a href="https://scoremycft.com" class="scoreset-card live">
-      <div class="sc-badge live">Live now</div>
-      <div>
-        <div class="sc-name">U.S. Army CFT</div>
-        <div class="sc-publisher">scoreset_us_army_cft · U.S. Army</div>
-      </div>
-      <div class="sc-audience">The Combat Field Test — 7-event continuous sequence, 30-minute pass standard, sex-neutral and age-neutral. Required annually for soldiers in 24 designated combat MOSs.</div>
-      <div class="sc-meta">
-        <span class="sc-meta-item">7 events · continuous</span>
-        <span class="sc-meta-item">≤ 30:00 pass</span>
-        <span class="sc-meta-item">Combat MOS</span>
-      </div>
-      <div class="sc-arrow">Open scoremycft.com <span>↗</span></div>
-    </a>
-
-    <!-- LIVE: NFL Combine -->
-    <a href="/combine" class="scoreset-card live">
-      <div class="sc-badge live">Live now</div>
-      <div>
-        <div class="sc-name">NFL Scouting Combine</div>
-        <div class="sc-publisher">scoreset_nfl_combine · NFL</div>
-      </div>
-      <div class="sc-audience">Position-based athletic profile for draft prospects. No composite score — per-event interpretation against position-specific standards.</div>
-      <div class="sc-meta">
-        <span class="sc-meta-item">6 events</span>
-        <span class="sc-meta-item">10 positions</span>
-        <span class="sc-meta-item">Feedback-only</span>
-      </div>
-      <div class="sc-arrow">Run the assessment <span>→</span></div>
-    </a>
-
-    <!-- LIVE: Presidential Fitness Test (hosted at scoremypft.com) -->
-    <a href="https://scoremypft.com" class="scoreset-card live">
-      <div class="sc-badge live">Live now</div>
-      <div>
-        <div class="sc-name">Presidential Fitness Test</div>
-        <div class="sc-publisher">scoreset_us_presidential_fitness_test_2026 · President's Council</div>
-      </div>
-      <div class="sc-audience">The reinstated 2026 Presidential Physical Fitness Test for U.S. youth ages 6–17. Three categories — Core, Cardio, Upper Body — pick one test per category, hit the threshold in all three to earn the Presidential Award.</div>
-      <div class="sc-meta">
-        <span class="sc-meta-item">6 tests · pick 3</span>
-        <span class="sc-meta-item">Ages 6–17</span>
-        <span class="sc-meta-item">Pass/Fail</span>
-      </div>
-      <div class="sc-arrow">Open scoremypft.com <span>↗</span></div>
-    </a>
-
-  </div>
+<!-- VERDICT -->
+<div class="verdict-block">
+  <div class="verdict-eyebrow">Your result</div>
+  <div class="verdict-title pending" id="verdictTitle">Pick your group, age, and complete one test per category</div>
+  <div class="verdict-body" id="verdictBody"></div>
 </div>
 
-<!-- ── REALFIT SECTION ── -->
-<section class="realfit-section">
-  <div class="realfit-inner">
-    <div class="realfit-text">
-      <h2>Want the full picture?</h2>
-      <p>Each test here scores one dimension of your fitness. The REALFIT Absolute Score combines all 13 tests into a single 0–1,000 number — the only score that tells you whether you are genuinely fitter than you were last year, regardless of your age or who you're comparing yourself to.</p>
-      <p>A 700 at 25 and a 700 at 45 mean exactly the same thing. The standard doesn't move. Only your fitness does.</p>
-      <div class="realfit-cta-group">
-        <div class="realfit-app-row">
-          <a class="realfit-app-badge" href="https://apps.apple.com/us/app/realfit-absolute-score/id6760310323" target="_blank" rel="noopener" aria-label="Download REALFIT Absolute Score on the App Store">
-            <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="Download on the App Store">
-          </a>
-          <div class="realfit-app-caption">Take your Absolute Score on iPhone.<br>Track it over time.</div>
-        </div>
-        <div class="realfit-secondary-row">
-          <a href="https://realfitscore.com" class="rl-web-link" target="_blank" rel="noopener">Or use the web version: realfitscore.com <span>→</span></a>
-          <a href="https://fitdat.com/scoring-spec.html" class="rl-secondary">How the score works</a>
-        </div>
-      </div>
-    </div>
-    <div class="score-card-preview">
-      <div class="scp-label">REALFIT Absolute Score™</div>
-      <div class="scp-score">7<span>35</span></div>
-      <div class="scp-band">Exceptionally Fit</div>
-      <div class="scp-bars">
-        <div class="scp-bar-row">
-          <div class="scp-bar-label">Cardiovascular</div>
-          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:72%;background:#5DCAA5"></div></div>
-          <div class="scp-bar-val">720</div>
-        </div>
-        <div class="scp-bar-row">
-          <div class="scp-bar-label">Muscular strength</div>
-          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:76%"></div></div>
-          <div class="scp-bar-val">760</div>
-        </div>
-        <div class="scp-bar-row">
-          <div class="scp-bar-label">Muscular endurance</div>
-          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:66%;background:#3A7BFF"></div></div>
-          <div class="scp-bar-val">659</div>
-        </div>
-        <div class="scp-bar-row">
-          <div class="scp-bar-label">Power</div>
-          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:68%;background:#EF9F27"></div></div>
-          <div class="scp-bar-val">680</div>
-        </div>
-        <div class="scp-bar-row">
-          <div class="scp-bar-label">Speed</div>
-          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:89%;background:#D85A30"></div></div>
-          <div class="scp-bar-val">890</div>
-        </div>
-        <div class="scp-bar-row">
-          <div class="scp-bar-label">Agility</div>
-          <div class="scp-bar-track"><div class="scp-bar-fill" style="width:71%;background:#D4537E"></div></div>
-          <div class="scp-bar-val">710</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div style="max-width:1100px;margin:0 auto;padding:0 24px 32px">
-  <div class="dev-intro">
-    <span class="dev-intro-tag">Built on FITDAT</span>
-    <p class="dev-intro-text">
-      ScoreMyFitness is a sample app built on the <a href="https://fitdat.com">FITDAT open library</a> using the <a href="https://fitdat.com/scoring-spec.html">REALFIT Absolute Score</a> specification. Every score matches the live iOS app exactly &mdash; same test definitions, same protocols, same scoring tables. Developers can build their own scoring apps on the same open foundation. <a href="https://fitdat.com/architecture.html">Learn how &rarr;</a>
-    </p>
-  </div>
+<!-- DEFERRED AWARDS -->
+<div class="deferred-block">
+  <div class="deferred-title">National Award · Participation Award</div>
+  <div class="deferred-body">The National Award (broader achievement tier) and Participation Award (recognition of test completion) are part of the official Presidential Fitness Test program. Their specific thresholds have not yet been released by the President's Council on Sports, Fitness, and Nutrition. ScoreMyPFT will publish them in a future update once they are officially released.</div>
 </div>
+
+<!-- SOURCE -->
+<div class="source-block">
+  <div class="source-eyebrow">Source authority</div>
+  <p class="source-body">
+    All benchmark data sourced exclusively from the official <strong>President's Council on Sports, Fitness, and Nutrition</strong> publication at the White House. Specifically: <a href="https://www.whitehouse.gov/fitness/">whitehouse.gov/fitness</a> and the underlying PDF <a href="https://www.whitehouse.gov/wp-content/uploads/2026/05/Presidential-Physical-Fitness-Test.pdf">Presidential-Physical-Fitness-Test.pdf</a>. Any updates to the official benchmarks will be reflected here within days of release.
+  </p>
+</div>
+
+<!-- BUILT ON FITDAT -->
+<div class="built-on">
+  <div class="built-on-eyebrow">Built on FITDAT</div>
+  <p class="built-on-body">
+    This scorer implements <span class="mono">scoreset_us_presidential_fitness_test_2026</span> &mdash; a Score Set on the FITDAT v1.0 Data Specification. Six tests (<span class="mono">test_curl_ups_1min</span>, <span class="mono">test_plank_hold</span>, <span class="mono">test_one_mile_run</span>, <span class="mono">test_beep_test_20m</span>, <span class="mono">test_right_angle_pushups</span>, <span class="mono">test_pullup_max</span>) organized into three Replacement Groups (<span class="mono">rg_pft_core_strength</span>, <span class="mono">rg_pft_cardio</span>, <span class="mono">rg_pft_upper_body</span>) with twelve age-stratified StandardSets anchored to the new <span class="mono">pop_us_youth_school_age_6_17</span> Population. Pass/fail threshold archetype with category-pick logic.
+  </p>
+</div>
+
+</main>
 
 <footer>
-  <div class="footer-left">
-    <strong style="color:var(--text);font-family:'Barlow Condensed',sans-serif;letter-spacing:.04em">ScoreMyFitness</strong>
-    <span class="divider">·</span>
-    A <a href="https://realfit.com">REALFIT</a> App
+  <div class="footer-eyebrow">A REALFIT reference tool · ScoreMyPFT</div>
+  <div class="footer-links">
+    <a href="https://scoremyfitness.com">scoremyfitness.com</a>
+    <a href="https://scoremyaft.com">scoremyaft.com</a>
+    <a href="https://scoremycft.com">scoremycft.com</a>
+    <a href="https://realfit.com">realfit.com</a>
+    <a href="https://fitdat.com">fitdat.com</a>
   </div>
-  <div class="footer-right">© 2026 REALFIT® · All rights reserved</div>
+  <div class="footer-disclaimer">REALFIT&reg; and FITDAT&reg; are registered trademarks. ScoreMyPFT is an independent reference tool implementing the official 2026 Presidential Physical Fitness Test benchmarks as published at whitehouse.gov/fitness. Not affiliated with or endorsed by the President's Council on Sports, Fitness, and Nutrition or the U.S. Government. All benchmark data is sourced from the public domain official publication.</div>
 </footer>
 
 <script>
 function toggleTheme(){
-  const t = document.documentElement.getAttribute('data-theme');
-  document.documentElement.setAttribute('data-theme', t==='dark'?'light':'dark');
-  localStorage.setItem('smf-theme', t==='dark'?'light':'dark');
+  const html=document.documentElement;
+  const cur=html.getAttribute('data-theme');
+  html.setAttribute('data-theme',cur==='dark'?'light':'dark');
 }
-const saved = localStorage.getItem('smf-theme');
-if(saved) document.documentElement.setAttribute('data-theme', saved);
+
+// ─── BENCHMARKS (sourced from whitehouse.gov PDF, May 2026) ───
+const BENCHMARKS = {
+  boys: {
+    6:  {curlUps: 33, plank: 73,  mileRunSec: 615, beepTest: 27, pushUps: 9,  pullUps: 2},
+    7:  {curlUps: 36, plank: 90,  mileRunSec: 562, beepTest: 32, pushUps: 14, pullUps: 4},
+    8:  {curlUps: 40, plank: 95,  mileRunSec: 528, beepTest: 39, pushUps: 17, pullUps: 5},
+    9:  {curlUps: 41, plank: 109, mileRunSec: 511, beepTest: 47, pushUps: 18, pullUps: 5},
+    10: {curlUps: 45, plank: 119, mileRunSec: 477, beepTest: 55, pushUps: 22, pullUps: 6},
+    11: {curlUps: 47, plank: 119, mileRunSec: 452, beepTest: 60, pushUps: 27, pullUps: 6},
+    12: {curlUps: 50, plank: 127, mileRunSec: 431, beepTest: 65, pushUps: 31, pullUps: 7},
+    13: {curlUps: 53, plank: 134, mileRunSec: 410, beepTest: 70, pushUps: 39, pullUps: 7},
+    14: {curlUps: 56, plank: 134, mileRunSec: 386, beepTest: 75, pushUps: 40, pullUps: 10},
+    15: {curlUps: 57, plank: 156, mileRunSec: 380, beepTest: 81, pushUps: 42, pullUps: 11},
+    16: {curlUps: 57, plank: 156, mileRunSec: 368, beepTest: 84, pushUps: 44, pullUps: 11},
+    17: {curlUps: 57, plank: 156, mileRunSec: 366, beepTest: 84, pushUps: 53, pullUps: 13}
+  },
+  girls: {
+    6:  {curlUps: 32, plank: 71,  mileRunSec: 680, beepTest: 22, pushUps: 9,  pullUps: 2},
+    7:  {curlUps: 34, plank: 92,  mileRunSec: 636, beepTest: 25, pushUps: 14, pullUps: 2},
+    8:  {curlUps: 38, plank: 92,  mileRunSec: 602, beepTest: 29, pushUps: 17, pullUps: 2},
+    9:  {curlUps: 39, plank: 105, mileRunSec: 570, beepTest: 35, pushUps: 18, pullUps: 2},
+    10: {curlUps: 40, plank: 105, mileRunSec: 559, beepTest: 41, pushUps: 20, pullUps: 3},
+    11: {curlUps: 42, plank: 105, mileRunSec: 542, beepTest: 46, pushUps: 20, pullUps: 3},
+    12: {curlUps: 45, plank: 127, mileRunSec: 503, beepTest: 49, pushUps: 20, pullUps: 3},
+    13: {curlUps: 46, plank: 127, mileRunSec: 493, beepTest: 50, pushUps: 21, pullUps: 3},
+    14: {curlUps: 47, plank: 134, mileRunSec: 479, beepTest: 50, pushUps: 21, pullUps: 3},
+    15: {curlUps: 48, plank: 145, mileRunSec: 479, beepTest: 50, pushUps: 21, pullUps: 3},
+    16: {curlUps: 48, plank: 145, mileRunSec: 479, beepTest: 50, pushUps: 24, pullUps: 3},
+    17: {curlUps: 48, plank: 145, mileRunSec: 479, beepTest: 50, pushUps: 25, pullUps: 3}
+  }
+};
+
+// ─── CATEGORY DEFINITIONS ───
+const CATEGORIES = [
+  {
+    id: 'core',
+    name: 'Core & Abdominal Strength',
+    options: [
+      {id: 'curlUps', name: 'Curl-Ups', protocol: 'PFT · 1 minute',
+       direction: 'higher', unit: 'reps in 1 min',
+       inputType: 'number', placeholder: '40', step: '1',
+       benchmarkKey: 'curlUps',
+       note: 'Lying on back, knees bent, feet anchored. Curl up to elbows-touch-thighs, lower so shoulder blades touch floor. 1-minute time cap. Form: continuous, no bouncing.'},
+      {id: 'plank', name: 'Plank Hold', protocol: 'PFT · max time',
+       direction: 'higher', unit: 'seconds held',
+       inputType: 'number', placeholder: '90', step: '1',
+       benchmarkKey: 'plank',
+       note: 'Forearm plank, body straight from shoulders to ankles. Hold as long as possible. Test ends when form breaks (sagging hips, raised hips, knees touch floor).'}
+    ]
+  },
+  {
+    id: 'cardio',
+    name: 'Cardiorespiratory Fitness',
+    options: [
+      {id: 'mileRun', name: 'One Mile Run', protocol: 'PFT · 1,609 meters',
+       direction: 'lower', unit: 'min:sec',
+       inputType: 'text', placeholder: '8:30',
+       benchmarkKey: 'mileRunSec',
+       note: 'Run (or walk/run) one mile on a measured course. Standing start. Walking is allowed but discouraged.'},
+      {id: 'beepTest', name: '20m Beep Test (PACER)', protocol: 'PFT · progressive shuttle',
+       direction: 'higher', unit: 'laps completed',
+       inputType: 'number', placeholder: '40', step: '1',
+       benchmarkKey: 'beepTest',
+       note: 'Progressive 20-meter shuttle run paced by audio cadence. Continue until you fail to reach the line on time on two consecutive beeps.'}
+    ]
+  },
+  {
+    id: 'upperBody',
+    name: 'Upper Body Strength',
+    options: [
+      {id: 'pushUps', name: 'Right-Angle Push-Ups', protocol: 'PFT · cadence',
+       direction: 'higher', unit: 'total reps',
+       inputType: 'number', placeholder: '20', step: '1',
+       benchmarkKey: 'pushUps',
+       note: 'Push-ups performed to a metronome cadence (1 rep every 3 seconds). Lower until 90-degree elbow angle. Continue until rhythm is broken.'},
+      {id: 'pullUps', name: 'Pull-Ups', protocol: 'PFT · max strict',
+       direction: 'higher', unit: 'total reps',
+       inputType: 'number', placeholder: '6', step: '1',
+       benchmarkKey: 'pullUps',
+       note: 'Strict pull-ups, dead-hang start, overhand grip, chin clears bar. No swinging or kipping. Continue until form failure.'}
+    ]
+  }
+];
+
+// ─── STATE ───
+let state = {
+  sex: null,    // 'boys' or 'girls'
+  age: null,    // 6 to 17
+  selections: {}  // { categoryId: { optionId, value } }
+};
+
+// ─── HELPERS ───
+function parseTimeToSeconds(s) {
+  if (typeof s === 'number') return s;
+  if (!s) return NaN;
+  s = String(s).trim();
+  if (s.includes(':')) {
+    const parts = s.split(':');
+    if (parts.length !== 2) return NaN;
+    const m = parseInt(parts[0], 10);
+    const sec = parseFloat(parts[1]);
+    if (isNaN(m) || isNaN(sec)) return NaN;
+    return m * 60 + sec;
+  }
+  const v = parseFloat(s);
+  return isNaN(v) ? NaN : v;
+}
+
+function formatSeconds(secs) {
+  const m = Math.floor(secs / 60);
+  const s = Math.round(secs - m * 60);
+  return m + ':' + String(s).padStart(2, '0');
+}
+
+function formatBenchmark(option, value) {
+  if (option.benchmarkKey === 'mileRunSec') return formatSeconds(value);
+  return value + ' ' + option.unit;
+}
+
+function checkPass(option, raw, threshold) {
+  if (raw === null || isNaN(raw)) return null;
+  if (option.direction === 'higher') return raw >= threshold;
+  return raw <= threshold;
+}
+
+// ─── RENDER PROFILE ───
+function renderProfile() {
+  document.querySelectorAll('#sexPills .profile-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.sex === state.sex);
+    p.addEventListener('click', () => {
+      state.sex = p.dataset.sex;
+      renderProfile();
+      renderCategories();
+      renderVerdict();
+    }, {once: true});
+  });
+
+  const sel = document.getElementById('ageSelect');
+  if (sel.value !== (state.age === null ? '' : String(state.age))) {
+    sel.value = state.age === null ? '' : String(state.age);
+  }
+}
+
+document.getElementById('ageSelect').addEventListener('change', (e) => {
+  const v = e.target.value;
+  state.age = v === '' ? null : parseInt(v, 10);
+  renderCategories();
+  renderVerdict();
+});
+
+// ─── RENDER CATEGORIES ───
+function renderCategories() {
+  const list = document.getElementById('categoriesList');
+  list.innerHTML = '';
+
+  CATEGORIES.forEach(cat => {
+    const card = document.createElement('div');
+    card.className = 'category-card';
+    card.dataset.cat = cat.id;
+
+    const sel = state.selections[cat.id];
+    let categoryStatus = 'pending';
+    let categoryStatusLabel = 'Pick one';
+    if (sel && state.sex && state.age !== null) {
+      const opt = cat.options.find(o => o.id === sel.optionId);
+      const threshold = BENCHMARKS[state.sex][state.age][opt.benchmarkKey];
+      const passed = checkPass(opt, sel.value, threshold);
+      if (passed === true) { categoryStatus = 'pass'; categoryStatusLabel = 'Met'; }
+      else if (passed === false) { categoryStatus = 'fail'; categoryStatusLabel = 'Not yet'; }
+    }
+    card.classList.add('has-' + (categoryStatus === 'pending' ? 'none' : categoryStatus));
+
+    let optionsHtml = '<div class="test-options">';
+    cat.options.forEach(opt => {
+      const isSelected = sel && sel.optionId === opt.id;
+      const val = isSelected ? sel.value : null;
+      const valStr = (val !== null && !isNaN(val)) ? (opt.benchmarkKey === 'mileRunSec' ? formatSeconds(val) : val) : '';
+
+      let resultHtml = '';
+      if (isSelected && val !== null && !isNaN(val) && state.sex && state.age !== null) {
+        const threshold = BENCHMARKS[state.sex][state.age][opt.benchmarkKey];
+        const passed = checkPass(opt, val, threshold);
+        const targetText = formatBenchmark(opt, threshold);
+        resultHtml = `
+          <div class="test-option-result">
+            <div class="test-target-line">Threshold for ${state.sex === 'boys' ? 'Boys' : 'Girls'} age ${state.age === 17 ? '17+' : state.age}: <strong>${targetText}</strong></div>
+            <div class="test-result-line ${passed ? 'pass' : 'fail'}">
+              ${passed ? '✓ Met' : '✗ Not yet'}
+            </div>
+          </div>`;
+      } else if (isSelected && state.sex && state.age !== null) {
+        const threshold = BENCHMARKS[state.sex][state.age][opt.benchmarkKey];
+        const targetText = formatBenchmark(opt, threshold);
+        resultHtml = `
+          <div class="test-option-result" style="display:block">
+            <div class="test-target-line">Threshold for ${state.sex === 'boys' ? 'Boys' : 'Girls'} age ${state.age === 17 ? '17+' : state.age}: <strong>${targetText}</strong></div>
+          </div>`;
+      } else if (isSelected) {
+        resultHtml = `
+          <div class="test-option-result" style="display:block">
+            <div class="test-target-line" style="font-style:italic">Pick group and age above to see threshold</div>
+          </div>`;
+      }
+
+      optionsHtml += `
+        <div class="test-option ${isSelected ? 'selected' : ''} ${val !== null && !isNaN(val) ? 'has-value' : ''}" data-cat="${cat.id}" data-opt="${opt.id}">
+          <div class="test-option-name">${opt.name}</div>
+          <div class="test-option-protocol">${opt.protocol}</div>
+          <div class="test-option-meta">${opt.note}</div>
+          <div class="test-option-input-row">
+            <input type="${opt.inputType}" class="test-input"
+                   data-cat="${cat.id}" data-opt="${opt.id}"
+                   placeholder="${opt.placeholder}"
+                   ${opt.step ? `step="${opt.step}"` : ''}
+                   ${opt.inputType === 'number' ? 'inputmode="decimal"' : ''}
+                   value="${valStr}"
+                   aria-label="${opt.name} value">
+            <span class="test-input-unit">${opt.unit}</span>
+          </div>
+          ${resultHtml}
+        </div>`;
+    });
+    optionsHtml += '</div>';
+
+    card.innerHTML = `
+      <div class="category-header">
+        <div>
+          <div class="category-eyebrow">${cat.id === 'core' ? 'Category 1' : cat.id === 'cardio' ? 'Category 2' : 'Category 3'}</div>
+          <div class="category-name">${cat.name}</div>
+          <div class="category-instruction">Pick one test below and enter your result</div>
+        </div>
+        <div class="category-status ${categoryStatus}">${categoryStatusLabel}</div>
+      </div>
+      ${optionsHtml}
+    `;
+    list.appendChild(card);
+  });
+
+  // Wire input listeners
+  list.querySelectorAll('.test-input').forEach(input => {
+    input.addEventListener('input', (e) => {
+      const catId = input.dataset.cat;
+      const optId = input.dataset.opt;
+      const cat = CATEGORIES.find(c => c.id === catId);
+      const opt = cat.options.find(o => o.id === optId);
+
+      let value;
+      if (opt.benchmarkKey === 'mileRunSec') {
+        value = parseTimeToSeconds(input.value);
+      } else {
+        value = parseFloat(input.value);
+      }
+
+      if (input.value === '' || isNaN(value)) {
+        if (state.selections[catId] && state.selections[catId].optionId === optId) {
+          delete state.selections[catId];
+        }
+      } else {
+        state.selections[catId] = {optionId: optId, value: value};
+      }
+      renderCategories();
+      renderVerdict();
+      // Restore focus to the input that was just typed in
+      const newInput = document.querySelector(`.test-input[data-cat="${catId}"][data-opt="${optId}"]`);
+      if (newInput) {
+        newInput.focus();
+        newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+      }
+    });
+    // Click on test-option (outside the input) to select that option
+  });
+
+  // Click on a non-selected test-option header to switch selection
+  list.querySelectorAll('.test-option').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      // Don't intercept clicks on the input
+      if (e.target.tagName === 'INPUT') return;
+      const catId = opt.dataset.cat;
+      const optId = opt.dataset.opt;
+      const cur = state.selections[catId];
+      if (!cur || cur.optionId !== optId) {
+        // Switch the selection (clear value)
+        state.selections[catId] = {optionId: optId, value: NaN};
+        renderCategories();
+        renderVerdict();
+        // Focus the input of the newly selected option
+        const newInput = document.querySelector(`.test-input[data-cat="${catId}"][data-opt="${optId}"]`);
+        if (newInput) newInput.focus();
+      }
+    });
+  });
+}
+
+// ─── RENDER VERDICT ───
+function renderVerdict() {
+  const titleEl = document.getElementById('verdictTitle');
+  const bodyEl = document.getElementById('verdictBody');
+
+  if (!state.sex || state.age === null) {
+    titleEl.className = 'verdict-title pending';
+    titleEl.textContent = 'Pick your group, age, and complete one test per category';
+    bodyEl.innerHTML = '';
+    return;
+  }
+
+  const categoryResults = CATEGORIES.map(cat => {
+    const sel = state.selections[cat.id];
+    if (!sel || isNaN(sel.value)) return null;
+    const opt = cat.options.find(o => o.id === sel.optionId);
+    const threshold = BENCHMARKS[state.sex][state.age][opt.benchmarkKey];
+    return checkPass(opt, sel.value, threshold);
+  });
+
+  const completeCount = categoryResults.filter(r => r !== null).length;
+  const passCount = categoryResults.filter(r => r === true).length;
+  const failCount = categoryResults.filter(r => r === false).length;
+
+  if (completeCount < 3) {
+    titleEl.className = 'verdict-title pending';
+    titleEl.textContent = `${completeCount} of 3 categories complete`;
+    bodyEl.innerHTML = `Pick a test in each category and enter your result. ${state.sex === 'boys' ? 'Boys' : 'Girls'} age ${state.age === 17 ? '17+' : state.age}.`;
+    return;
+  }
+
+  if (passCount === 3) {
+    titleEl.className = 'verdict-title pass';
+    titleEl.textContent = 'Presidential Award';
+    bodyEl.innerHTML = `Hit the threshold in all three categories. <strong>Earned the 2026 Presidential Physical Fitness Award.</strong> Stratification: ${state.sex === 'boys' ? 'Boys' : 'Girls'} age ${state.age === 17 ? '17+' : state.age}. The official certificate is downloadable from <a href="https://www.whitehouse.gov/fitness/" style="color:var(--pres-gold)">whitehouse.gov/fitness</a>.`;
+  } else {
+    titleEl.className = 'verdict-title fail';
+    titleEl.textContent = 'Not Yet Presidential';
+    const missing = CATEGORIES.filter((cat, i) => categoryResults[i] === false).map(c => c.name);
+    bodyEl.innerHTML = `Hit the threshold in <strong>${passCount} of 3</strong> categories. To earn the Presidential Award, hit the threshold in all three. ${missing.length > 0 ? `Categories below threshold: <strong>${missing.join(', ')}</strong>.` : ''} Stratification: ${state.sex === 'boys' ? 'Boys' : 'Girls'} age ${state.age === 17 ? '17+' : state.age}.`;
+  }
+}
+
+// ─── INIT ───
+function init() {
+  try {
+    renderProfile();
+    renderCategories();
+    renderVerdict();
+  } catch (e) {
+    console.error('PFT scorer init failed:', e);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 </script>
 
-<div style="background:#0f0e0c;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-    <span style="font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.22)">REALFIT&reg; ecosystem</span>
-  </div>
-  <div style="display:flex;gap:18px;flex-wrap:wrap">
-    <a href="https://realfit.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">REALFIT.com</a>
-    <a href="https://fitdat.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">FITDAT.com</a>
-    <a href="https://realfitscore.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">Score estimator</a>
-    <a href="https://scoremyfitness.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">ScoreMyFitness</a>
-    <a href="https://scoremy40.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">ScoreMy40</a>
-    <a href="https://fitdat.com/scoring-spec.html" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">Scoring spec</a>
-    <a href="mailto:hello@realfit.com" style="font-size:12px;color:rgba(255,255,255,.38);text-decoration:none">Contact</a>
-  </div>
-  <div style="font-size:11px;color:rgba(255,255,255,.18)">&copy; 2026 REALFIT&reg; &middot; FITDAT&reg;</div>
-</div>
 </body>
 </html>
